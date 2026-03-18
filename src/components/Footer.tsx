@@ -10,14 +10,7 @@ export default function Footer() {
         padding: "2rem 0",
       }}
     >
-      <div
-        className="section-wrap"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="section-wrap footer-layout">
         <Logo size="sm" />
 
         <span

@@ -52,10 +52,8 @@ export default function EngineeringMindset() {
     <section
       id="engineering"
       ref={sectionRef}
-      style={{
-        padding: "9rem 0",
-        borderTop: "1px solid var(--stroke)",
-      }}
+      className="section-pad"
+      style={{ borderTop: "1px solid var(--stroke)" }}
     >
       <div className="section-wrap">
         {/* Header */}
@@ -89,13 +87,7 @@ export default function EngineeringMindset() {
         </div>
 
         {/* Pillars */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "1.5rem",
-          }}
-        >
+        <div className="pillars-grid">
           {pillars.map(({ number, title, description, accent, accentBg, tags }) => (
             <div
               key={number}

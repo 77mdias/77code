@@ -34,7 +34,7 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      style={{ padding: "9rem 0" }}
+      className="section-pad"
     >
       <div className="section-wrap">
         {/* Header */}
@@ -55,14 +55,7 @@ export default function About() {
         </div>
 
         {/* Content grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "5rem",
-            alignItems: "start",
-          }}
-        >
+        <div className="about-grid">
           {/* Bio */}
           <div className="reveal">
             <p

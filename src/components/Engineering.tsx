@@ -66,17 +66,7 @@ function RepoRow({ project }: { project: (typeof projects)[0] }) {
 
   return (
     <div
-      className="reveal"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr auto",
-        alignItems: "center",
-        gap: "2rem",
-        padding: "1.25rem 0",
-        borderBottom: "1px solid var(--stroke)",
-        transition: "background 0.2s ease",
-        cursor: "default",
-      }}
+      className="reveal repo-row"
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.background = "transparent";
       }}
@@ -261,10 +251,8 @@ export default function Engineering() {
     <section
       id="engineering"
       ref={sectionRef}
-      style={{
-        padding: "9rem 0",
-        borderTop: "1px solid var(--stroke)",
-      }}
+      className="section-pad"
+      style={{ borderTop: "1px solid var(--stroke)" }}
     >
       <div className="section-wrap">
         {/* Header */}

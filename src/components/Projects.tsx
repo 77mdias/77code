@@ -214,7 +214,7 @@ export default function Projects() {
   }, []);
 
   return (
-    <section id="work" ref={sectionRef} style={{ padding: "9rem 0" }}>
+    <section id="work" ref={sectionRef} className="section-pad">
       <div className="section-wrap">
         {/* Header */}
         <div className="reveal" style={{ marginBottom: "4rem" }}>

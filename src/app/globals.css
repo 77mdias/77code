@@ -141,7 +141,13 @@ body {
 .section-wrap {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .section-wrap {
+    padding: 0 2rem;
+  }
 }
 
 /* Reveal on scroll */
@@ -167,4 +173,216 @@ body {
 
 [data-theme="light"] .glass {
   background: rgba(255, 255, 255, 0.75);
+}
+
+/* ==================================================
+   RESPONSIVE LAYOUT
+   ================================================== */
+
+/* Section vertical padding — mobile-first */
+.section-pad {
+  padding: 5rem 0;
+}
+
+@media (min-width: 768px) {
+  .section-pad {
+    padding: 9rem 0;
+  }
+}
+
+.section-pad-lg {
+  padding: 5rem 0 4rem;
+}
+
+@media (min-width: 768px) {
+  .section-pad-lg {
+    padding: 10rem 0 8rem;
+  }
+}
+
+/* Hero two-column layout */
+.hero-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+@media (min-width: 768px) {
+  .hero-layout {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4rem;
+  }
+}
+
+/* Hero text wrapper */
+.hero-text {
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-text {
+    flex: 1;
+  }
+}
+
+/* Hero orb — acima do texto no mobile, à direita no desktop */
+.hero-orb-wrap {
+  order: -1;
+  width: 100%;
+  height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Vignette suave — sem borda dura */
+  -webkit-mask-image: radial-gradient(ellipse 65% 70% at 50% 50%, black 50%, transparent 90%);
+  mask-image: radial-gradient(ellipse 65% 70% at 50% 50%, black 50%, transparent 90%);
+}
+
+.hero-orb-scale {
+  transform: scale(0.65);
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-orb-wrap {
+    order: 0;
+    width: auto;
+    height: auto;
+    display: block;
+    -webkit-mask-image: none;
+    mask-image: none;
+    opacity: 0;
+    animation: fade-in 1.2s ease 1.1s forwards;
+  }
+
+  .hero-orb-scale {
+    transform: none;
+  }
+}
+
+/* About two-column grid */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .about-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+  }
+}
+
+/* Engineering mindset pillars grid */
+.pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .pillars-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pillars-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Repo list row */
+.repo-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--stroke);
+  transition: background 0.2s ease;
+  cursor: default;
+}
+
+@media (min-width: 640px) {
+  .repo-row {
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+  }
+}
+
+/* Footer layout */
+.footer-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .footer-layout {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* Hero scroll indicator — hidden on mobile */
+.hero-scroll {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hero-scroll {
+    display: flex;
+  }
+}
+
+/* Navbar — desktop links */
+.nav-links-desktop {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .nav-links-desktop {
+    display: flex;
+    gap: 2rem;
+  }
+}
+
+/* Navbar — hamburger button (mobile only) */
+.nav-hamburger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .nav-hamburger {
+    display: none;
+  }
+}
+
+/* Mobile navigation overlay */
+.mobile-nav {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  z-index: 40;
+  border-top: 1px solid var(--stroke);
+  animation: fade-in 0.2s ease forwards;
 }

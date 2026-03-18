@@ -41,20 +41,9 @@ export default function Hero() {
         }}
       />
 
-      <div
-        className="section-wrap"
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "4rem",
-          paddingTop: "80px",
-          paddingBottom: "80px",
-        }}
-      >
+      <div className="section-wrap hero-layout">
         {/* Left: Text content */}
-        <div style={{ flex: "1", minWidth: 0 }}>
+        <div className="hero-text">
           {/* Role label */}
           <p
             className="label"
@@ -184,25 +173,22 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right: 3D orb */}
-        <div
-          style={{
-            opacity: 0,
-            animation: "fade-in 1.2s ease 1.1s forwards",
-          }}
-        >
-          <FloatingOrb />
+        {/* Right: 3D orb — acima do texto no mobile, à direita no desktop */}
+        <div className="hero-orb-wrap">
+          <div className="hero-orb-scale">
+            <FloatingOrb />
+          </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator — hidden on mobile */}
       <div
+        className="hero-scroll"
         style={{
           position: "absolute",
           bottom: "2.5rem",
           left: "50%",
           transform: "translateX(-50%)",
-          display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: "0.5rem",

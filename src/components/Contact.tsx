@@ -28,10 +28,8 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      style={{
-        padding: "10rem 0 8rem",
-        borderTop: "1px solid var(--stroke)",
-      }}
+      className="section-pad-lg"
+      style={{ borderTop: "1px solid var(--stroke)" }}
     >
       <div className="section-wrap">
         <div
