@@ -81,7 +81,7 @@ export default function Contact() {
 
           {/* Email CTA */}
           <a
-            href="mailto:jean@example.com"
+            href="mailto:jean.77mdiasdev@gmail.com"
             style={{
               display: "inline-flex",
               alignItems: "center",
