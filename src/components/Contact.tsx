@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 const socials = [
-  { label: "GitHub", href: "https://github.com", mono: "gh" },
-  { label: "LinkedIn", href: "https://linkedin.com", mono: "in" },
-  { label: "Twitter", href: "https://twitter.com", mono: "tw" },
+  { label: "GitHub", href: "https://github.com/77mdias", icon: FaGithub },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/jeancmdias/",
+    icon: FaLinkedinIn,
+  },
+  { label: "Twitter", href: "https://x.com/77mdias", icon: FaXTwitter },
 ];
 
 export default function Contact() {
@@ -17,10 +23,12 @@ export default function Contact() {
         entries.forEach((e) => {
           if (e.isIntersecting) e.target.classList.add("visible");
         }),
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
-    sectionRef.current?.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    sectionRef.current
+      ?.querySelectorAll(".reveal")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -67,8 +75,8 @@ export default function Contact() {
               maxWidth: "440px",
             }}
           >
-            Open to opportunities, collaborations, and interesting projects.
-            If you think we could make something great — I&apos;d love to hear it.
+            Open to opportunities, collaborations, and interesting projects. If
+            you think we could make something great — I&apos;d love to hear it.
           </p>
 
           {/* Email CTA */}
@@ -90,11 +98,13 @@ export default function Contact() {
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.opacity = "0.85";
-              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+              (e.currentTarget as HTMLElement).style.transform =
+                "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.opacity = "1";
-              (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+              (e.currentTarget as HTMLElement).style.transform =
+                "translateY(0)";
             }}
           >
             Say hello →
@@ -105,14 +115,15 @@ export default function Contact() {
             style={{
               width: "1px",
               height: "40px",
-              background: "linear-gradient(to bottom, var(--stroke-em), transparent)",
+              background:
+                "linear-gradient(to bottom, var(--stroke-em), transparent)",
               marginTop: "1rem",
             }}
           />
 
           {/* Social links */}
           <div style={{ display: "flex", gap: "2rem" }}>
-            {socials.map(({ label, href, mono }) => (
+            {socials.map(({ label, href, icon: Icon }) => (
               <a
                 key={label}
                 href={href}
@@ -127,10 +138,12 @@ export default function Contact() {
                   transition: "transform 0.2s ease",
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                  (e.currentTarget as HTMLElement).style.transform =
+                    "translateY(-2px)";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+                  (e.currentTarget as HTMLElement).style.transform =
+                    "translateY(0)";
                 }}
               >
                 <span
@@ -143,22 +156,22 @@ export default function Contact() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontFamily: "var(--font-geist-mono)",
-                    fontSize: "11px",
                     color: "var(--ink-2)",
-                    letterSpacing: "0.04em",
                     transition: "background 0.2s ease, color 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = "var(--surface-hover)";
+                    (e.currentTarget as HTMLElement).style.background =
+                      "var(--surface-hover)";
                     (e.currentTarget as HTMLElement).style.color = "var(--ink)";
                   }}
                   onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = "var(--surface)";
-                    (e.currentTarget as HTMLElement).style.color = "var(--ink-2)";
+                    (e.currentTarget as HTMLElement).style.background =
+                      "var(--surface)";
+                    (e.currentTarget as HTMLElement).style.color =
+                      "var(--ink-2)";
                   }}
                 >
-                  {mono}
+                  <Icon size={16} />
                 </span>
                 <span
                   style={{
