@@ -1,59 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
-const projects = [
-  {
-    name: "project-alpha",
-    description: "High-performance web app with focus on rendering optimizations and clean component architecture.",
-    lang: "TypeScript",
-    langColor: "#3178c6",
-    type: "Web App",
-    status: "active",
-    github: "#",
-    live: "#",
-  },
-  {
-    name: "project-beta",
-    description: "Design system and component library built from scratch. Storybook-documented, fully typed.",
-    lang: "TypeScript",
-    langColor: "#3178c6",
-    type: "Library",
-    status: "active",
-    github: "#",
-    live: null,
-  },
-  {
-    name: "project-gamma",
-    description: "CLI tool for automating repetitive dev tasks. Node.js-based, built for developer experience.",
-    lang: "JavaScript",
-    langColor: "#f7df1e",
-    type: "CLI",
-    status: "wip",
-    github: "#",
-    live: null,
-  },
-  {
-    name: "project-delta",
-    description: "REST API with authentication, rate limiting, and structured error handling.",
-    lang: "TypeScript",
-    langColor: "#3178c6",
-    type: "API",
-    status: "archived",
-    github: "#",
-    live: null,
-  },
-  {
-    name: "project-epsilon",
-    description: "Minimal portfolio experiment — exploring motion and 3D without sacrificing performance.",
-    lang: "TypeScript",
-    langColor: "#3178c6",
-    type: "Web App",
-    status: "active",
-    github: "#",
-    live: "#",
-  },
-];
+import type { EngineeringRepo } from "@/lib/github";
 
 const statusConfig = {
   active: { label: "active", color: "var(--sage)", bg: "var(--sage-bg)" },
@@ -61,7 +9,7 @@ const statusConfig = {
   archived: { label: "archived", color: "var(--ink-3)", bg: "rgba(68,68,76,0.12)" },
 };
 
-function RepoRow({ project }: { project: (typeof projects)[0] }) {
+function RepoRow({ project }: { project: EngineeringRepo }) {
   const status = statusConfig[project.status as keyof typeof statusConfig];
 
   return (
@@ -229,7 +177,7 @@ function RepoRow({ project }: { project: (typeof projects)[0] }) {
   );
 }
 
-export default function Engineering() {
+export default function Engineering({ projects = [] }: { projects: EngineeringRepo[] }) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {

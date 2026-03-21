@@ -1,44 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import type { Project } from "@/lib/github";
 
-const projects = [
-  {
-    id: "01",
-    title: "Project Alpha",
-    description:
-      "A high-performance web application crafted with precision. Built with a focus on smooth interactions and maintainable architecture.",
-    stack: ["React", "TypeScript", "Node.js"],
-    accent: "var(--blue)",
-    accentBg: "var(--blue-bg)",
-    href: "#",
-    github: "#",
-  },
-  {
-    id: "02",
-    title: "Project Beta",
-    description:
-      "Design-first interface with deep attention to UX detail. Every interaction considered, every transition earned.",
-    stack: ["Next.js", "Tailwind", "PostgreSQL"],
-    accent: "var(--lavender)",
-    accentBg: "var(--lavender-bg)",
-    href: "#",
-    github: "#",
-  },
-  {
-    id: "03",
-    title: "Project Gamma",
-    description:
-      "An elegant tool that simplifies complex workflows. Performance and clarity as first-class concerns.",
-    stack: ["React", "Zustand", "Vite"],
-    accent: "var(--sage)",
-    accentBg: "var(--sage-bg)",
-    href: "#",
-    github: "#",
-  },
-];
-
-function ProjectCard({ project }: { project: (typeof projects)[0] }) {
+function ProjectCard({ project }: { project: Project }) {
   const ref = useRef<HTMLDivElement>(null);
 
   const handleMouseEnter = () => {
@@ -73,11 +38,13 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Preview area — gradient thumbnail */}
+      {/* Preview area — thumbnail */}
       <div
         style={{
           height: "200px",
-          background: `radial-gradient(ellipse at 30% 40%, ${project.accent}22 0%, ${project.accentBg} 60%, transparent 100%)`,
+          background: project.image
+            ? `url(${project.image}) center/cover no-repeat`
+            : `radial-gradient(ellipse at 30% 40%, ${project.accent}22 0%, ${project.accentBg} 60%, transparent 100%)`,
           borderBottom: "1px solid var(--stroke)",
           display: "flex",
           alignItems: "center",
@@ -86,6 +53,11 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
           overflow: "hidden",
         }}
       >
+        {/* Camada de sobreposição para melhor leitura de números e grid em imagens */}
+        {project.image && (
+           <div style={{ position: "absolute", inset: 0, backgroundColor: "var(--surface)", opacity: 0.2 }} />
+        )}
+
         {/* Project number — watermark style */}
         <span
           style={{
@@ -197,7 +169,7 @@ function ProjectCard({ project }: { project: (typeof projects)[0] }) {
   );
 }
 
-export default function Projects() {
+export default function Projects({ projects = [] }: { projects: Project[] }) {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -242,9 +214,11 @@ export default function Projects() {
             gap: "1.5rem",
           }}
         >
-          {projects.map((p) => (
-            <ProjectCard key={p.id} project={p} />
-          ))}
+          {projects.length > 0 ? (
+            projects.map((p) => <ProjectCard key={p.id} project={p} />)
+          ) : (
+            <p style={{ color: "var(--ink-3)", fontSize: "14px" }}>Nenhum projeto encontrado.</p>
+          )}
         </div>
       </div>
     </section>

@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=auto&height=200&section=header&text=77code%20Portfolio&fontSize=50&animation=fadeIn&fontAlignY=38&desc=Jean%20Carlos&descAlignY=62&descAlign=62" width="100%" />
 
-First, run the development server:
+# 💻🚀 Jean Carlos — Developer Portfolio
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Um portfólio moderno, minimalista e de extrema performance construído para a nova geração da web.**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Bun](https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh/)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+</div>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Sobre o Projeto
 
-To learn more about Next.js, take a look at the following resources:
+Este repositório abriga o código-fonte do meu portfólio pessoal. O foco principal duranto o desenvolvimento foi garantir uma arquitetura extremamente limpa e uma **UX (Experiência do Usuário)** premium, validando meu amor por design e atenção aos mínimos detalhes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A aplicação vai muito além do visual, ela é **dinâmica e inteligente**:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 🔗 **Sincronização com o GitHub**: Todo o conteúdo de trabalhos entregues (nas áreas de Projetos e Engenharia) é buscado de forma dinâmica direto do meu perfil do GitHub (`77mdias`). A listagem utiliza a poderosa **API GraphQL** para exibir repositórios em formato _Pinned_ com detalhes valiosos (como as imagens de pré-visualização oficiais geradas na nuvem e etiquetas de linguagem em tempo real).
+- 🎨 **Design System Nativo e Temático**: Toda a interface é adaptável, possuindo suporte total a _Dark Mode_ e _Light Mode_ (mantidos de forma fluida através de propriedades customizadas do CSS no `globals.css`).
+- 💠 **Microinterações Elegantes**: O site não é estático — inclui o padrão _scroll-reveal_ (os elementos surgem suavemente de acordo com a sua rolagem de tela), acabamentos em _glassmorphism_ (efeitinhos de vidro polido) e componentes bem separados.
 
-## Deploy on Vercel
+## 🛠️ Tecnologias Utilizadas
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **[Next.js 16 (App Router)](https://nextjs.org/)** — Framework backend/frontend com renderização SSR.
+- **[React.js](https://react.dev/)** — Base do sistema modular de componentes.
+- **[Tailwind CSS v4](https://tailwindcss.com/)** — Pipeline CSS via integração direta pelo PostCSS.
+- **[TypeScript](https://www.typescriptlang.org/)** — Tipagem estática pesada eliminando quebras em tempo de execução.
+- **[Bun](https://bun.sh/)** — Runtime e gerenciador de pacotes ultrarrápido responsável pelo ambiente de desenvolvimento limpo.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Como Executar Localmente
+
+Siga os passos abaixo para rodar o projeto na sua máquina local:
+
+1. **Clone o repositório**
+
+   ```bash
+   git clone https://github.com/77mdias/77code.git
+   cd 77code
+   ```
+
+2. **Instale as dependências usando o Bun**
+
+   ```bash
+   bun install
+   ```
+
+3. **Configure as Variáveis de Ambiente**
+   Copie o arquivo de exemplo e insira seu Token Pessoal do GitHub:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   > 💡 _Nota: A chave \`GITHUB_TOKEN\` é super recomendada para que os projetos consigam realizar fetch dos itens fixados (Pinned) com alta qualidade visual._
+
+4. **Inicie o servidor de desenvolvimento**
+
+   ```bash
+   bun dev
+   ```
+
+5. O servidor abrirá magicamente em **[http://localhost:3000](http://localhost:3000)**! ✨
+
+---
+
+## 📁 Arquitetura Simplificada (Overview)
+
+\`\`\`text
+src/
+├── app/ # Central do App Router (Rotas, page.tsx e layout global)
+├── components/ # Componentes modulares de UI (Hero, Navbar, Projects, etc)
+└── lib/ # Utilitários e Integração com APIs externas (github.ts)
+\`\`\`
+
+---
+
+## 🤝 Autor e Contato
+
+Desenvolvido com ☕, boas músicas e foco extremo no ofício da Engenharia de Software por **Jean Carlos**.
+_Sinta-se à vontade para enviar mensagens para conversar, perguntar ou conectar!_
+
+<div align="center">
+  <br />
+  <a href="https://github.com/77mdias" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub_Meu_Perfil-100000?style=for-the-badge&logo=github&logoColor=white" />
+  </a>
+  <a href="https://linkedin.com/in/" target="_blank">
+    <img src="https://img.shields.io/badge/LinkedIn_Conectar-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
+  </a>
+</div>

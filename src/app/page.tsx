@@ -6,16 +6,22 @@ import Engineering from "@/components/Engineering";
 import EngineeringMindset from "@/components/EngineeringMindset";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import { getGithubProjects, getGithubEngineeringRepos } from "@/lib/github";
 
-export default function Home() {
+export default async function Home() {
+  const [projects, engineeringRepos] = await Promise.all([
+    getGithubProjects(),
+    getGithubEngineeringRepos(),
+  ]);
+
   return (
     <>
       <Navbar />
       <main>
         <Hero />
         <About />
-        <Projects />
-        <Engineering />
+        <Projects projects={projects} />
+        <Engineering projects={engineeringRepos} />
         <EngineeringMindset />
         <Contact />
       </main>
