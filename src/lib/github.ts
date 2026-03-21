@@ -63,7 +63,7 @@ export async function getGithubProjects(): Promise<Project[]> {
             }
           `,
         }),
-        next: { revalidate: 3600 }, // Cache por 1 hora (ISR)
+        next: { revalidate: 60 }, // Cache por 1 hora (ISR)
       });
 
       if (resp.ok) {
@@ -100,7 +100,7 @@ export async function getGithubProjects(): Promise<Project[]> {
   // Fallback: Buscar ultimos atualizados via REST API Publica (sem token)
   try {
     const resp = await fetch(`https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=6`, {
-      next: { revalidate: 3600 }
+      next: { revalidate: 60 }
     });
     
     if (resp.ok) {
@@ -202,7 +202,7 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
 
   try {
     const resp = await fetch(`https://api.github.com/users/${USERNAME}/repos?sort=pushed&per_page=12`, {
-      next: { revalidate: 3600 }
+      next: { revalidate: 60 }
     });
     
     if (resp.ok) {
