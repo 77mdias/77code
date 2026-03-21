@@ -4,7 +4,7 @@
 
 # 💻🚀 Jean Carlos — Developer Portfolio
 
-**Um portfólio moderno, minimalista e de extrema performance construído para a nova geração da web.**
+**A modern, minimalist, and high-performance portfolio built for the next generation of the web.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -16,84 +16,84 @@
 
 ---
 
-## ✨ Sobre o Projeto
+## ✨ About the Project
 
-Este repositório abriga o código-fonte do meu portfólio pessoal. O foco principal duranto o desenvolvimento foi garantir uma arquitetura extremamente limpa e uma **UX (Experiência do Usuário)** premium, validando meu amor por design e atenção aos mínimos detalhes.
+This repository hosts the source code for my personal portfolio. The main focus during development was to ensure an extremely clean architecture and a premium **UX (User Experience)**, highlighting my love for design and attention to precise details.
 
-A aplicação vai muito além do visual, ela é **dinâmica e inteligente**:
+The application goes far beyond just visuals; it is **dynamic and smart**:
 
-- 🔗 **Sincronização com o GitHub**: Todo o conteúdo de trabalhos entregues (nas áreas de Projetos e Engenharia) é buscado de forma dinâmica direto do meu perfil do GitHub (`77mdias`). A listagem utiliza a poderosa **API GraphQL** para exibir repositórios em formato _Pinned_ com detalhes valiosos (como as imagens de pré-visualização oficiais geradas na nuvem e etiquetas de linguagem em tempo real).
-- 🎨 **Design System Nativo e Temático**: Toda a interface é adaptável, possuindo suporte total a _Dark Mode_ e _Light Mode_ (mantidos de forma fluida através de propriedades customizadas do CSS no `globals.css`).
-- 💠 **Microinterações Elegantes**: O site não é estático — inclui o padrão _scroll-reveal_ (os elementos surgem suavemente de acordo com a sua rolagem de tela), acabamentos em _glassmorphism_ (efeitinhos de vidro polido) e componentes bem separados.
+- 🔗 **GitHub Synchronization**: All showcased work (in the Projects and Engineering sections) is fetched dynamically straight from my GitHub profile (`77mdias`). The list utilizes the powerful **GraphQL API** to display _Pinned_ repositories with rich details (such as official social preview images generated in the cloud and real-time language tags).
+- 🎨 **Native & Themed Design System**: The entire interface is adaptable, featuring full support for _Dark Mode_ and _Light Mode_ (seamlessly maintained through CSS custom properties in `globals.css`).
+- 💠 **Elegant Micro-interactions**: The site is never static — it includes _scroll-reveal_ patterns (elements softly fade in as you scroll), _glassmorphism_ finishes (frosted glass effects), and cleanly separated components.
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tech Stack
 
-- **[Next.js 16 (App Router)](https://nextjs.org/)** — Framework backend/frontend com renderização SSR.
-- **[React.js](https://react.dev/)** — Base do sistema modular de componentes.
-- **[Tailwind CSS v4](https://tailwindcss.com/)** — Pipeline CSS via integração direta pelo PostCSS.
-- **[TypeScript](https://www.typescriptlang.org/)** — Tipagem estática pesada eliminando quebras em tempo de execução.
-- **[Bun](https://bun.sh/)** — Runtime e gerenciador de pacotes ultrarrápido responsável pelo ambiente de desenvolvimento limpo.
+- **[Next.js 16 (App Router)](https://nextjs.org/)** — Backend/frontend framework with SSR.
+- **[React.js](https://react.dev/)** — The core of the modular component system.
+- **[Tailwind CSS v4](https://tailwindcss.com/)** — CSS pipeline via direct PostCSS integration.
+- **[TypeScript](https://www.typescriptlang.org/)** — Strict static typing aiming for zero runtime errors.
+- **[Bun](https://bun.sh/)** — Ultra-fast runtime and package manager responsible for a clean development environment.
 
 ---
 
-## 🚀 Como Executar Localmente
+## 🚀 Getting Started Locally
 
-Siga os passos abaixo para rodar o projeto na sua máquina local:
+Follow the steps below to run the project on your local machine:
 
-1. **Clone o repositório**
+1. **Clone the repository**
 
    ```bash
    git clone https://github.com/77mdias/77code.git
    cd 77code
    ```
 
-2. **Instale as dependências usando o Bun**
+2. **Install dependencies using Bun**
 
    ```bash
    bun install
    ```
 
-3. **Configure as Variáveis de Ambiente**
-   Copie o arquivo de exemplo e insira seu Token Pessoal do GitHub:
+3. **Set up Environment Variables**
+   Copy the example file and insert your GitHub Personal Access Token:
 
    ```bash
    cp .env.example .env.local
    ```
 
-   > 💡 _Nota: A chave \`GITHUB_TOKEN\` é super recomendada para que os projetos consigam realizar fetch dos itens fixados (Pinned) com alta qualidade visual._
+   > 💡 _Note: The `GITHUB_TOKEN` key is highly recommended so the app can fetch Pinned items with high visual quality._
 
-4. **Inicie o servidor de desenvolvimento**
+4. **Start the development server**
 
    ```bash
    bun dev
    ```
 
-5. O servidor abrirá magicamente em **[http://localhost:3000](http://localhost:3000)**! ✨
+5. The server will magically open at **[http://localhost:3000](http://localhost:3000)**! ✨
 
 ---
 
-## 📁 Arquitetura Simplificada (Overview)
+## 📁 Simple Architecture Overview
 
 \`\`\`text
 src/
-├── app/ # Central do App Router (Rotas, page.tsx e layout global)
-├── components/ # Componentes modulares de UI (Hero, Navbar, Projects, etc)
-└── lib/ # Utilitários e Integração com APIs externas (github.ts)
+├── app/ # App Router Core (Routes, page.tsx, and global layout)
+├── components/ # Modular UI Components (Hero, Navbar, Projects, etc)
+└── lib/ # Utilities and External API Integrations (github.ts)
 \`\`\`
 
 ---
 
-## 🤝 Autor e Contato
+## 🤝 Author & Contact
 
-Desenvolvido com ☕, boas músicas e foco extremo no ofício da Engenharia de Software por **Jean Carlos**.
-_Sinta-se à vontade para enviar mensagens para conversar, perguntar ou conectar!_
+Developed with ☕, great music, and extreme focus on the Software Engineering craft by **Jean Carlos**.
+_Feel free to drop a message to chat, ask questions, or connect!_
 
 <div align="center">
   <br />
   <a href="https://github.com/77mdias" target="_blank">
-    <img src="https://img.shields.io/badge/GitHub_Meu_Perfil-100000?style=for-the-badge&logo=github&logoColor=white" />
+    <img src="https://img.shields.io/badge/GitHub_Profile-100000?style=for-the-badge&logo=github&logoColor=white" />
   </a>
   <a href="https://linkedin.com/in/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn_Conectar-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
+    <img src="https://img.shields.io/badge/LinkedIn_Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
   </a>
 </div>
