@@ -43,7 +43,7 @@ function ProjectCard({ project }: { project: Project }) {
         style={{
           height: "200px",
           background: project.image
-            ? `url(${project.image}) center/cover no-repeat`
+            ? `url('${project.image}') center/cover no-repeat`
             : `radial-gradient(ellipse at 30% 40%, ${project.accent}22 0%, ${project.accentBg} 60%, transparent 100%)`,
           borderBottom: "1px solid var(--stroke)",
           display: "flex",

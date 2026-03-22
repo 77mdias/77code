@@ -37,23 +37,22 @@ export async function getGithubProjects(): Promise<Project[]> {
           query: `
             {
               user(login: "${USERNAME}") {
-                pinnedItems(first: 6, types: [REPOSITORY]) {
+                repositories(first: 6, orderBy: {field: PUSHED_AT, direction: DESC}, isFork: false, privacy: PUBLIC) {
                   nodes {
-                    ... on Repository {
-                      id
+                    id
+                    name
+                    description
+                    url
+                    homepageUrl
+                    openGraphImageUrl
+                    usesCustomOpenGraphImage
+                    primaryLanguage {
                       name
-                      description
-                      url
-                      homepageUrl
-                      openGraphImageUrl
-                      primaryLanguage {
-                        name
-                      }
-                      repositoryTopics(first: 3) {
-                        nodes {
-                          topic {
-                            name
-                          }
+                    }
+                    repositoryTopics(first: 3) {
+                      nodes {
+                        topic {
+                          name
                         }
                       }
                     }
@@ -67,8 +66,11 @@ export async function getGithubProjects(): Promise<Project[]> {
       });
 
       if (resp.ok) {
-        const { data } = await resp.json();
-        const nodes = data?.user?.pinnedItems?.nodes || [];
+        const { data, errors } = await resp.json();
+        if (errors) {
+            console.error("GraphQL Errors:", errors);
+        }
+        const nodes = data?.user?.repositories?.nodes || [];
         
         if (nodes.length > 0) {
           return nodes.map((repo: any, index: number) => {
@@ -87,10 +89,12 @@ export async function getGithubProjects(): Promise<Project[]> {
               accentBg: color.accentBg,
               href: repo.homepageUrl || repo.url,
               github: repo.url,
-              image: repo.openGraphImageUrl,
+              image: repo.usesCustomOpenGraphImage ? repo.openGraphImageUrl : undefined,
             };
           });
         }
+      } else {
+        console.error("GraphQL fetch failed with status", resp.status, await resp.text());
       }
     } catch (e) {
       console.error("Erro ao buscar repositorios fixados do GitHub GraphQL", e);
