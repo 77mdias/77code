@@ -65,6 +65,21 @@ function ProjectCard({ project }: { project: Project }) {
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
   const canExpandDescription = project.description.length > 180;
 
+  const openProject = () => {
+    window.open(project.href, "_blank", "noopener,noreferrer");
+  };
+
+  const handleCardClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("a, button")) return;
+    openProject();
+  };
+
+  const handleCardKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openProject();
+  };
+
   const handleMouseEnter = () => {
     if (!ref.current) return;
     ref.current.style.background = "var(--surface-hover)";
@@ -98,6 +113,11 @@ function ProjectCard({ project }: { project: Project }) {
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
+      role="link"
+      tabIndex={0}
+      aria-label={`Open ${project.title}`}
     >
       {/* Preview area — thumbnail */}
       <div
@@ -238,6 +258,8 @@ function ProjectCard({ project }: { project: Project }) {
         <div style={{ display: "flex", gap: "1rem", marginTop: "auto" }}>
           <a
             href={project.href}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               fontSize: "13px",
               color: "var(--ink-2)",
@@ -254,6 +276,8 @@ function ProjectCard({ project }: { project: Project }) {
           </a>
           <a
             href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               fontSize: "13px",
               color: "var(--ink-3)",
