@@ -146,6 +146,7 @@ export async function getGithubProjects(): Promise<Project[]> {
 export interface EngineeringRepo {
   name: string;
   description: string;
+  stack: string[];
   lang: string;
   langColor: string;
   type: string;
@@ -177,7 +178,7 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
                     name
                     color
                   }
-                  repositoryTopics(first: 1) {
+                  repositoryTopics(first: 4) {
                     nodes {
                       topic {
                         name
@@ -198,11 +199,22 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
 
         if (nodes.length > 0) {
           return nodes.map((repo: any) => {
+            const topicStack = repo.repositoryTopics?.nodes?.map((n: any) => n.topic.name) || [];
+            const autoStack = [...topicStack];
+            const normalized = new Set(autoStack.map((tag: string) => tag.toLowerCase()));
+
+            if (repo.primaryLanguage?.name && !normalized.has(repo.primaryLanguage.name.toLowerCase())) {
+              autoStack.unshift(repo.primaryLanguage.name);
+            }
+
+            const stack = (STACK_OVERRIDES[repo.name] ?? autoStack).slice(0, 4);
+
             return {
               name: repo.name,
               description:
                 repo.description?.slice(0, 100) + (repo.description?.length > 100 ? "..." : "") ||
                 "No description provided.",
+              stack,
               lang: repo.primaryLanguage?.name || "Unknown",
               langColor: repo.primaryLanguage?.color || "#3178c6",
               type: repo.repositoryTopics?.nodes?.[0]?.topic?.name || "Repository",
@@ -229,11 +241,14 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
         .filter((r: any) => !r.fork)
         .slice(0, 10)
         .map((repo: any) => {
+          const stack = (STACK_OVERRIDES[repo.name] ?? (repo.language ? [repo.language] : [])).slice(0, 4);
+
           return {
             name: repo.name,
             description:
               repo.description?.slice(0, 100) + (repo.description?.length > 100 ? "..." : "") ||
               "No description provided.",
+            stack,
             lang: repo.language || "Unknown",
             langColor: "#3178c6",
             type: "Repository",

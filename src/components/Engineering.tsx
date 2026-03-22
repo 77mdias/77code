@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { EngineeringRepo } from "@/lib/github";
+import { getStackPalette } from "@/lib/stackTags";
 
 const statusConfig = {
   active: { label: "active", color: "var(--sage)", bg: "var(--sage-bg)" },
@@ -11,6 +12,9 @@ const statusConfig = {
 
 function RepoRow({ project }: { project: EngineeringRepo }) {
   const status = statusConfig[project.status as keyof typeof statusConfig];
+  const stackTags = [project.lang, ...project.stack].filter(
+    (tech, index, list) => list.findIndex((item) => item.toLowerCase() === tech.toLowerCase()) === index,
+  );
 
   return (
     <div
@@ -83,36 +87,48 @@ function RepoRow({ project }: { project: EngineeringRepo }) {
             color: "var(--ink-2)",
             fontWeight: 300,
             lineHeight: 1.6,
-            marginBottom: "0.75rem",
+            marginBottom: "0.85rem",
             maxWidth: "560px",
           }}
         >
           {project.description}
         </p>
 
-        {/* Language */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.375rem" }}>
-          <span
-            style={{
-              width: "10px",
-              height: "10px",
-              borderRadius: "50%",
-              background: project.langColor,
-              flexShrink: 0,
-              boxShadow: `0 0 6px ${project.langColor}60`,
-            }}
-          />
-          <span
-            style={{
-              fontFamily: "var(--font-geist-mono)",
-              fontSize: "11px",
-              color: "var(--ink-3)",
-              letterSpacing: "0.04em",
-            }}
-          >
-            {project.lang}
-          </span>
-        </div>
+        {/* Stack tags (subtle style) */}
+        {stackTags.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem", marginBottom: "0.85rem" }}>
+            {stackTags.map((tech) => {
+              const palette = getStackPalette(tech);
+
+              return (
+                <span
+                  key={`${project.name}-${tech}`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.35rem",
+                    fontFamily: "var(--font-geist-mono)",
+                    fontSize: "11px",
+                    color: "var(--ink-3)",
+                    letterSpacing: "0.04em",
+                  }}
+                >
+                  <span
+                    style={{
+                      width: "7px",
+                      height: "7px",
+                      borderRadius: "50%",
+                      background: palette.accent,
+                      boxShadow: `0 0 6px ${palette.accent}50`,
+                      flexShrink: 0,
+                    }}
+                  />
+                  {tech}
+                </span>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Right: links */}
@@ -139,12 +155,8 @@ function RepoRow({ project }: { project: EngineeringRepo }) {
             alignItems: "center",
             gap: "0.375rem",
           }}
-          onMouseEnter={(e) =>
-            ((e.currentTarget as HTMLElement).style.color = "var(--ink-2)")
-          }
-          onMouseLeave={(e) =>
-            ((e.currentTarget as HTMLElement).style.color = "var(--ink-3)")
-          }
+          onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--ink-2)")}
+          onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--ink-3)")}
         >
           GitHub ↗
         </a>
@@ -162,12 +174,8 @@ function RepoRow({ project }: { project: EngineeringRepo }) {
               textTransform: "uppercase",
               transition: "color 0.2s ease",
             }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.color = "var(--blue)")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.color = "var(--ink-3)")
-            }
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--blue)")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--ink-3)")}
           >
             Live ↗
           </a>
@@ -186,22 +194,15 @@ export default function Engineering({ projects = [] }: { projects: EngineeringRe
         entries.forEach((e) => {
           if (e.isIntersecting) e.target.classList.add("visible");
         }),
-      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.05, rootMargin: "0px 0px -40px 0px" },
     );
 
-    sectionRef.current?.querySelectorAll(".reveal").forEach((el) =>
-      observer.observe(el)
-    );
+    sectionRef.current?.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section
-      id="engineering"
-      ref={sectionRef}
-      className="section-pad"
-      style={{ borderTop: "1px solid var(--stroke)" }}
-    >
+    <section id="engineering" ref={sectionRef} className="section-pad" style={{ borderTop: "1px solid var(--stroke)" }}>
       <div className="section-wrap">
         {/* Header */}
         <div
