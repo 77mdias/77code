@@ -23,9 +23,19 @@
   --blue: #93c5fd;
   --lavender: #c4b5fd;
   --sage: #86efac;
+  --amber: #fbbf24;
+  --rose: #fb7185;
+  --teal: #5eead4;
+  --cyan: #67e8f9;
+  --peach: #fdba74;
   --blue-bg: rgba(147, 197, 253, 0.07);
   --lavender-bg: rgba(196, 181, 253, 0.07);
   --sage-bg: rgba(134, 239, 172, 0.07);
+  --amber-bg: rgba(251, 191, 36, 0.08);
+  --rose-bg: rgba(251, 113, 133, 0.08);
+  --teal-bg: rgba(94, 234, 212, 0.08);
+  --cyan-bg: rgba(103, 232, 249, 0.08);
+  --peach-bg: rgba(253, 186, 116, 0.08);
 
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
@@ -53,6 +63,11 @@
   --blue-bg: rgba(59, 130, 246, 0.06);
   --lavender-bg: rgba(139, 92, 246, 0.06);
   --sage-bg: rgba(34, 197, 94, 0.06);
+  --amber-bg: rgba(217, 119, 6, 0.07);
+  --rose-bg: rgba(225, 29, 72, 0.07);
+  --teal-bg: rgba(13, 148, 136, 0.07);
+  --cyan-bg: rgba(8, 145, 178, 0.08);
+  --peach-bg: rgba(234, 88, 12, 0.08);
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.06);
@@ -79,10 +94,16 @@ html {
 body {
   background-color: var(--bg);
   color: var(--ink);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    var(--font-geist-sans),
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.5s ease, color 0.3s ease;
+  transition:
+    background-color 0.5s ease,
+    color 0.3s ease;
   min-height: 100%;
 }
 
@@ -91,39 +112,75 @@ body {
    ================================================== */
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  40%       { transform: translateY(-16px) rotate(2deg); }
-  70%       { transform: translateY(-8px) rotate(-1deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  40% {
+    transform: translateY(-16px) rotate(2deg);
+  }
+  70% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
 }
 
 @keyframes orbit {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes orbit-reverse {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
 }
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50%       { opacity: 0.75; transform: scale(1.06); }
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.06);
+  }
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(22px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes trace-in {
-  from { width: 0; }
-  to   { width: 100%; }
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ==================================================
@@ -154,8 +211,9 @@ body {
 .reveal {
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .reveal.visible {
