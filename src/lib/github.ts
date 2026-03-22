@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const USERNAME = '77mdias';
+const USERNAME = "77mdias";
 
 export interface Project {
   id: string;
@@ -20,17 +20,23 @@ const ACCENT_COLORS = [
   { accent: "var(--sage)", accentBg: "var(--sage-bg)" },
   { accent: "var(--amber)", accentBg: "var(--amber-bg)" },
   { accent: "var(--rose)", accentBg: "var(--rose-bg)" },
-  { accent: "var(--teal)", accentBg: "var(--teal-bg)" }
+  { accent: "var(--teal)", accentBg: "var(--teal-bg)" },
 ];
+
+const STACK_OVERRIDES: Record<string, string[]> = {
+  "77code": ["Next.js 16", "TypeScript", "Tailwind CSS v4", "Vercel"],
+  "valorant-ascension-next": ["Next.js", "TypeScript", "Prisma", "Stripe"],
+  "next-setup-e-commerce": ["Next.js", "React", "PostgreSQL", "Prisma"],
+};
 
 export async function getGithubProjects(): Promise<Project[]> {
   // Se houver um token, tentamos buscar os repositórios Pinned via GraphQL (Recomendado)
   if (GITHUB_TOKEN) {
     try {
-      const resp = await fetch('https://api.github.com/graphql', {
-        method: 'POST',
+      const resp = await fetch("https://api.github.com/graphql", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${GITHUB_TOKEN}`,
         },
         body: JSON.stringify({
@@ -68,22 +74,27 @@ export async function getGithubProjects(): Promise<Project[]> {
       if (resp.ok) {
         const { data, errors } = await resp.json();
         if (errors) {
-            console.error("GraphQL Errors:", errors);
+          console.error("GraphQL Errors:", errors);
         }
         const nodes = data?.user?.repositories?.nodes || [];
-        
+
         if (nodes.length > 0) {
           return nodes.map((repo: any, index: number) => {
             const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
-            const stack = repo.repositoryTopics?.nodes?.map((n: any) => n.topic.name) || [];
-            if (repo.primaryLanguage && !stack.includes(repo.primaryLanguage.name.toLowerCase())) {
-               stack.unshift(repo.primaryLanguage.name);
+            const topicStack = repo.repositoryTopics?.nodes?.map((n: any) => n.topic.name) || [];
+            const autoStack = [...topicStack];
+            const normalized = new Set(autoStack.map((tag: string) => tag.toLowerCase()));
+
+            if (repo.primaryLanguage?.name && !normalized.has(repo.primaryLanguage.name.toLowerCase())) {
+              autoStack.unshift(repo.primaryLanguage.name);
             }
 
+            const stack = STACK_OVERRIDES[repo.name] ?? autoStack;
+
             return {
-              id: String(index + 1).padStart(2, '0'),
+              id: String(index + 1).padStart(2, "0"),
               title: repo.name,
-              description: repo.description || 'No description provided.',
+              description: repo.description || "No description provided.",
               stack: stack.slice(0, 4), // Mostrar no maximo 4 tech tags
               accent: color.accent,
               accentBg: color.accentBg,
@@ -104,25 +115,26 @@ export async function getGithubProjects(): Promise<Project[]> {
   // Fallback: Buscar ultimos atualizados via REST API Publica (sem token)
   try {
     const resp = await fetch(`https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=6`, {
-      next: { revalidate: 60 }
+      next: { revalidate: 60 },
     });
-    
+
     if (resp.ok) {
-        const repos = await resp.json();
-        return repos.map((repo: any, index: number) => {
-            const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
-            return {
-                id: String(index + 1).padStart(2, '0'),
-                title: repo.name,
-                description: repo.description || 'No description provided.',
-                stack: repo.language ? [repo.language] : [],
-                accent: color.accent,
-                accentBg: color.accentBg,
-                href: repo.homepage || repo.html_url,
-                github: repo.html_url,
-                image: `https://opengraph.githubassets.com/1/${USERNAME}/${repo.name}`,
-            };
-        });
+      const repos = await resp.json();
+      return repos.map((repo: any, index: number) => {
+        const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
+        const stack = STACK_OVERRIDES[repo.name] ?? (repo.language ? [repo.language] : []);
+        return {
+          id: String(index + 1).padStart(2, "0"),
+          title: repo.name,
+          description: repo.description || "No description provided.",
+          stack: stack.slice(0, 4),
+          accent: color.accent,
+          accentBg: color.accentBg,
+          href: repo.homepage || repo.html_url,
+          github: repo.html_url,
+          image: `https://opengraph.githubassets.com/1/${USERNAME}/${repo.name}`,
+        };
+      });
     }
   } catch (e) {
     console.error("Erro ao buscar repositorios do GitHub REST API", e);
@@ -145,10 +157,10 @@ export interface EngineeringRepo {
 export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
   if (GITHUB_TOKEN) {
     try {
-      const resp = await fetch('https://api.github.com/graphql', {
-        method: 'POST',
+      const resp = await fetch("https://api.github.com/graphql", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${GITHUB_TOKEN}`,
         },
         body: JSON.stringify({
@@ -183,16 +195,18 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
       if (resp.ok) {
         const { data } = await resp.json();
         const nodes = data?.user?.repositories?.nodes || [];
-        
+
         if (nodes.length > 0) {
           return nodes.map((repo: any) => {
             return {
               name: repo.name,
-              description: repo.description?.slice(0, 100) + (repo.description?.length > 100 ? '...' : '') || 'No description provided.',
-              lang: repo.primaryLanguage?.name || 'Unknown',
-              langColor: repo.primaryLanguage?.color || '#3178c6',
-              type: repo.repositoryTopics?.nodes?.[0]?.topic?.name || 'Repository',
-              status: repo.isArchived ? 'archived' : 'active',
+              description:
+                repo.description?.slice(0, 100) + (repo.description?.length > 100 ? "..." : "") ||
+                "No description provided.",
+              lang: repo.primaryLanguage?.name || "Unknown",
+              langColor: repo.primaryLanguage?.color || "#3178c6",
+              type: repo.repositoryTopics?.nodes?.[0]?.topic?.name || "Repository",
+              status: repo.isArchived ? "archived" : "active",
               github: repo.url,
               live: repo.homepageUrl || null,
             };
@@ -206,22 +220,27 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
 
   try {
     const resp = await fetch(`https://api.github.com/users/${USERNAME}/repos?sort=pushed&per_page=12`, {
-      next: { revalidate: 60 }
+      next: { revalidate: 60 },
     });
-    
+
     if (resp.ok) {
-        const repos = await resp.json();
-        return repos.filter((r: any) => !r.fork).slice(0, 10).map((repo: any) => {
-            return {
-                name: repo.name,
-                description: repo.description?.slice(0, 100) + (repo.description?.length > 100 ? '...' : '') || 'No description provided.',
-                lang: repo.language || 'Unknown',
-                langColor: '#3178c6',
-                type: 'Repository',
-                status: repo.archived ? 'archived' : 'active',
-                github: repo.html_url,
-                live: repo.homepage || null,
-            };
+      const repos = await resp.json();
+      return repos
+        .filter((r: any) => !r.fork)
+        .slice(0, 10)
+        .map((repo: any) => {
+          return {
+            name: repo.name,
+            description:
+              repo.description?.slice(0, 100) + (repo.description?.length > 100 ? "..." : "") ||
+              "No description provided.",
+            lang: repo.language || "Unknown",
+            langColor: "#3178c6",
+            type: "Repository",
+            status: repo.archived ? "archived" : "active",
+            github: repo.html_url,
+            live: repo.homepage || null,
+          };
         });
     }
   } catch (e) {
