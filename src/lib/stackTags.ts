@@ -12,6 +12,7 @@ const STACK_PALETTES: StackPalette[] = [
   { accent: "var(--teal)", accentBg: "var(--teal-bg)" },
   { accent: "var(--cyan)", accentBg: "var(--cyan-bg)" },
   { accent: "var(--peach)", accentBg: "var(--peach-bg)" },
+  { accent: "var(--green)", accentBg: "var(--sage-bg)" },
 ];
 
 const STACK_COLOR_BY_TECH: Record<string, StackPalette> = {
@@ -25,16 +26,19 @@ const STACK_COLOR_BY_TECH: Record<string, StackPalette> = {
   "tailwind css v4": STACK_PALETTES[6],
   tailwindcss: STACK_PALETTES[6],
   vercel: STACK_PALETTES[7],
+  python: STACK_PALETTES[8],
 };
 
 function normalizeStackKey(tech: string): string {
   const key = tech.trim().toLowerCase();
 
   if (key.startsWith("next.js") || key.startsWith("nextjs")) return "next.js";
-  if (key.startsWith("tailwind css") || key.startsWith("tailwindcss")) return "tailwindcss";
+  if (key.startsWith("tailwind css") || key.startsWith("tailwindcss"))
+    return "tailwindcss";
   if (key.startsWith("typescript")) return "typescript";
   if (key.startsWith("react")) return "react";
-  if (key.startsWith("postgresql") || key.startsWith("postgres")) return "postgresql";
+  if (key.startsWith("postgresql") || key.startsWith("postgres"))
+    return "postgresql";
   if (key.startsWith("prisma")) return "prisma";
   if (key.startsWith("stripe")) return "stripe";
   if (key.startsWith("vercel")) return "vercel";

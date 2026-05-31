@@ -26,7 +26,23 @@ const ACCENT_COLORS = [
 const STACK_OVERRIDES: Record<string, string[]> = {
   "77code": ["Next.js 16", "TypeScript", "Tailwind CSS v4", "Vercel"],
   "valorant-ascension-next": ["Next.js", "TypeScript", "Prisma", "Stripe"],
-  "next-setup-e-commerce": ["Next.js", "React", "PostgreSQL", "Prisma"],
+  "next-setup-e-commerce": [
+    "Next.js",
+    "React",
+    "PostgreSQL",
+    "Prisma",
+    "TypeScript",
+  ],
+  "pen-tracking-demo": ["Next.js", "React Three Fiber", "GSAP", "Three JS"],
+  criptenv: [
+    "Python",
+    "FastApi",
+    "Next.js",
+    "PostgreSQL",
+    "TypeScript",
+    "Docker",
+  ],
+  "barbershop-next": ["Next.js", "Prisma", "NeonDB", "TypeScript"],
 };
 
 export async function getGithubProjects(): Promise<Project[]> {
@@ -81,11 +97,17 @@ export async function getGithubProjects(): Promise<Project[]> {
         if (nodes.length > 0) {
           return nodes.map((repo: any, index: number) => {
             const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
-            const topicStack = repo.repositoryTopics?.nodes?.map((n: any) => n.topic.name) || [];
+            const topicStack =
+              repo.repositoryTopics?.nodes?.map((n: any) => n.topic.name) || [];
             const autoStack = [...topicStack];
-            const normalized = new Set(autoStack.map((tag: string) => tag.toLowerCase()));
+            const normalized = new Set(
+              autoStack.map((tag: string) => tag.toLowerCase()),
+            );
 
-            if (repo.primaryLanguage?.name && !normalized.has(repo.primaryLanguage.name.toLowerCase())) {
+            if (
+              repo.primaryLanguage?.name &&
+              !normalized.has(repo.primaryLanguage.name.toLowerCase())
+            ) {
               autoStack.unshift(repo.primaryLanguage.name);
             }
 
@@ -95,17 +117,23 @@ export async function getGithubProjects(): Promise<Project[]> {
               id: String(index + 1).padStart(2, "0"),
               title: repo.name,
               description: repo.description || "No description provided.",
-              stack: stack.slice(0, 4), // Mostrar no maximo 4 tech tags
+              stack: stack.slice(0, 6), // Mostrar no maximo 6 tech tags
               accent: color.accent,
               accentBg: color.accentBg,
               href: repo.homepageUrl || repo.url,
               github: repo.url,
-              image: repo.usesCustomOpenGraphImage ? repo.openGraphImageUrl : undefined,
+              image: repo.usesCustomOpenGraphImage
+                ? repo.openGraphImageUrl
+                : undefined,
             };
           });
         }
       } else {
-        console.error("GraphQL fetch failed with status", resp.status, await resp.text());
+        console.error(
+          "GraphQL fetch failed with status",
+          resp.status,
+          await resp.text(),
+        );
       }
     } catch (e) {
       console.error("Erro ao buscar repositorios fixados do GitHub GraphQL", e);
@@ -114,20 +142,24 @@ export async function getGithubProjects(): Promise<Project[]> {
 
   // Fallback: Buscar ultimos atualizados via REST API Publica (sem token)
   try {
-    const resp = await fetch(`https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=6`, {
-      next: { revalidate: 60 },
-    });
+    const resp = await fetch(
+      `https://api.github.com/users/${USERNAME}/repos?sort=updated&per_page=6`,
+      {
+        next: { revalidate: 60 },
+      },
+    );
 
     if (resp.ok) {
       const repos = await resp.json();
       return repos.map((repo: any, index: number) => {
         const color = ACCENT_COLORS[index % ACCENT_COLORS.length];
-        const stack = STACK_OVERRIDES[repo.name] ?? (repo.language ? [repo.language] : []);
+        const stack =
+          STACK_OVERRIDES[repo.name] ?? (repo.language ? [repo.language] : []);
         return {
           id: String(index + 1).padStart(2, "0"),
           title: repo.name,
           description: repo.description || "No description provided.",
-          stack: stack.slice(0, 4),
+          stack: stack.slice(0, 6),
           accent: color.accent,
           accentBg: color.accentBg,
           href: repo.homepage || repo.html_url,
@@ -178,7 +210,7 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
                     name
                     color
                   }
-                  repositoryTopics(first: 4) {
+                  repositoryTopics(first: 6) {
                     nodes {
                       topic {
                         name
@@ -199,25 +231,33 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
 
         if (nodes.length > 0) {
           return nodes.map((repo: any) => {
-            const topicStack = repo.repositoryTopics?.nodes?.map((n: any) => n.topic.name) || [];
+            const topicStack =
+              repo.repositoryTopics?.nodes?.map((n: any) => n.topic.name) || [];
             const autoStack = [...topicStack];
-            const normalized = new Set(autoStack.map((tag: string) => tag.toLowerCase()));
+            const normalized = new Set(
+              autoStack.map((tag: string) => tag.toLowerCase()),
+            );
 
-            if (repo.primaryLanguage?.name && !normalized.has(repo.primaryLanguage.name.toLowerCase())) {
+            if (
+              repo.primaryLanguage?.name &&
+              !normalized.has(repo.primaryLanguage.name.toLowerCase())
+            ) {
               autoStack.unshift(repo.primaryLanguage.name);
             }
 
-            const stack = (STACK_OVERRIDES[repo.name] ?? autoStack).slice(0, 4);
+            const stack = (STACK_OVERRIDES[repo.name] ?? autoStack).slice(0, 6);
 
             return {
               name: repo.name,
               description:
-                repo.description?.slice(0, 100) + (repo.description?.length > 100 ? "..." : "") ||
+                repo.description?.slice(0, 100) +
+                  (repo.description?.length > 100 ? "..." : "") ||
                 "No description provided.",
               stack,
               lang: repo.primaryLanguage?.name || "Unknown",
               langColor: repo.primaryLanguage?.color || "#3178c6",
-              type: repo.repositoryTopics?.nodes?.[0]?.topic?.name || "Repository",
+              type:
+                repo.repositoryTopics?.nodes?.[0]?.topic?.name || "Repository",
               status: repo.isArchived ? "archived" : "active",
               github: repo.url,
               live: repo.homepageUrl || null,
@@ -226,14 +266,20 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
         }
       }
     } catch (e) {
-      console.error("Erro ao buscar repositorios recentes do GitHub GraphQL", e);
+      console.error(
+        "Erro ao buscar repositorios recentes do GitHub GraphQL",
+        e,
+      );
     }
   }
 
   try {
-    const resp = await fetch(`https://api.github.com/users/${USERNAME}/repos?sort=pushed&per_page=12`, {
-      next: { revalidate: 60 },
-    });
+    const resp = await fetch(
+      `https://api.github.com/users/${USERNAME}/repos?sort=pushed&per_page=12`,
+      {
+        next: { revalidate: 60 },
+      },
+    );
 
     if (resp.ok) {
       const repos = await resp.json();
@@ -241,12 +287,15 @@ export async function getGithubEngineeringRepos(): Promise<EngineeringRepo[]> {
         .filter((r: any) => !r.fork)
         .slice(0, 10)
         .map((repo: any) => {
-          const stack = (STACK_OVERRIDES[repo.name] ?? (repo.language ? [repo.language] : [])).slice(0, 4);
+          const stack = (
+            STACK_OVERRIDES[repo.name] ?? (repo.language ? [repo.language] : [])
+          ).slice(0, 6);
 
           return {
             name: repo.name,
             description:
-              repo.description?.slice(0, 100) + (repo.description?.length > 100 ? "..." : "") ||
+              repo.description?.slice(0, 100) +
+                (repo.description?.length > 100 ? "..." : "") ||
               "No description provided.",
             stack,
             lang: repo.language || "Unknown",

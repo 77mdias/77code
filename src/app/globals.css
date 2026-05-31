@@ -28,6 +28,7 @@
   --teal: #5eead4;
   --cyan: #67e8f9;
   --peach: #fdba74;
+  --green: #46e08a;
   --blue-bg: rgba(147, 197, 253, 0.07);
   --lavender-bg: rgba(196, 181, 253, 0.07);
   --sage-bg: rgba(134, 239, 172, 0.07);
@@ -296,8 +297,16 @@ body {
   justify-content: center;
   align-items: center;
   /* Vignette suave — sem borda dura */
-  -webkit-mask-image: radial-gradient(ellipse 65% 70% at 50% 50%, black 50%, transparent 90%);
-  mask-image: radial-gradient(ellipse 65% 70% at 50% 50%, black 50%, transparent 90%);
+  -webkit-mask-image: radial-gradient(
+    ellipse 65% 70% at 50% 50%,
+    black 50%,
+    transparent 90%
+  );
+  mask-image: radial-gradient(
+    ellipse 65% 70% at 50% 50%,
+    black 50%,
+    transparent 90%
+  );
 }
 
 .hero-orb-scale {
