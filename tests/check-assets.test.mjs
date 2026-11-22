@@ -1,12 +1,18 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { audit, collectRefs } from '../scripts/check-assets.mjs';
 
 test('expande os quadros da hero', () => {
   const r = collectRefs(['img.src = `/static/frames2/Image${i}.webp`;']);
   assert.equal(r.size, 40);
   assert.ok(r.has('/static/frames2/Image40.webp'));
+});
+
+test('expande os quadros do celular e lê .ts/.tsx', () => {
+  const r = collectRefs(["const u = mobile ? `/static/frames2/m/Image${i}.webp` : `/static/frames2/Image${i}.webp`;"]);
+  assert.equal(r.size, 80);
+  assert.ok(r.has('/static/frames2/m/Image1.webp'));
 });
 
 test('lê caminhos com aspas, url() e query', () => {
@@ -17,7 +23,7 @@ test('lê caminhos com aspas, url() e query', () => {
 test('o repo está limpo', () => {
   const a = audit(process.cwd());
   assert.deepEqual(a.missing, []);
-  // `unused` volta a ser exigido vazio na Task 8: quadros, Flora e capturas só são usados nas Tasks 3-6.
+  assert.deepEqual(a.unused, []);
   assert.deepEqual(a.spaced, []);
   assert.deepEqual(a.leftovers, []);
   assert.ok(a.bytes < 12_000_000, `public/static com ${a.bytes} bytes`);
@@ -46,4 +52,20 @@ test('ícones com o logo 77 (C7) no site e na 404', () => {
   assert.ok(!existsSync('public/static/logo.webp'));
   const svg = readFileSync('public/favicon.svg', 'utf8');
   assert.match(svg, /prefers-color-scheme: ?dark/);
+});
+
+test('toda fonte de public/fonts está em design/CREDITS.md', () => {
+  const credits = readFileSync('design/CREDITS.md', 'utf8');
+  const fonts = readdirSync('public/fonts');
+  assert.ok(fonts.length > 0);
+  for (const f of fonts) {
+    const family = f.replace(/\.woff2?$/, '').split('-')[0].replace(/([a-z])([A-Z])/g, '$1 $2');
+    assert.ok(credits.includes(family), `${f} sem crédito (procurei "${family}")`);
+  }
+});
+
+test('nenhuma fonte proibida no código', () => {
+  const a = audit(process.cwd());
+  assert.deepEqual(a.leftovers, []);
+  for (const f of readdirSync('public/fonts')) assert.ok(!/space|noto|dancing|kaushan/i.test(f), f);
 });
