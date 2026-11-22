@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { waitLoader, isPinned, scrollThrough } from './helpers.js';
+import { waitLoader, isPinned, scrollThrough, onTop, watch } from './helpers.js';
 
 const SEL = 'section#flora';
 const SIZES = [[1440, 900], [390, 844]] as const;
@@ -251,6 +251,19 @@ test('o histórico some em degradê em cima e embaixo', async ({ page }) => {
   const mask = await log(page).evaluate((el) => getComputedStyle(el).maskImage);
   expect(mask.startsWith('linear-gradient(rgba(0, 0, 0, 0)')).toBe(true);
   expect(mask.trim().endsWith('rgba(0, 0, 0, 0))')).toBe(true);
+});
+
+// O link direto cai no fim do pin: o chat inteiro à vista e o campo responde.
+test('link direto /#flora cai com o chat pronto', async ({ page }) => {
+  const w = watch(page);
+  await page.route('**/api/chat', (r) => r.fulfill({ json: { reply: 'ok', expression: 'warm' } }));
+  await page.goto('/#flora');
+  await waitLoader(page);
+  await expect.poll(() => chatOpacity(page)).toBe(1);
+  await expect.poll(() => onTop(page, '#chat-input')).toBe(true);
+  await send(page, 'oi');
+  await expect(lastFlora(page)).toHaveText('ok');
+  expect(w.errors).toEqual([]);
 });
 
 test('menos movimento: nada preso, chat pronto', async ({ page }) => {

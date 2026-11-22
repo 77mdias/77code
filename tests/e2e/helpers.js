@@ -18,6 +18,16 @@ export async function scrollThrough(page, selector, fraction) {
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
 }
 
+// O elemento está na tela e é ele (ou um filho) que recebe o clique no centro: nada recortado nem por cima.
+export const onTop = (page, selector) =>
+  page.locator(selector).evaluate((el) => {
+    const r = el.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = r.top + r.height / 2;
+    if (x < 0 || y < 0 || x > innerWidth || y > innerHeight) return false;
+    return el.contains(document.elementFromPoint(x, y));
+  });
+
 // Junta erros de console/página e respostas 4xx/5xx de uma página.
 export function watch(page) {
   const errors = [];

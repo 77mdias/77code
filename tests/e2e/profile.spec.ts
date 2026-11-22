@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { waitLoader, isPinned, scrollThrough } from './helpers.js';
+import { waitLoader, isPinned, scrollThrough, onTop, watch } from './helpers.js';
 import { PROFILE } from '../../src/content/profile.ts';
 
 const SEL = 'section#profile';
@@ -122,6 +122,17 @@ test('leitor de tela lê o texto inteiro', async ({ page }) => {
   expect(await typed(page)).toBe(0);
   const tree = await page.locator(SEL).ariaSnapshot();
   for (const p of PROFILE.about) expect(tree).toContain(p);
+});
+
+// O link direto cai no fim do pin: texto todo datilografado e quadros assentados.
+test('link direto /#profile cai com a ficha completa', async ({ page }) => {
+  const w = watch(page);
+  await page.goto('/#profile');
+  await waitLoader(page);
+  await expect.poll(() => typed(page)).toBe(1);
+  await expect.poll(() => settled(page)).toEqual([true, true, true]);
+  await expect.poll(() => onTop(page, `${SEL} [data-typed]`)).toBe(true);
+  expect(w.errors).toEqual([]);
 });
 
 test('menos movimento: nada preso e tudo pronto', async ({ page }) => {

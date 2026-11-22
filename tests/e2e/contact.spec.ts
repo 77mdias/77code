@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { watch, waitLoader, isPinned, scrollThrough } from './helpers.js';
+import { watch, waitLoader, isPinned, scrollThrough, onTop } from './helpers.js';
 import { CONTACT } from '../../src/content/contact.ts';
 
 const SUBMIT = 'https://api.web3forms.com/submit';
@@ -85,13 +85,20 @@ test('a 404 mostra CASE NOT FOUND e volta para /', async ({ page }) => {
   await expect(page.getByRole('link', { name: /DIAS77/ })).toHaveAttribute('href', '/');
 });
 
-test('link direto /#contact cai na cena de contato', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/#contact');
-  await waitLoader(page);
-  await expect.poll(() => page.locator('#contact').evaluate((e) => Math.round(e.getBoundingClientRect().top))).toBeLessThan(450);
-  await expect.poll(() => page.locator('#contact').evaluate((e) => e.getBoundingClientRect().top)).toBeGreaterThan(-100);
-});
+// O link direto cai no fim do pin, com a cena inteira: formulário visível e por cima de tudo.
+for (const [width, height] of SIZES) {
+  test(`link direto /#contact cai com o formulário à vista (${width}px)`, async ({ page }) => {
+    const w = watch(page);
+    await page.setViewportSize({ width, height });
+    await page.goto('/#contact');
+    await waitLoader(page);
+    await expect.poll(() => formOpacity(page)).toBe(1);
+    for (const s of ['#contact-form input[name="name"]', '#contact-form textarea', '#contact-form button']) {
+      await expect.poll(() => onTop(page, s), s).toBe(true);
+    }
+    expect(w.errors).toEqual([]);
+  });
+}
 
 test('hash malformado não quebra', async ({ page }) => {
   const w = watch(page);

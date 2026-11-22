@@ -38,6 +38,17 @@ test('o carimbo bate no fim do trecho preso', async ({ page }) => {
   await expect.poll(() => opacity(stamp), { timeout: 1500 }).toBeGreaterThanOrEqual(0.9);
 });
 
+// O link direto para um caso cai no fim do pin: dossiê aberto e carimbado.
+test('link direto /#case-ateliesys cai com o carimbo batido', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  await page.goto('/#case-ateliesys');
+  await waitLoader(page);
+  await expect.poll(() => opacity(page.locator('#case-ateliesys').getByTestId('stamp'))).toBeGreaterThanOrEqual(0.9);
+  expect(errors).toEqual([]);
+});
+
 // No celular a prova aparece no meio do trecho preso e o relatório fecha o dossiê.
 for (const [width, height, fraction] of [[1440, 900, 0.95], [390, 844, 0.5]]) {
   test(`o fio toca as etiquetas (${width}px)`, async ({ page }) => {

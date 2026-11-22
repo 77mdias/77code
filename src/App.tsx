@@ -36,7 +36,9 @@ export function App() {
     const el = document.getElementById(id);
     if (!el) return;
     ScrollTrigger.refresh();
-    scrollTo(0, el.getBoundingClientRect().top + scrollY);
+    // Cena presa: o topo é o começo da animação (quase vazia); o fim do pin tem a cena inteira.
+    const pin = ScrollTrigger.getAll().find((t) => t.pin === el);
+    scrollTo(0, pin ? pin.end : el.getBoundingClientRect().top + scrollY);
   }, [ready]);
   useScrollMemory(ready);
   return (
