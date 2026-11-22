@@ -1,12 +1,18 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { audit, collectRefs } from '../scripts/check-assets.mjs';
 
 test('expande os quadros da hero', () => {
   const r = collectRefs(['img.src = `/static/frames2/Image${i}.webp`;']);
   assert.equal(r.size, 40);
   assert.ok(r.has('/static/frames2/Image40.webp'));
+});
+
+test('expande os quadros do celular e lê .ts/.tsx', () => {
+  const r = collectRefs(["const u = mobile ? `/static/frames2/m/Image${i}.webp` : `/static/frames2/Image${i}.webp`;"]);
+  assert.equal(r.size, 80);
+  assert.ok(r.has('/static/frames2/m/Image1.webp'));
 });
 
 test('lê caminhos com aspas, url() e query', () => {
@@ -25,29 +31,13 @@ test('o repo está limpo', () => {
 
 test('metadados de compartilhamento', () => {
   const html = readFileSync('index.html', 'utf8');
-  assert.match(html, /property="og:image" content="https:\/\/77code\.com\.br\/static\/og\.jpg"/);
+  assert.match(html, /property="og:image" content="https:\/\/77code\.com\.br\/og\.jpg"/);
   assert.match(html, /property="og:url" content="https:\/\/77code\.com\.br"/);
-  assert.ok(existsSync('public/static/og.jpg'));
+  assert.ok(existsSync('public/og.jpg'));
 });
 
 test('a chave do Web3Forms do autor original não está no código', () => {
-  assert.ok(!readFileSync('src/main.js', 'utf8').includes('32ed7635-a0ab-4135-b458-17153735f046'));
-});
-
-test('a IA se chama Flora em todo o site', () => {
-  const files = ['index.html', 'src/main.js', 'src/style.css'];
-  const kiko = files.flatMap((f) => readFileSync(f, 'utf8').split('\n')
-    .map((l, i) => (/kiko/i.test(l) ? `${f}:${i + 1}` : null)).filter(Boolean));
-  assert.deepEqual(kiko, []);
-  const html = readFileSync('index.html', 'utf8');
-  assert.match(html, /<div class="chat-title">Interactive Flora AI<\/div>/);
-  assert.match(html, /placeholder="Speak to Flora\.\.\."/);
-});
-
-test('a frase japonesa da cena 2 diz full cycle, como a hero', () => {
-  const html = readFileSync('index.html', 'utf8');
-  assert.ok(html.includes('<div class="award-top-subtitle">フルサイクルAIエンジニア / クリエイティブコーダー</div>'));
-  assert.ok(!html.includes('フルスタック'));
+  assert.ok(!readFileSync('src/content/contact.ts', 'utf8').includes('32ed7635-a0ab-4135-b458-17153735f046'));
 });
 
 test('ícones com o logo 77 (C7) no site e na 404', () => {
@@ -62,4 +52,20 @@ test('ícones com o logo 77 (C7) no site e na 404', () => {
   assert.ok(!existsSync('public/static/logo.webp'));
   const svg = readFileSync('public/favicon.svg', 'utf8');
   assert.match(svg, /prefers-color-scheme: ?dark/);
+});
+
+test('toda fonte de public/fonts está em design/CREDITS.md', () => {
+  const credits = readFileSync('design/CREDITS.md', 'utf8');
+  const fonts = readdirSync('public/fonts');
+  assert.ok(fonts.length > 0);
+  for (const f of fonts) {
+    const family = f.replace(/\.woff2?$/, '').split('-')[0].replace(/([a-z])([A-Z])/g, '$1 $2');
+    assert.ok(credits.includes(family), `${f} sem crédito (procurei "${family}")`);
+  }
+});
+
+test('nenhuma fonte proibida no código', () => {
+  const a = audit(process.cwd());
+  assert.deepEqual(a.leftovers, []);
+  for (const f of readdirSync('public/fonts')) assert.ok(!/space|noto|dancing|kaushan/i.test(f), f);
 });

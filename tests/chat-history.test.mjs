@@ -30,9 +30,10 @@ test('falas de erro da Flora', () => {
 
 test('a site key de produção do Turnstile está no código', async () => {
   const { readFileSync } = await import('node:fs');
-  const main = readFileSync('src/main.js', 'utf8');
-  assert.ok(!main.includes('TURNSTILE_SITE_KEY_PENDENTE'));
-  assert.ok(main.includes("'0x4AAAAAAGMqWO7gw7Me7Zju'"));
+  const src = readFileSync('src/chat/turnstile.ts', 'utf8');
+  assert.ok(!src.includes('TURNSTILE_SITE_KEY_PENDENTE'));
+  assert.ok(src.includes("'0x4AAAAAAGMqWO7gw7Me7Zju'"));
+  assert.ok(src.includes("'1x00000000000000000000BB'"));
 });
 
 test('resposta longa da Flora vai cortada em 4000 caracteres no histórico', () => {

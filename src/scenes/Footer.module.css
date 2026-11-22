@@ -1,0 +1,97 @@
+/* Rodapé de encerramento sobre --ink (DESIGN_V1.md §5). Texto em --paper ou --soft (~7:1); o gato na lua é decorativo. */
+.footer {
+  --soft: color-mix(in srgb, var(--paper) 65%, transparent);
+  display: grid;
+  gap: 32px;
+  padding: 56px 16px 32px;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: clip;
+  view-timeline: --footer block;
+}
+
+.eof {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+}
+/* Linha de corte até a borda: o arquivo acaba aqui. */
+.eof::after { content: ''; flex: 1; height: 2px; background: var(--paper); }
+.jp { font-size: 20px; letter-spacing: 0; }
+
+/* Celular: o gato ocupa a linha de cima, grande; créditos e xícara dividem a de baixo. */
+.middle { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; }
+.cat { order: -1; grid-column: 1 / -1; justify-self: center; display: block; width: min(86vw, 420px); height: auto; overflow: visible; }
+
+/* Janela dos créditos: eles sobem por baixo e somem em degradê, como no fim do episódio. */
+.roll {
+  overflow: clip;
+  /* O degradê fica só no respiro: parados, os créditos estão inteiros (contraste cheio). */
+  mask-image: linear-gradient(transparent, #000 32px, #000 calc(100% - 32px), transparent);
+  padding-block: 36px;
+}
+.credits { display: grid; gap: 14px; margin: 0; }
+.credits dt {
+  color: var(--soft);
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.credits dd { margin: 4px 0 0; font: 700 15px / 1.3 var(--f-mono); }
+
+.cup { position: relative; width: 72px; flex: none; }
+.mug { display: block; width: 100%; overflow: visible; }
+.mug path { fill: none; stroke: var(--paper); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.steam { position: absolute; left: 14%; bottom: 82%; width: 45%; }
+
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 32px;
+  padding-top: 20px;
+  border-top: 2px solid var(--paper);
+}
+.links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; padding: 0; list-style: none; }
+.links a, .rewind, .copy {
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.links a { text-decoration: underline; text-underline-offset: 6px; }
+/* Botão de quadro invertido: papel sobre a tela preta, sombra chapada vermelha no hover (DESIGN.md §5, Botão). */
+.rewind {
+  padding: 12px 20px;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.rewind:hover { box-shadow: 4px 4px 0 var(--red); }
+.copy { color: var(--soft); }
+
+@media (min-width: 768px) {
+  .footer { padding: 72px 48px 40px; gap: 40px; }
+  /* Créditos à esquerda, a lua enorme no meio (um pouco para a direita), a xícara no canto. */
+  .middle { grid-template-columns: minmax(0, 1fr) auto auto; gap: 48px; }
+  .cat { order: 0; grid-column: auto; width: clamp(360px, 46vw, 760px); margin-right: 6vw; }
+  .cup { width: 104px; }
+  .copy { margin-left: auto; }
+}
+
+/* Créditos e gato atrelados ao scroll da entrada do rodapé; sem suporte, ficam parados no lugar. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .credits, .cat {
+      animation: linear both;
+      animation-timeline: --footer;
+      animation-range: entry 0% entry 100%;
+    }
+    .credits { animation-name: roll; }
+    .cat { animation-name: lift; }
+  }
+}
+@keyframes roll { from { transform: translateY(110%); } to { transform: none; } }
+@keyframes lift { from { transform: translateY(30%); } to { transform: none; } }

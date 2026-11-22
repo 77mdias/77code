@@ -1,0 +1,201 @@
+@import url(https://fonts.bunny.net/css?family=ibm-plex-serif:400);
+
+@layer demo, hint, base;
+
+@layer demo{
+	body {
+	  height: 600vh;
+	}
+	.rain {
+		font-family: 'IBM Plex Serif', serif;
+	  position: fixed;
+	  inset: 0;
+		transform-origin: center center;
+	  animation: --k-rain-zoom both;
+		animation-timing-function: cubic-bezier(0, 0, 0.84, 0);
+	  animation-timeline: scroll(root);
+	  animation-range: 40% 100%;
+	}
+	/* aniamtion - zoom in on rain and move up as title is revealed */
+	@keyframes --k-rain-zoom {
+	  80%{
+			translate: 0 0;
+		}
+		to {
+	    scale: 2;
+			translate: 0 -100vh;
+	  }
+	}
+	/* each rain "column" */
+	.stream {
+	  position: absolute;
+	  top: 0;
+	  left: calc((sibling-index() - 1) * (100vw / sibling-count()));
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: space-between;
+		animation: --k-fade-out ease-in forwards;
+	  animation-timeline: scroll(root);
+	  animation-range: 80% 90%;
+
+		/* rain drops with random properties and animation */
+		span {
+			--start: random(0%, 30%);
+		  --end: random(70%, 100%);
+		  --step: calc((var(--end) - var(--start)) / sibling-count());
+			color: #00ff41;
+			font-size: random(clamp(10px, 1.5vw, 20px), clamp(20px, 2vw, 35px));
+			line-height: random(0.3, 2.3);
+		  text-shadow: 0 0 random(2px, 12px) #00ff41;
+			filter: blur(random(0px, 1px));
+		  scale: random(1, 1.5) ;
+			transform: scaleX(random(-1, 1, 2));
+		  opacity: .5;
+		  animation: --k-reveal linear both;
+		  animation-timeline: scroll(root);
+			/* each letter will have diffferent starting & ending points within the animation range based on their sibling-index() to create the random rain falling effect */
+		  animation-range:
+		    calc(var(--start) + (sibling-index() - 1) * var(--step))
+		    calc(var(--start) + sibling-index() * var(--step));
+		}
+	}
+	/* animation - fade rain out */
+	@keyframes --k-fade-out{
+		to{
+			opacity: 0;
+		}
+	}
+	/* animation - reveal rain drops then fade out */
+	@keyframes --k-reveal {
+	  0% {
+	    opacity: 0;
+	    color: #003b00;
+	  }
+	  30% {
+	    opacity: random(.7,1);
+	    color:  #00ff41;
+	  }
+	  100% {
+	    opacity: random(0,.65);
+	    color: #008f11;
+	  }
+	}
+	
+	
+	/* title reveal*/
+	.title {
+		font-family: 'IBM Plex Serif', serif;
+	  position: fixed;
+	  inset: 0;
+	  display: grid;
+	  place-items: center;
+	  pointer-events: none;
+			h1 {
+		  display: flex;
+		  gap: .45em;
+		  color: #00ff41;
+		 font-size:clamp(.7rem, 1.2vw + .045rem, 2rem);
+		  text-shadow: 0 0 20px #00ff41;
+		  animation: --k-title-zoom  both;
+				animation-timing-function:cubic-bezier(0, 0, 0.84, 0);
+		  animation-timeline: scroll(root);
+		  animation-range: 50% 100%;
+			
+			.space {
+				width: .5em;
+			}
+			span {
+			  --order: random(0%, 100%);
+				filter: blur(random(3px,10px));
+		  text-shadow: 0 0 random(2px, 12px) #00ff41;
+			  opacity: 0;
+			  animation: --k-title-reveal linear both;
+			  animation-timeline: scroll(root);
+			  animation-range:
+			    calc(65% + var(--order) * .15)
+			    calc(66% + var(--order) * .15);
+			}
+		}
+	}
+	/* animation - zoom out title */
+	@keyframes --k-title-zoom {
+	  70% {
+	    opacity: 1;
+			scale:1.5;
+			gap:.45em;
+	  }
+	  100% {
+	    opacity: 0;
+			gap: .75em;
+	    scale: 3;
+	  }
+	}
+	/* animation - reveal title letters */
+	@keyframes --k-title-reveal {
+		to{
+			opacity:1;
+			filter:blur(0);
+		}
+	}
+}
+
+
+@layer hint{
+	/* bouncing down arrow to indicate scroll required */
+	.scroll-hint {
+		position: fixed;
+		top: 1.5rem;
+		left: 50%;
+		transform: translateX(-50%);
+	  font-size: 1rem;
+	  color: #00ff41;
+		width:4ch;
+		text-align: center;
+		font-size: .7rem;
+	  animation:
+	    --k-hint-bounce 1.5s infinite ease-in-out,
+	    --k-hint-hide both;
+	    animation-timeline: auto, scroll(root);
+	    animation-range: 0% 20%;
+	}
+	@keyframes --k-hint-bounce {
+	  50% {
+	    translate: 0 10px;
+	  }
+	}
+	@keyframes --k-hint-hide {
+	  to {
+	    opacity: 0;
+	  }
+	}
+}
+
+
+
+
+@layer base{
+	* {
+	  box-sizing: border-box;
+	}
+	
+	body {
+	  margin: 0;
+	  background: #000;
+				font-family: system-ui, sans-serif;
+
+		@supports not  (width: random(1px, 10px)) {
+			&::before {
+  				content:"Your browser doesn't support random() so you may will not be seeing the complete effect.";
+  				position: fixed;
+  				bottom: 1rem;
+  				left: 50%;
+  				translate: -50% 0;
+  				font-size: 0.8rem;
+          color: white;
+					background-color: red;
+					padding: .5em 1em;
+  		}
+		}
+	}
+}

@@ -1,0 +1,78 @@
+<h2>Como um caso (projeto) aparece?</h2>
+<p class="subtitle">Exemplo com o Lene Studio Beauty. Entre um caso e outro entra o eyecatch (vinheta de tela cheia, ex.: "ARQUIVO DIAS77 · CASO 03"). O texto é rascunho. Clique na que mais combina.</p>
+
+<style>
+  .pg{position:relative;width:100%;flex:1;height:420px;background:#f3f0e8;color:#0d0d0d;font-family:system-ui,sans-serif;overflow:hidden;border-radius:6px}
+  .tone{background-image:radial-gradient(#0d0d0d33 1px,transparent 1.3px);background-size:5px 5px}
+  .k{font:800 9px ui-monospace,monospace;letter-spacing:.22em;color:#e0322a}
+  .typ{font:11px/1.45 'Courier New',monospace}
+  .stamp{position:absolute;border:3px solid #e0322a;color:#e0322a;font:900 15px ui-monospace,monospace;padding:2px 8px;transform:rotate(-11deg);background:#f3f0e8cc;letter-spacing:.06em}
+
+  /* A — página de mangá */
+  .a .grid{position:absolute;inset:10px;display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr auto;gap:8px}
+  .a .pn{border:3px solid #0d0d0d;background:#f3f0e8;position:relative;overflow:hidden;padding:10px}
+  .a .p1{grid-column:1/3;background:#0d0d0d;color:#f3f0e8}
+  .a .p1 h4{margin:4px 0 0;font:900 24px/1 system-ui;text-transform:uppercase;letter-spacing:-.02em}
+  .a .p1 .typ{color:#cfc8b8;margin-top:6px}
+  .a .p2 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;filter:grayscale(1) contrast(1.1)}
+  .a .p2 .lbl{position:absolute;left:6px;bottom:6px;background:#f3f0e8;border:2px solid #0d0d0d;font:800 9px ui-monospace,monospace;padding:2px 5px;letter-spacing:.12em}
+  .a .p3 ul{margin:6px 0 0;padding-left:16px}
+  .a .p3 li{margin-bottom:3px}
+  .a .p4{grid-column:1/3;display:flex;justify-content:space-between;align-items:center}
+  .a .p4 b{font:800 11px ui-monospace,monospace}
+  .a .p4 .go{background:#0d0d0d;color:#f3f0e8;font:800 10px ui-monospace,monospace;padding:6px 10px;letter-spacing:.12em}
+  .a .stamp{right:28%;bottom:62px}
+
+  /* B — dossiê */
+  .b{background:#1c1712}
+  .b .fold{position:absolute;left:5%;right:5%;top:8%;bottom:6%;background:#cdb88f;border-radius:4px 4px 2px 2px;box-shadow:0 14px 30px #000b}
+  .b .tab{position:absolute;left:8%;top:calc(8% - 18px);width:34%;height:22px;background:#cdb88f;border-radius:6px 6px 0 0;font:800 9px ui-monospace,monospace;letter-spacing:.2em;padding:6px 10px;color:#3a2d1c}
+  .b .sheet{position:absolute;left:8%;top:13%;width:50%;bottom:9%;background:#f3f0e8;padding:14px;box-shadow:0 2px 6px #0005;transform:rotate(-1deg)}
+  .b .sheet h4{margin:2px 0 8px;font:900 18px/1 'Courier New',monospace}
+  .b .sheet .typ b{display:block;margin-top:6px}
+  .b .x{background:#0d0d0d;color:#0d0d0d}
+  .b .photo{position:absolute;right:9%;top:15%;width:34%;height:46%;background:#f3f0e8;padding:6px 6px 22px;transform:rotate(4deg);box-shadow:0 6px 14px #0008}
+  .b .photo img{width:100%;height:100%;object-fit:cover;object-position:top;filter:grayscale(1) contrast(1.1)}
+  .b .photo span{position:absolute;left:8px;bottom:4px;font:700 9px 'Courier New',monospace}
+  .b .clip{position:absolute;right:calc(9% + 30%);top:calc(15% - 10px);width:12px;height:34px;border:3px solid #888;border-radius:6px;z-index:2;transform:rotate(4deg)}
+  .b .tags{position:absolute;right:9%;bottom:12%;width:34%;display:flex;flex-wrap:wrap;gap:5px}
+  .b .tags span{background:#0d0d0d;color:#f3f0e8;font:700 9px ui-monospace,monospace;padding:3px 6px}
+  .b svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  .b .stamp{left:30%;bottom:13%}
+</style>
+
+<div class="cards">
+  <div class="card" data-choice="pagina-manga" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="pg a">
+      <div class="grid">
+        <div class="pn p1"><span class="k">CASO 03 · EPISÓDIO 03</span><h4>O salão que só existia no boca a boca</h4><div class="typ">Um negócio real, sem site, perdendo cliente para quem aparecia no Google.</div></div>
+        <div class="pn p2 tone"><img src="/files/lenestudiobeauty.jpg" alt=""><span class="lbl">PROVA #1</span></div>
+        <div class="pn p3"><span class="k">AS PISTAS</span><ul class="typ"><li>Cliente chega pelo celular</li><li>Quer ver serviço, tempo e antes e depois</li><li>Decide no WhatsApp</li></ul></div>
+        <div class="pn p4"><b>Next.js 16 · Tailwind 4 · Vercel</b><span class="go">VER O SITE →</span></div>
+      </div>
+      <div class="stamp">RESOLVIDO</div>
+    </div></div>
+    <div class="card-body">
+      <h3>A · Página de mangá</h3>
+      <p>Cada caso é uma página com quadros: o caso, a prova (captura do site), as pistas e a solução. No scroll, os quadros aparecem na ordem de leitura e o carimbo "RESOLVIDO" bate no fim. Fica igual a ler um capítulo; no celular os quadros só empilham.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="dossie" onclick="toggleSelect(this)">
+    <div class="card-image"><div class="pg b">
+      <div class="tab">CASO 03</div>
+      <div class="fold"></div>
+      <div class="sheet"><span class="k">RELATÓRIO</span><h4>LENE STUDIO BEAUTY</h4>
+        <div class="typ"><b>O caso:</b>Salão real sem site, dependendo do boca a boca.<b>As pistas:</b>Cliente no celular; decide no WhatsApp; quer ver antes e depois.<b>A solução:</b>Site rápido com um botão direto pro chat. Responsável: <span class="x">DIAS77</span></div></div>
+      <div class="clip"></div>
+      <div class="photo"><img src="/files/lenestudiobeauty.jpg" alt=""><span>PROVA #1</span></div>
+      <svg viewBox="0 0 400 420" preserveAspectRatio="none"><path d="M235 130 L330 330" stroke="#c8261f" stroke-width="1.4" fill="none"/></svg>
+      <div class="tags"><span>NEXT.JS 16</span><span>TAILWIND 4</span><span>VERCEL</span><span>CSP + HSTS</span></div>
+      <div class="stamp">RESOLVIDO</div>
+    </div></div>
+    <div class="card-body">
+      <h3>B · Dossiê que abre</h3>
+      <p>Cada caso é uma pasta fechada que se abre no scroll: o relatório datilografado de um lado, a captura presa com clipe como prova do outro, fio vermelho até a tecnologia usada e o carimbo no fim. Mais "série criminal", menos mangá.</p>
+    </div>
+  </div>
+</div>

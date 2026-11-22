@@ -1,0 +1,32 @@
+# Créditos
+
+## Fontes
+
+| Fonte | Autor | Licença | Origem |
+|---|---|---|---|
+| Humane (Bold, SemiBold) | Rajesh Rajput | Freeware, uso comercial liberado; os arquivos não podem ser modificados (usados sem alteração) | https://rajeshrajput.gumroad.com (pacote "HUMANE Typeface") |
+| Cabinet Grotesk (Extrabold 800) | Indian Type Foundry | Fontshare Free Font License (FFL); conversão e subconjunto contam como obra derivada, por isso o `.woff2` oficial é usado sem alteração | https://www.fontshare.com/fonts/cabinet-grotesk |
+| Reggae One | Fontworks Inc. | SIL OFL 1.1 (sem nome reservado) | https://fonts.google.com/specimen/Reggae+One; `public/fonts/ReggaeOne-JP.woff2` é um subconjunto só com os caracteres de `src/content/jp.ts`, gerado por `scripts/make-jp-font.py` |
+| Special Elite | Astigmatic | Apache 2.0 | https://fonts.google.com/specimen/Special+Elite (pacote `@fontsource/special-elite`) |
+| Familjen Grotesk | Familjen | SIL OFL 1.1 | https://fonts.google.com/specimen/Familjen+Grotesk (pacote `@fontsource/familjen-grotesk`) |
+
+Os arquivos de Humane, Cabinet Grotesk e o subconjunto do Reggae One ficam em `public/fonts/`; as demais vêm do pacote `@fontsource/*` e o Vite as serve do próprio site.
+
+## Código de terceiros
+
+Pens exportados pelo Jean (pastas `design/chromatic-folds/` e `design/the-matrixanimation-timeline/`, com o `LICENSE.txt` de cada um). Serviram de base; o código do site foi reescrito na identidade do DESIGN.md.
+
+| O quê | Autor | Licença | Origem | Onde |
+|---|---|---|---|---|
+| Chromatic Folds (leque de dobras: `clip-path` em zigue-zague, sombra de dobra, `flex` que abre) | Matt Cannon | MIT, © 2026 Matt Cannon | https://codepen.io/editor/matt-cannon/pen/01a1e5fd-b92a-7dcd-8735-568dbe0da3fb | `src/scenes/Projects.module.css` |
+| The Matrix - animation-timeline (ideia da chuva de caracteres; refeita em canvas, sem o CSS original) | Chris Bolson | MIT, © 2026 Chris Bolson | https://codepen.io/editor/cbolson/pen/01a1d14a-b9ec-7700-85c2-5107be451f2c | `src/ui/MatrixRain.tsx` |
+| Loader cat (gato sentado abanando o rabo; convertido para SVG e recolorido por `scripts/make-cat.py`) | o arquivo só registra "LottieFiles" como autor | Gratuita, conforme informado pelo Jean em 2026-11-22 (sem link da página de origem) | `design/Loader cat.json`, exportado pelo Jean | `src/ui/LoaderCat.tsx`, no rodapé |
+
+## Imagens
+
+- **40 quadros** (`public/static/frames2/`): tirados do vídeo do próprio Jean (`euu-semmarca.mp4`), recortados para fundo transparente em 2026-11-21. Personagem do Jean.
+- **Retrato** (`public/static/hero/image-4.webp`, 2752×1536): personagem do Jean, mesma arte.
+- **Flora** (`public/static/char/*.webp`, `char_back3.webp`, `back2.webm`): personagem e estúdio gerados pelo Jean a partir de prompts do projeto (2026-11-21); a janela em vídeo foi montada de um vídeo que ele gerou no Kling.
+- **Fundo da abertura** (`design/fundo-hero/delegacia-noir-gemini.jpeg`): gerado pelo Jean no Gemini em 2026-11-22.
+- **Capturas dos projetos** (`public/static/projects/`): telas dos sites do próprio Jean.
+- **Derivadas** (geradas por `scripts/make-images.py`): `public/static/opening/bg-*.webp` (do fundo da abertura), `public/static/frames2/m/` (os 40 quadros em 960px) e `public/og.jpg` (fundo + quadro 40 + "DIAS77" desenhado com a Humane Bold; a fonte não é alterada nem distribuída).

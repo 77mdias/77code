@@ -1,0 +1,148 @@
+/* Contato (DESIGN_V1.md §5): tela --ink, uma faixa --red atravessando a cena e a folha do formulário,
+   o único papel, mais alta que a faixa e por cima dela. À direita da faixa, 次回予告 em pé. */
+.contact {
+  position: relative;
+  height: 100svh;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: clip;
+}
+/* Chuva de caracteres ao fundo, quase apagada. */
+.rain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.1; pointer-events: none; }
+/* O 77 gigante do fundo: só contorno, decorativo. */
+.bigNum {
+  position: absolute;
+  left: -2vw;
+  bottom: -6vh;
+  font: 700 clamp(320px, 62vw, 900px) / 0.8 var(--f-title);
+  color: transparent;
+  -webkit-text-stroke: 2px color-mix(in srgb, var(--paper) 18%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Celular: a faixa vai de borda a borda; os canais ficam na tira de cima e o 次回予告 na tira da direita. */
+.band { position: absolute; inset: 5% 0 12%; background: var(--red); overflow: hidden; }
+/* brightness(0): os caracteres (papel e vermelho) viram nanquim. */
+.bandRain { display: block; width: 100%; height: 100%; filter: brightness(0); opacity: 0.34; }
+
+.card {
+  position: absolute;
+  z-index: 1;
+  top: 13.5%;
+  left: 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 78%;
+  min-height: 82%;
+  padding: 18px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 8px 8px 0 var(--ink);
+  transform-origin: 50% 0;
+  scale: var(--fit, 1);
+}
+.head { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding-bottom: 14px; border-bottom: 2px solid var(--ink); }
+.title { font: 700 clamp(64px, 7vw, 120px) / 0.85 var(--f-title); letter-spacing: 0.02em; }
+
+.form { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+.field { display: grid; gap: 2px; }
+.grow { flex: 1; grid-template-rows: auto 1fr; }
+.field span {
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+/* Campo só com a linha de baixo, como numa ficha preenchida à mão. */
+.field input, .field textarea {
+  width: 100%;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 2px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 400 16px / 1.3 var(--f-body); /* 16px: o iOS não dá zoom no foco */
+  resize: none;
+}
+.field textarea { min-height: 4.5em; }
+.form button { width: 100%; padding-block: 16px; }
+.status { min-height: 1.55em; color: var(--ink-soft); font-size: 14px; }
+
+.channels {
+  position: absolute;
+  top: 7.2%;
+  left: 5%;
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.channels a {
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+.contact .sfx {
+  position: absolute;
+  /* A altura da faixa: o texto em pé fica centrado nela e nunca quebra em duas colunas. */
+  top: 5%;
+  bottom: 12%;
+  right: 3.5%;
+  writing-mode: vertical-rl;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--paper);
+  font-size: 11vw;
+  line-height: 1;
+}
+.side { display: none; }
+
+@media (min-width: 768px) {
+  .bigNum { left: auto; right: -2vw; }
+  .band { inset: 16% 6%; }
+  .card {
+    top: 5.5%;
+    left: 22%;
+    gap: 22px;
+    width: clamp(340px, 34%, 520px);
+    min-height: 89%;
+    padding: clamp(24px, 3vw, 44px);
+    box-shadow: 10px 10px 0 var(--ink);
+  }
+  .head { gap: 14px; padding-bottom: 22px; }
+  .form { gap: 20px; }
+  /* Canais em coluna, na ponta esquerda da faixa. */
+  .channels { top: auto; bottom: 21%; left: 8%; display: grid; gap: 16px; }
+  .contact .sfx { top: 16%; bottom: 16%; right: 14%; font-size: min(15vh, 10vw); }
+  /* Rótulo em pé com um traço em cima, ao lado do 次回予告. */
+  .side {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: absolute;
+    top: 24%;
+    right: 9.5%;
+    writing-mode: vertical-rl;
+    font: 700 var(--t-label) / 1 var(--f-mono);
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+  }
+  .side::before { content: ''; width: 1px; height: 9vh; background: currentColor; }
+}
+@media (min-width: 1200px) {
+  .band { inset: 16% 12%; }
+  .card { left: 27%; width: clamp(340px, 30%, 520px); }
+  .channels { left: 14.5%; }
+  .contact .sfx { right: 19%; }
+  .side { right: 15%; }
+}
+
+/* Sem pin (menos movimento) não há JS encolhendo a folha: a cena garante a altura que ela precisa. */
+@media (prefers-reduced-motion: reduce) {
+  .contact { min-height: 760px; }
+}

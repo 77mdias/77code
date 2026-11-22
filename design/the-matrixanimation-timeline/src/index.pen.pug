@@ -1,0 +1,12 @@
+- const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789アイウエオカキクケコサシスセソタチツテトナニヌネノ'
+.rain
+  each stream in Array.from({ length: 25 }, (_, i) => i)
+    .stream
+      each glyph in Array.from({ length: 50 }, () => glyphs[Math.floor(Math.random() * glyphs.length)])
+        span= glyph
+.title
+  h1
+    each letter in 'ANIMATION-TIMELINE'
+      span(class=letter === ' ' ? 'space' : '')= letter
+
+span.scroll-hint scroll ↓

@@ -1,0 +1,45 @@
+<link rel="stylesheet" href="./style.css">
+<script src="./script.js" defer></script>
+
+<header>
+  <a href="https://mattcannon.design" target="_blank" rel="noopener">
+    MATT CANNON
+  </a>
+  <span>SIBLING EXPERIMENT / 02</span>
+</header>
+
+<main>
+  <section class="intro">
+    <div>
+      <p class="eyebrow">AN INTERACTIVE STUDY IN COLOR</p>
+      <h1>Chromatic Folds.</h1>
+    </div>
+
+    <nav class="tools" aria-label="Adjust colors">
+      <button id="remove" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="4"/>
+          <path d="M7 12h10"/>
+        </svg>
+        Remove color
+      </button>
+
+      <button id="add" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="4"/>
+          <path d="M7 12h10M12 7v10"/>
+        </svg>
+        Add color
+      </button>
+    </nav>
+  </section>
+
+  <div class="art">
+    <div class="swatches" id="swatches"></div>
+  </div>
+</main>
+
+<footer>
+  <span>HOVER TO EXPLORE ↗</span>
+  <span class="count" id="count" aria-live="polite"></span>
+</footer>

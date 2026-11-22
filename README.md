@@ -1,19 +1,27 @@
 # 77code
 
-Portfólio de DIAS77 (Jean Carlos Moreira Dias): site com animação presa à rolagem, feito em Vite e publicado na Cloudflare.
+Portfólio de DIAS77 (Jean Carlos Moreira Dias): "Case File 77", um arquivo de casos contado como mangá noir. React 19 + TypeScript + Vite, publicado na Cloudflare (Workers static assets + Worker do chat da Flora).
 
 ## Rodar
 
 ```bash
-docker compose up
+pnpm install
+pnpm dev        # Vite em http://localhost:5177 (sem o Worker do chat)
+pnpm cf:dev     # build + wrangler dev em http://localhost:8778 (headers e /api/chat como em produção)
 ```
 
-Abre em http://localhost:5177. Sem Docker: `pnpm install && pnpm dev`.
+Também há `docker compose up` (Vite na porta 5177).
 
-## Testar
+## Conferir
 
 ```bash
-pnpm test:e2e
+pnpm check      # typecheck + testes unitários/auditoria + e2e
 ```
 
-Mais detalhes em `CLAUDE.md`.
+Scripts: `dev`, `build`, `typecheck`, `test`, `test:e2e`, `check`, `cf:dev`, `deploy`. O e2e sobe o `cf:dev`; contra outra porta ou site publicado: `PLAYWRIGHT_BASE_URL=http://localhost:8779 pnpm test:e2e`.
+
+O visual é decidido em `DESIGN.md`. Créditos de fontes e imagens em `design/CREDITS.md`. Mais detalhes em `CLAUDE.md`.
+
+## Fonte japonesa
+
+`public/fonts/ReggaeOne-JP.woff2` é um subconjunto com só os caracteres de `src/content/jp.ts`. Adicionou palavra lá? Rode `python3 -I scripts/make-jp-font.py` (precisa de `fonttools` e `brotli` num venv) e faça commit do `.woff2` e do `scripts/jp-font-chars.txt` (o `pnpm test` confere essa lista contra o `jp.ts`).
