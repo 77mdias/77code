@@ -17,3 +17,11 @@
   font-display: swap;
   src: url('/fonts/CabinetGrotesk-Extrabold.woff2') format('woff2');
 }
+
+/* Subconjunto do Reggae One só com os caracteres de src/content/jp.ts (scripts/make-jp-font.py); OFL permite. */
+@font-face {
+  font-family: 'Reggae One';
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ReggaeOne-JP.woff2') format('woff2');
+}

@@ -6,11 +6,11 @@
 |---|---|---|---|
 | Humane (Bold, SemiBold) | Rajesh Rajput | Freeware, uso comercial liberado; os arquivos não podem ser modificados (usados sem alteração) | https://rajeshrajput.gumroad.com (pacote "HUMANE Typeface") |
 | Cabinet Grotesk (Extrabold 800) | Indian Type Foundry | Fontshare Free Font License (FFL); conversão e subconjunto contam como obra derivada, por isso o `.woff2` oficial é usado sem alteração | https://www.fontshare.com/fonts/cabinet-grotesk |
-| Reggae One | Fontworks Inc. | SIL OFL 1.1 | https://fonts.google.com/specimen/Reggae+One (pacote `@fontsource/reggae-one`) |
+| Reggae One | Fontworks Inc. | SIL OFL 1.1 (sem nome reservado) | https://fonts.google.com/specimen/Reggae+One; `public/fonts/ReggaeOne-JP.woff2` é um subconjunto só com os caracteres de `src/content/jp.ts`, gerado por `scripts/make-jp-font.py` |
 | Special Elite | Astigmatic | Apache 2.0 | https://fonts.google.com/specimen/Special+Elite (pacote `@fontsource/special-elite`) |
 | Familjen Grotesk | Familjen | SIL OFL 1.1 | https://fonts.google.com/specimen/Familjen+Grotesk (pacote `@fontsource/familjen-grotesk`) |
 
-Os arquivos de Humane e Cabinet Grotesk ficam em `public/fonts/`; as demais vêm do pacote `@fontsource/*` e o Vite as serve do próprio site.
+Os arquivos de Humane, Cabinet Grotesk e o subconjunto do Reggae One ficam em `public/fonts/`; as demais vêm do pacote `@fontsource/*` e o Vite as serve do próprio site.
 
 ## Imagens
 

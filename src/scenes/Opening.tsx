@@ -7,7 +7,7 @@ import { PROFILE } from '../content/profile.ts';
 import { Sfx } from '../ui/Sfx.tsx';
 import { RedLabel } from '../ui/RedLabel.tsx';
 import { Caption } from '../ui/Caption.tsx';
-import { FRAME_COUNT, frameForProgress, frameUrl, loadImage, nearestLoaded } from '../lib/frames.ts';
+import { BG_MOBILE, BG_MOBILE_QUERY, BG_SIZES, BG_SRC, BG_SRCSET, FRAME_COUNT, frameForProgress, frameUrl, loadImage, nearestLoaded } from '../lib/frames.ts';
 import { registerGsap, useReducedMotion } from '../lib/motion.ts';
 import { RainCanvas } from './opening/RainCanvas.tsx';
 import { DustCanvas } from './opening/DustCanvas.tsx';
@@ -41,7 +41,7 @@ export function Opening({ ready }: { ready: boolean }) {
     let stop = false;
     (async () => {
       for (let n = 2; n <= FRAME_COUNT && !stop; n++) {
-        try { await loadImage(frameUrl(n, mobile)); } catch { continue; }
+        try { await loadImage(frameUrl(n, mobile), { low: true }); } catch { continue; }
         loaded.current.add(n);
         show();
       }
@@ -87,13 +87,10 @@ export function Opening({ ready }: { ready: boolean }) {
   return (
     <section id="opening" ref={root} className={styles.opening}>
       <div ref={stage} className={styles.stage}>
-        <img
-          className={styles.bg}
-          src="/static/opening/bg-1920.webp"
-          srcSet="/static/opening/bg-1920.webp 1920w, /static/opening/bg-2752.webp 2752w"
-          sizes="(min-aspect-ratio: 2752/1536) 100vw, 180vh"
-          alt=""
-        />
+        <picture>
+          <source media={BG_MOBILE_QUERY} srcSet={BG_MOBILE} />
+          <img className={styles.bg} src={BG_SRC} srcSet={BG_SRCSET} sizes={BG_SIZES} fetchPriority="high" alt="" />
+        </picture>
         {!reduced && <RainCanvas className={styles.rain} />}
         <div className={styles.lamp} />
         {!reduced && <DustCanvas className={styles.dust} />}
@@ -110,6 +107,7 @@ export function Opening({ ready }: { ready: boolean }) {
           ref={jean}
           className={styles.jean}
           data-testid="jean-frame"
+          fetchPriority="high"
           src={frameUrl(reduced ? FRAME_COUNT : 1, mobile)}
           alt="Jean, the DIAS77 character, at his desk"
         />

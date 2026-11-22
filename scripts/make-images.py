@@ -21,8 +21,9 @@ def resize_width(img, width):
 def background():
     OPENING.mkdir(exist_ok=True)
     bg = Image.open(BG).convert('RGB')
-    for width in (1920, 2752):
-        resize_width(bg, width).save(OPENING / f'bg-{width}.webp', quality=82, method=6)
+    # 960 é o do celular (<picture> na abertura); a cena é noturna e escura, então qualidade menor não aparece.
+    for width, quality in ((960, 70), (1920, 25), (2752, 70)):
+        resize_width(bg, width).save(OPENING / f'bg-{width}.webp', quality=quality, method=6)
 
 
 def mobile_frames():

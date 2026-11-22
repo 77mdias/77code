@@ -21,3 +21,7 @@ pnpm check      # typecheck + testes unitários/auditoria + e2e
 Scripts: `dev`, `build`, `typecheck`, `test`, `test:e2e`, `check`, `cf:dev`, `deploy`. O e2e sobe o `cf:dev`; contra outra porta ou site publicado: `PLAYWRIGHT_BASE_URL=http://localhost:8779 pnpm test:e2e`.
 
 O visual é decidido em `DESIGN.md`. Créditos de fontes e imagens em `design/CREDITS.md`. Mais detalhes em `CLAUDE.md`.
+
+## Fonte japonesa
+
+`public/fonts/ReggaeOne-JP.woff2` é um subconjunto com só os caracteres de `src/content/jp.ts`. Adicionou palavra lá? Rode `python3 -I scripts/make-jp-font.py` (precisa de `fonttools` e `brotli` num venv) e faça commit do `.woff2`.

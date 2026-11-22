@@ -20,11 +20,20 @@ export function nearestLoaded(requested: number, loaded: ReadonlySet<number>): n
 export const frameUrl = (i: number, mobile: boolean) =>
   mobile ? `/static/frames2/m/Image${i}.webp` : `/static/frames2/Image${i}.webp`;
 
-export function loadImage(url: string): Promise<void> {
+// Fundo da abertura: a Loading e o <picture> usam as mesmas constantes para o navegador baixar um arquivo só.
+export const BG_MOBILE = '/static/opening/bg-960.webp';
+export const BG_MOBILE_QUERY = '(max-width: 767px)';
+export const BG_SRC = '/static/opening/bg-1920.webp';
+export const BG_SRCSET = '/static/opening/bg-1920.webp 1920w, /static/opening/bg-2752.webp 2752w';
+export const BG_SIZES = '(min-aspect-ratio: 2752/1536) 100vw, 180vh';
+
+export function loadImage(url: string, opts: { srcset?: string; sizes?: string; low?: boolean } = {}): Promise<void> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve();
     img.onerror = reject;
+    if (opts.low) img.fetchPriority = 'low';
+    if (opts.srcset) { img.sizes = opts.sizes ?? ''; img.srcset = opts.srcset; }
     img.src = url;
   });
 }

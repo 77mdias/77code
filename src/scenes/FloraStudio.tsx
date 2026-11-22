@@ -24,6 +24,20 @@ export function FloraStudio() {
   const reduced = useReducedMotion();
   const { messages, expression, pending, send } = useFloraChat();
   const log = useRef<HTMLDivElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+
+  // O vídeo de fundo (197 KB) só começa a baixar quando a seção está perto da tela.
+  useEffect(() => {
+    const v = video.current!;
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      io.disconnect();
+      v.preload = 'auto';
+      if (reduced) v.load(); else void v.play().catch(() => {});
+    }, { rootMargin: '600px 0px' });
+    io.observe(v);
+    return () => io.disconnect();
+  }, [reduced]);
 
   useEffect(() => {
     log.current!.scrollTop = log.current!.scrollHeight;
@@ -42,7 +56,7 @@ export function FloraStudio() {
   return (
     <section id="flora" className={styles.studio} aria-labelledby="flora-title">
       <div className={styles.stage}>
-        <video className={styles.layer} src="/static/char/back2.webm" autoPlay={!reduced} loop muted playsInline aria-hidden="true" />
+        <video ref={video} className={styles.layer} src="/static/char/back2.webm" preload="none" loop muted playsInline aria-hidden="true" />
         <img className={styles.layer} src="/static/char/char_back3.webp" alt="" width={2752} height={1536} loading="lazy" />
         <div className={styles.flora}>
           {EXPRESSIONS.map((name) => {

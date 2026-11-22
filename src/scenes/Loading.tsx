@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { Stamp } from '../ui/Stamp.tsx';
-import { frameUrl, loadImage } from '../lib/frames.ts';
+import { BG_MOBILE, BG_SIZES, BG_SRC, BG_SRCSET, frameUrl, loadImage } from '../lib/frames.ts';
 import { registerGsap, useReducedMotion } from '../lib/motion.ts';
 import styles from './Loading.module.css';
 
@@ -24,7 +24,7 @@ export function Loading({ onDone }: { onDone: () => void }) {
   useEffect(() => {
     const mobile = matchMedia('(max-width: 767px)').matches;
     const tasks = [
-      loadImage('/static/opening/bg-1920.webp'),
+      mobile ? loadImage(BG_MOBILE) : loadImage(BG_SRC, { srcset: BG_SRCSET, sizes: BG_SIZES }),
       loadImage(frameUrl(reduced ? 40 : 1, mobile)),
       document.fonts.load('700 1em Humane'),
     ];
