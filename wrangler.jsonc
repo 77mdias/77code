@@ -3,7 +3,7 @@
   "name": "77code",
   "compatibility_date": "2026-11-21",
   // Só arquivos estáticos (dist/), sem código de Worker por enquanto.
-  // Sem not_found_handling: rota inexistente dá 404 de verdade.
-  "assets": { "directory": "./dist" },
+  // Rota inexistente: status 404 com a página public/404.html (nunca a home disfarçada).
+  "assets": { "directory": "./dist", "not_found_handling": "404-page" },
   "workers_dev": true
 }

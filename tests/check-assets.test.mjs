@@ -29,3 +29,7 @@ test('metadados de compartilhamento', () => {
   assert.match(html, /property="og:url" content="https:\/\/77code\.com\.br"/);
   assert.ok(existsSync('public/static/og.jpg'));
 });
+
+test('a chave do Web3Forms do autor original não está no código', () => {
+  assert.ok(!readFileSync('src/main.js', 'utf8').includes('32ed7635-a0ab-4135-b458-17153735f046'));
+});

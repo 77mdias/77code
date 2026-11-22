@@ -916,11 +916,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // FOOTER REVEAL LOGIC & FORM SUBMISSION
     // ==========================================
+    // Chave pública do Web3Forms do Jean (web3forms.com). Vazia = o formulário abre o e-mail em vez de enviar,
+    // para nenhuma mensagem ir parar na caixa de outra pessoa.
+    const WEB3FORMS_KEY = "";
+    const CONTACT_EMAIL = "jean.77mdiasdev@gmail.com";
+
     document.getElementById('contact-form').addEventListener('submit', function(e) {
         e.preventDefault();
 
         const btnText = document.querySelector('.submit-btn span');
         const originalText = btnText.textContent;
+
+        if (!WEB3FORMS_KEY) {
+            const name = document.getElementById('c-name').value;
+            const subject = encodeURIComponent(`Contato pelo portfólio: ${name}`);
+            const body = encodeURIComponent(`${document.getElementById('c-msg').value}\n\n${name} <${document.getElementById('c-email').value}>`);
+            btnText.textContent = "OPENING EMAIL...";
+            window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+            setTimeout(() => { btnText.textContent = originalText; }, 3000);
+            return;
+        }
+
         btnText.textContent = "TRANSMITTING...";
 
         fetch("https://api.web3forms.com/submit", {
@@ -930,7 +946,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "Accept": "application/json"
             },
             body: JSON.stringify({
-                access_key: "32ed7635-a0ab-4135-b458-17153735f046", // <--- PASTE YOUR KEY HERE
+                access_key: WEB3FORMS_KEY,
                 name: document.getElementById('c-name').value,
                 email: document.getElementById('c-email').value,
                 message: document.getElementById('c-msg').value

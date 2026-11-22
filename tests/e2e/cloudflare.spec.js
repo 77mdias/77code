@@ -16,6 +16,13 @@ test('rota inexistente dá 404', async ({ request }) => {
   expect((await request.get('/lab/')).status()).toBe(404);
 });
 
+test('a página 404 não fica em branco e leva de volta à home', async ({ page }) => {
+  const res = await page.goto('/lab/');
+  expect(res.status()).toBe(404);
+  await expect(page.locator('h1')).toContainText('404');
+  await expect(page.locator('a[href="/"]')).toBeVisible();
+});
+
 test('chat responde o aviso local e não chama /api/chat', async ({ page }) => {
   const calls = [];
   page.on('request', (r) => r.url().includes('/api/chat') && calls.push(r.url()));
@@ -29,8 +36,17 @@ test('chat responde o aviso local e não chama /api/chat', async ({ page }) => {
   expect(calls).toEqual([]);
 });
 
-test('formulário de contato chega ao Web3Forms sem bloqueio de CSP', async ({ page }) => {
+test('a CSP deixa o navegador falar com o Web3Forms', async ({ page }) => {
   const w = watch(page);
+  await page.route('https://api.web3forms.com/submit', (r) => r.fulfill({ json: { success: true } }));
+  await page.goto('/');
+  await waitLoader(page);
+  const ok = await page.evaluate(() => fetch('https://api.web3forms.com/submit', { method: 'POST', body: '{}' }).then((r) => r.ok));
+  expect(ok).toBe(true);
+  expect(w.errors).toEqual([]);
+});
+
+test('sem chave própria, o formulário não envia nada ao Web3Forms e abre o e-mail', async ({ page }) => {
   let posted = false;
   await page.route('https://api.web3forms.com/submit', (r) => { posted = true; r.fulfill({ json: { success: true } }); });
   await page.goto('/');
@@ -41,6 +57,6 @@ test('formulário de contato chega ao Web3Forms sem bloqueio de CSP', async ({ p
     document.getElementById('c-msg').value = 'Mensagem de teste';
     document.getElementById('contact-form').requestSubmit();
   });
-  await expect.poll(() => posted).toBe(true);
-  expect(w.errors).toEqual([]);
+  await expect(page.locator('.submit-btn span')).toHaveText('OPENING EMAIL...');
+  expect(posted).toBe(false);
 });
