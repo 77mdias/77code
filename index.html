@@ -18,9 +18,9 @@
   <style>
     /* Casca estática: a abertura (fundo, quadro 1, título) pintada antes do JS; o App tira quando o React desenha a mesma cena.
        Mesma geometria de Opening.module.css (.stage, .jean, .titleBlock, .frame) e de RedLabel/Caption; os tokens vêm do CSS do bundle. */
-    #shell { position: fixed; inset: 0; overflow: hidden; background: var(--ink); }
+    #shell { position: fixed; inset: 0 0 auto; height: 100lvh; overflow: hidden; background: var(--ink); } /* 100lvh: a mesma altura da cena (--scene-h) */
     #shell picture { display: contents; }
-    #shell .stage { --w: max(calc(100% + 48px), calc((100svh + 48px) * 2752 / 1536)); position: absolute; top: 50%; left: 50%; width: var(--w); aspect-ratio: 2752 / 1536; margin: calc(var(--w) * 1536 / 2752 / -2) 0 0 calc(var(--w) / -2); }
+    #shell .stage { --w: max(calc(100% + 48px), calc((100lvh + 48px) * 2752 / 1536)); position: absolute; top: 50%; left: 50%; width: var(--w); aspect-ratio: 2752 / 1536; margin: calc(var(--w) * 1536 / 2752 / -2) 0 0 calc(var(--w) / -2); }
     #shell .bg { display: block; width: 100%; height: 100%; }
     #shell .jean { --h: 100svh; position: absolute; bottom: 0; left: 77%; height: var(--h); width: calc(var(--h) * 16 / 9); margin-left: calc(var(--h) * 16 / 9 * -0.526); }
     #shell .block { position: absolute; top: 9%; left: 7%; display: grid; justify-items: start; gap: 10px; }

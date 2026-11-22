@@ -135,6 +135,7 @@ Bibliotecas: GSAP + ScrollTrigger (via `@gsap/react`) e Lenis para o scroll suav
 ## 8. Layout
 
 - Página única, rolagem vertical. **Recarregar (F5) sempre volta ao início**: topo da página, sem hash e sem ficha de projeto aberta (pedido do Jean, 2026-11-22); só o voltar/avançar do navegador devolve a posição. Largura de leitura máxima do texto corrido: 64ch.
+- **Altura das cenas presas:** `--scene-h` (`100lvh`, a altura maior da tela), nunca `100svh`. No celular a barra do navegador some ao rolar e a tela cresce uns 100px; a cena presa fica com a altura medida no carregamento, e com `svh` sobrava uma faixa vazia embaixo (visto no iPhone 16, 2026-11-22). O que precisa estar sempre à vista (campo do chat, formulário, cards, leque) fica dentro de `--safe-h` (`100svh`): a faixa de baixo (`--scene-extra`) leva só o fundo da cena. Tokens em `src/styles/tokens.css`.
 - **Quebras:** celular até 767px, tablet 768–1199px, desktop a partir de 1200px.
 - **Celular:** cada cena vira uma pilha de quadros; a abertura mantém o personagem embaixo e o título em cima; o leque de projetos fica em pé e a ficha vira uma coluna (captura, depois folha); o parallax do mouse vira um parallax leve de scroll.
 - Moldura de página (borda + respiro de papel) em todas as cenas, inclusive no celular (respiro de 6px).

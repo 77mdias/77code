@@ -35,13 +35,13 @@ export function NextEpisode() {
     if (reduced) return;
     const el = root.current!;
     const $ = (cls: string) => el.querySelector<HTMLElement>(`.${cls}`)!;
-    const [bigNum, band, sfx, side, channels, card, title] =
-      [styles.bigNum, styles.band, styles.sfx, styles.side, styles.channels, styles.card, styles.title].map($);
+    const [frame, bigNum, band, sfx, side, channels, card, title] =
+      [styles.frame, styles.bigNum, styles.band, styles.sfx, styles.side, styles.channels, styles.card, styles.title].map($);
 
     // A cena presa tem que caber na tela: a folha encolhe quando o conteúdo passa do espaço dela.
     const onRefresh = () => {
-      const top = card.offsetTop / el.clientHeight;
-      card.style.setProperty('--fit', String(Math.min(1, ((0.96 - top) * el.clientHeight) / card.offsetHeight)));
+      const room = frame.clientHeight; // a área segura, não a cena inteira
+      card.style.setProperty('--fit', String(Math.min(1, (0.96 * room - card.offsetTop) / card.offsetHeight)));
     };
     onRefresh();
     ScrollTrigger.addEventListener('refresh', onRefresh);
@@ -123,45 +123,47 @@ export function NextEpisode() {
     <section ref={root} id="contact" className={styles.contact} aria-labelledby="contact-title">
       <MatrixRain className={styles.rain} />
       <span className={styles.bigNum} aria-hidden="true">77</span>
-      {/* A mesma chuva, em nanquim, por cima do vermelho: cai dentro da faixa e anda com ela. */}
-      <div className={styles.band} aria-hidden="true"><MatrixRain className={styles.bandRain} /></div>
+      <div className={styles.frame}>
+        {/* A mesma chuva, em nanquim, por cima do vermelho: cai dentro da faixa e anda com ela. */}
+        <div className={styles.band} aria-hidden="true"><MatrixRain className={styles.bandRain} /></div>
 
-      {/* A folha: o único papel da cena, mais alta que a faixa. */}
-      <div className={styles.card} data-reveal>
-        <div className={styles.head}>
-          <RedLabel>Next episode</RedLabel>
-          <h2 id="contact-title" className={styles.title}>Your project.</h2>
+        {/* A folha: o único papel da cena, mais alta que a faixa. */}
+        <div className={styles.card} data-reveal>
+          <div className={styles.head}>
+            <RedLabel>Next episode</RedLabel>
+            <h2 id="contact-title" className={styles.title}>Your project.</h2>
+          </div>
+          <form id="contact-form" className={styles.form} onSubmit={onSubmit}>
+            <label className={styles.field}>
+              <span>Name</span>
+              <input name="name" required autoComplete="name" />
+            </label>
+            <label className={styles.field}>
+              <span>Email</span>
+              <input name="email" type="email" required autoComplete="email" />
+            </label>
+            <label className={`${styles.field} ${styles.grow}`}>
+              <span>Message</span>
+              <textarea name="message" rows={4} required />
+            </label>
+            <InkButton type="submit" busy={state === 'sending'}>{LABEL[state]}</InkButton>
+            <p role="status" className={styles.status}>
+              {state === 'error' && `Something went wrong. Write to ${CONTACT.email} instead.`}
+              {state === 'sent' && 'Message received. I will reply soon.'}
+            </p>
+          </form>
         </div>
-        <form id="contact-form" className={styles.form} onSubmit={onSubmit}>
-          <label className={styles.field}>
-            <span>Name</span>
-            <input name="name" required autoComplete="name" />
-          </label>
-          <label className={styles.field}>
-            <span>Email</span>
-            <input name="email" type="email" required autoComplete="email" />
-          </label>
-          <label className={`${styles.field} ${styles.grow}`}>
-            <span>Message</span>
-            <textarea name="message" rows={4} required />
-          </label>
-          <InkButton type="submit" busy={state === 'sending'}>{LABEL[state]}</InkButton>
-          <p role="status" className={styles.status}>
-            {state === 'error' && `Something went wrong. Write to ${CONTACT.email} instead.`}
-            {state === 'sent' && 'Message received. I will reply soon.'}
-          </p>
-        </form>
-      </div>
 
-      <ul className={styles.channels}>
-        {CHANNELS.map((c) => (
-          <li key={c.label}>
-            <a href={c.href} {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{c.label}</a>
-          </li>
-        ))}
-      </ul>
-      <Sfx entry={JP.nextEpisode} className={styles.sfx} />
-      <span className={styles.side} aria-hidden="true">Preview</span>
+        <ul className={styles.channels}>
+          {CHANNELS.map((c) => (
+            <li key={c.label}>
+              <a href={c.href} {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{c.label}</a>
+            </li>
+          ))}
+        </ul>
+        <Sfx entry={JP.nextEpisode} className={styles.sfx} />
+        <span className={styles.side} aria-hidden="true">Preview</span>
+      </div>
     </section>
   );
 }

@@ -40,6 +40,7 @@ E2E contra um servidor seu em outra porta (a 8778 pode estar servindo build velh
 - Humane e Cabinet Grotesk: usar os `.woff2` oficiais sem converter nem cortar subconjunto (licença).
 - `prefers-reduced-motion: reduce`: sem pin, parallax, chuva ou poeira; quadro 40 parado; carimbos visíveis.
 - Site em inglês (`<html lang="en">`); japonês só pela tabela do DESIGN_V1.md §4, via `Sfx`.
+- Cena presa tem `height: var(--scene-h)` (100lvh), nunca `100svh`: no celular a barra do navegador some ao rolar e sobraria uma faixa vazia embaixo. Conteúdo que não pode ficar atrás da barra fica dentro de `--safe-h` (ver `tokens.css` e `tests/e2e/viewport.spec.ts`).
 - Mudou algo visual? Conferir no navegador (desktop e celular) antes de dar por pronto.
 - Docs, comentários e commits em português do Brasil (`feat:`, `fix:`, `test:`, `docs:`, `chore:`).
 - Nada vai para a `main` sem o Jean aprovar o PR (Workers Builds publica a `main`).
