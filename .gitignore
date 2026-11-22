@@ -4,3 +4,8 @@ dist/
 .wrangler/
 test-results/
 playwright-report/
+
+# Fundos de referência baixados (licença a conferir; o repo é público)
+design/fundos-delegacia/
+# Pacotes de fonte baixados (só os .woff2 usados vão para public/)
+design/fonts/
