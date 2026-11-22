@@ -6,6 +6,8 @@
   color: var(--paper);
   overflow: clip;
 }
+/* Chuva de caracteres ao fundo, quase apagada. */
+.rain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.1; pointer-events: none; }
 /* O 77 gigante do fundo: só contorno, decorativo (o texto por cima continua com o contraste do --paper). */
 .bigNum {
   position: absolute;

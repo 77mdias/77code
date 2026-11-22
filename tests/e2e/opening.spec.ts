@@ -117,7 +117,7 @@ test('recarregar no meio da página', async ({ page }) => {
   const w = watch(page);
   await page.goto('/');
   await waitLoader(page);
-  await page.evaluate(() => document.querySelector('#cases')!.scrollIntoView());
+  await page.evaluate(() => document.querySelector('#projects')!.scrollIntoView());
   await page.reload();
   await waitLoader(page);
   await expect.poll(() => frameOf(page), { timeout: 15_000 }).toBeGreaterThanOrEqual(30);

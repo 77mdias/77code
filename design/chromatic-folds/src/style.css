@@ -1,0 +1,376 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&display=swap");
+
+:root {
+  /* Edit these to customize */
+  --title-size: clamp(28px, 4vw, 55px);
+  --accordion-angle: -3deg;
+  --label-angle: 90deg;
+  --label-size: 20px;
+  --number-size: 22px;
+  --number-font: "Courier New", Courier, monospace;
+  --control-size: 18px;
+
+  --background: #e9e4db;
+  --ink: #262723;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Header and footer */
+
+header,
+footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  margin-inline: 5%;
+}
+
+header {
+  height: 76px;
+  padding: 30px 0;
+}
+
+header a {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+header span,
+.eyebrow,
+footer {
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+
+footer {
+  margin-top: auto;
+  padding: 0 0 30px;
+  gap: 20px;
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border: 1px solid #26272340;
+  border-radius: 30px;
+  font: inherit;
+  letter-spacing: inherit;
+  white-space: nowrap;
+}
+
+/* Intro */
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin: max(0px, calc(16svh - 76px)) 5% 0;
+}
+
+.eyebrow {
+  margin: 11px 0;
+  opacity: 0.6;
+}
+
+.intro h1 {
+  margin: 12px 0;
+  font-size: var(--title-size);
+  font-weight: 700;
+  letter-spacing: -2px;
+}
+
+/* Add and remove */
+
+.tools {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 30px;
+  padding-bottom: 5px;
+}
+
+.tools button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: 500 var(--control-size) Rubik, Arial, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.tools button:hover:not(:disabled) {
+  border-bottom-color: currentColor;
+}
+
+.tools button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.tools svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+/* Accordion */
+
+.art {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 440px;
+  padding: 65px 5vw;
+}
+
+.swatches {
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+  height: 310px;
+  isolation: isolate;
+  transform: rotate(var(--accordion-angle));
+}
+
+.swatch {
+  --i: var(--fallback-i);
+  --n: var(--fallback-n);
+
+  position: relative;
+  z-index: calc(var(--n) - var(--i));
+  flex: 1;
+  min-width: 0;
+  margin-right: -1px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  color: #202023;
+  cursor: pointer;
+
+  clip-path: polygon(0 0, 100% 5%, 100% 100%, 0 95%);
+
+  /* Permanent color plus fold shading */
+  background:
+    linear-gradient(
+      90deg,
+      #fff3,
+      transparent 40%,
+      #0003 95%,
+      #0005
+    ),
+    var(--color);
+
+  transition: flex 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.swatch:nth-child(even) {
+  clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%);
+  background:
+    linear-gradient(90deg, #0004, transparent 65%, #fff3),
+    var(--color);
+}
+
+.swatch.chosen,
+.swatch:focus-visible {
+  flex: 3;
+}
+
+@media (hover: hover) {
+  .swatch:hover {
+    flex: 3;
+  }
+}
+
+/* Numbers */
+
+.swatch::before {
+  content: attr(data-num);
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  font-family: var(--number-font);
+  font-size: var(--number-size);
+  font-weight: 400;
+  opacity: 0.75;
+  pointer-events: none;
+  transform:
+    translateX(-50%)
+    skewY(var(--fold-angle, 6deg));
+}
+
+/* Color names */
+
+.swatch span {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  font: 500 var(--label-size) Rubik, Arial, sans-serif;
+  line-height: 1.1;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  pointer-events: none;
+  transform-origin: center;
+  transform:
+    translate(-50%, -50%)
+    skewY(var(--fold-angle, 6deg))
+    rotate(var(--label-angle));
+}
+
+/* Sibling functions control the fold stacking order */
+
+@supports (width: calc(sibling-index() * 1px)) {
+  .swatch {
+    --i: sibling-index();
+    --n: sibling-count();
+  }
+}
+
+/* Focus */
+
+a:focus-visible,
+.tools button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+
+.swatch:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: -4px;
+}
+
+/* Responsive layout */
+
+@media (max-width: 850px) {
+  .intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --label-size: 12px;
+    --control-size: 14px;
+  }
+
+  header span {
+    display: none;
+  }
+
+  .intro {
+    margin-top: 15px;
+  }
+
+  .tools {
+    gap: 24px;
+  }
+
+  .art {
+    min-height: 370px;
+    padding: 50px 4vw;
+  }
+
+  .swatches {
+    width: 100%;
+    height: 250px;
+  }
+
+  .swatch::before {
+    top: 22px;
+  }
+
+  footer {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
+
+.intro {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.intro > div {
+  min-width: 0;
+}
+
+.intro h1 {
+  font-size: clamp(20px, 4vw, 55px);
+  white-space: nowrap;
+}
+
+.eyebrow {
+  font-size: clamp(6px, 1vw, 11px);
+  letter-spacing: 0.08em;
+}
+
+.tools {
+  gap: clamp(8px, 2vw, 30px);
+  margin-top: 0;
+}
+
+.tools button {
+  gap: 5px;
+  font-size: clamp(9px, 1.5vw, 18px);
+  white-space: nowrap;
+}
+
+.tools svg {
+  width: clamp(14px, 2vw, 24px);
+  height: clamp(14px, 2vw, 24px);
+}

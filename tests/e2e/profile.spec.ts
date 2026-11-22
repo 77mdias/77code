@@ -35,15 +35,64 @@ test('ficha com retrato, especialidades na ordem e texto do Jean', async ({ page
   await expect(profile).toContainText('Presidente Prudente');
 });
 
-test('no celular os três quadros empilham', async ({ page }) => {
+test('no celular os três cards empilham alternando de lado, cada um encostado numa borda', async ({ page }) => {
   await open(page, 390, 844);
   await scrollThrough(page, SEL, 1);
   const boxes = page.locator(`${SEL} [data-testid="specialty"]`);
   await expect(boxes).toHaveCount(3);
   const rects = await boxes.evaluateAll((els) => els.map((e) => e.getBoundingClientRect()));
-  expect(new Set(rects.map((r) => Math.round(r.x))).size).toBe(1);
   expect(rects[1].y).toBeGreaterThan(rects[0].y);
   expect(rects[2].y).toBeGreaterThan(rects[1].y);
+  // Ímpares na borda esquerda, o do meio na direita (a ficha pode estar encolhida uns poucos px para caber).
+  expect(rects[0].left).toBeLessThanOrEqual(12);
+  expect(rects[2].left).toBeLessThanOrEqual(12);
+  expect(rects[1].right).toBeGreaterThanOrEqual(390 - 12);
+  expect(rects[1].left).toBeGreaterThan(rects[0].left);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('desktop: composição assimétrica de tela cheia, com os cards descendo em escada', async ({ page }) => {
+  await open(page);
+  await scrollThrough(page, SEL, 1);
+  const rects = await page.locator(`${SEL} [data-testid="specialty"]`).evaluateAll((els) => els.map((e) => e.getBoundingClientRect()));
+  // Sem contêiner: o 1º card encosta na borda direita e a folha começa na borda esquerda.
+  expect(Math.round(rects[0].right)).toBe(1440);
+  for (const i of [1, 2]) {
+    expect(rects[i].top).toBeGreaterThanOrEqual(rects[i - 1].bottom);
+    expect(rects[i].left).toBeLessThan(rects[i - 1].left - 100);
+  }
+  const title = await page.locator(`${SEL} h2`).evaluate((e) => e.getBoundingClientRect());
+  const paper = await page.locator(`${SEL} img`).evaluate((e) => e.getBoundingClientRect());
+  expect(paper.left).toBe(0);
+  expect(Math.round(paper.bottom)).toBe(900);
+  // O título atravessa o corte da folha (40% da largura no topo).
+  expect(title.left).toBeLessThan(1440 * 0.4);
+  expect(title.right).toBeGreaterThan(1440 * 0.4);
+});
+
+test('entrada: o título sai de dentro do corte; saída: os cards são levantados em velocidades diferentes', async ({ page }) => {
+  await open(page);
+  const clip = () => page.locator(`${SEL} h2`).evaluate((e) => getComputedStyle(e).clipPath);
+  await scrollThrough(page, SEL, 0);
+  expect(await clip()).toMatch(/^inset\(100%/);
+  await scrollThrough(page, SEL, 0.3);
+  expect(await clip()).toMatch(/^inset\(-10%/);
+
+  // Deslocamento vertical de cada card em relação ao próprio lugar no layout (o degrau é quem sobe).
+  const lift = () => page.locator(`${SEL} [data-testid="specialty"]`).evaluateAll((els) =>
+    els.map((e) => Math.round(new DOMMatrix(getComputedStyle(e.parentElement!).transform).m42)));
+  await scrollThrough(page, SEL, 1);
+  expect(await lift()).toEqual([0, 0, 0]);
+  // Depois do pin (a cena já subindo): o de cima sobe mais que o do meio, que sobe mais que o de baixo.
+  await scrollThrough(page, SEL, 1.25);
+  const up = await lift();
+  expect(up[0]).toBeLessThan(up[1]);
+  expect(up[1]).toBeLessThan(up[2]);
+  expect(up[2]).toBeLessThan(0);
+  // Voltar para dentro do pin devolve tudo ao lugar.
+  await scrollThrough(page, SEL, 0.95);
+  expect(await lift()).toEqual([0, 0, 0]);
+  expect(await settled(page)).toEqual([true, true, true]);
 });
 
 for (const [width, height] of SIZES) {
@@ -59,11 +108,18 @@ for (const [width, height] of SIZES) {
       const r = el.querySelector(s)!.getBoundingClientRect();
       return !(r.top >= 0 && r.left >= 0 && r.bottom <= innerHeight && r.right <= innerWidth);
     }), selectors);
+    // No começo o retrato ainda está um pouco abaixo da borda (parallax): ele só precisa caber no fim.
     await scrollThrough(page, SEL, 0);
-    expect(await outside(['h2', 'img', '[data-typed]'])).toEqual([]);
+    expect(await outside(['h2', '[data-typed]'])).toEqual([]);
     await scrollThrough(page, SEL, 1);
-    expect(await outside(['h2', 'img', '[data-typed]', '[data-testid="specialty"]:nth-child(1)',
-      '[data-testid="specialty"]:nth-child(2)', '[data-testid="specialty"]:nth-child(3)'])).toEqual([]);
+    expect(await outside(['h2', 'img', '[data-typed]'])).toEqual([]);
+    // Os cards podem sair pela lateral (sangram na borda); em altura cabem inteiros, e o texto fica todo na tela.
+    const cards = await page.locator(`${SEL} [data-testid="specialty"]`).evaluateAll((els) => els.map((e) => {
+      const r = e.getBoundingClientRect();
+      const text = [...e.querySelectorAll('h3, dt, dd')].map((t) => t.getBoundingClientRect());
+      return r.top >= 0 && r.bottom <= innerHeight && text.every((t) => t.left >= 0 && t.right <= innerWidth);
+    }));
+    expect(cards).toEqual([true, true, true]);
     // Encolher para caber não pode deixar o texto pequeno demais.
     const scale = await page.locator(`${SEL} [data-typed]`).evaluate((e) => e.getBoundingClientRect().width / (e as HTMLElement).offsetWidth);
     expect(scale).toBeGreaterThanOrEqual(0.95);
@@ -80,7 +136,6 @@ for (const [width, height] of SIZES) {
         const rect = (s: string) => el.querySelector(s)!.getBoundingClientRect();
         const boxes = [...el.querySelectorAll('[data-testid="specialty"]')].map((b) => b.getBoundingClientRect());
         const out: string[] = [];
-        if (rect('[data-typed]').bottom > boxes[0].top) out.push('about abaixo do topo do 1º quadro');
         for (const s of ['h2', 'img', '[data-typed]']) {
           const t = rect(s);
           boxes.forEach((b, i) => {

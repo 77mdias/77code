@@ -1,51 +1,58 @@
+/* Personnel file: tela cheia --ink com uma folha de papel cortada na diagonal (DESIGN_V1.md §5).
+   Até 1199px: pilha (folha em cima, cards alternando de lado). A partir de 1200px: composição assimétrica. */
 .profile {
-  padding: 72px 16px;
-  background: var(--desk);
+  --pad: 16px;
+  position: relative;
+  padding: 72px var(--pad);
+  background: var(--ink);
+  color: var(--paper);
   overflow: clip;
 }
+/* Chuva de caracteres ao fundo, quase apagada. */
+.rain { position: absolute; inset: -60px 0; opacity: 0.1; pointer-events: none; }
+.canvas { display: block; width: 100%; height: 100%; }
+.bigNum, .jp { display: none; }
 
-/* Celular: foto 3x4 ao lado do nome, como numa ficha; o resto embaixo. */
 .file {
+  position: relative;
+  isolation: isolate; /* a folha fica atrás do conteúdo (z-index: -1) sem sair da ficha */
   display: grid;
-  gap: 14px;
-  max-width: 1180px;
-  margin: 0 auto;
+  gap: 10px 14px;
   grid-template-columns: 96px minmax(0, 1fr);
   grid-template-areas: "portrait head" "about about" "spec spec";
 }
-.text { display: contents; }
+/* A folha: sangra para cima e para os lados (a seção corta o excesso) e termina num corte inclinado. */
+.paper {
+  grid-row: 1 / 3;
+  grid-column: 1 / -1;
+  z-index: -1;
+  margin: -50vh calc(-1 * var(--pad) - 6vw) -14px;
+  background: var(--paper);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), 0 100%);
+}
 
-.portrait { grid-area: portrait; padding: 0 4px 4px 0; }
+/* O retrato é um recorte com fundo transparente: o personagem fica direto sobre o papel, sem moldura. */
+.portrait { grid-area: portrait; align-self: end; overflow: hidden; /* o personagem sobe de trás da borda de baixo */ }
 .portrait img {
   display: block;
   width: 100%;
   height: auto; /* o atributo height da imagem venceria o aspect-ratio */
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  /* Rosto no centro da arte larga, um pouco acima do meio. */
-  object-position: 52% 35%;
+  /* O personagem ocupa a faixa do meio da arte larga. */
+  object-position: 60% 100%;
 }
 
-.head {
-  grid-area: head;
-  align-self: end;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-}
-.title {
-  margin: 0;
-  color: var(--paper);
-  font: 600 var(--t-section) / 1 var(--f-section);
-  letter-spacing: 0.04em;
-}
+.head { grid-area: head; align-self: end; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.role { color: var(--ink); } /* a caixa de legenda é papel: o texto dela é sempre nanquim */
+.title { margin: 0; color: var(--ink); font: 700 60px / 0.8 var(--f-title); letter-spacing: 0.02em; }
 
 .about {
   grid-area: about;
   display: grid;
   gap: 8px;
-  color: var(--paper);
+  padding-bottom: 12px; /* folga para o corte inclinado da folha */
+  color: var(--ink);
   font: 400 var(--t-body) / 1.5 var(--f-body);
 }
 .about p { margin: 0; max-width: 60ch; }
@@ -59,50 +66,61 @@
   white-space: nowrap;
 }
 
-.specialties {
-  grid-area: spec;
-  display: grid;
-  gap: var(--gutter);
-  grid-template-columns: 1fr;
-}
-.specialty {
+/* Cards alternando de lado, cada um saindo por uma borda da tela. A sobra de 6vw de cada lado garante
+   o sangramento mesmo com a ficha encolhida (--fit); o padding do card devolve o texto para dentro. */
+.specialties { --bleed: calc(var(--pad) + 6vw); grid-area: spec; display: grid; gap: var(--gutter); margin-inline: calc(-1 * var(--bleed)); }
+.slot { width: 88%; }
+.slot:nth-child(even) { justify-self: end; }
+
+/* Card numerado (DESIGN_V1.md §5, arquitetura do DESIGN_V2.md §7.6): superfície lisa, sem borda,
+   sem sombra e sem raio; índice mono, conteúdo no meio e o título em caixa alta na base.
+   Um tom acima do --ink para aparecer sobre o fundo da cena. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   height: 100%;
-  padding: 10px 14px;
-  color: var(--ink);
+  padding: 12px 14px;
+  background: var(--desk);
+  color: var(--paper);
 }
-.specialty h3 {
-  margin: 0 0 6px;
-  font: 800 18px / 1.1 var(--f-section);
+.slot:nth-child(odd) .card { padding-left: var(--bleed); }
+.slot:nth-child(even) .card { padding-right: var(--bleed); }
+.slot:nth-child(even) .index { right: var(--bleed); }
+/* Na pilha a cena presa não tem altura sobrando: o índice vai para o canto de baixo, na linha do título. */
+.index { position: absolute; right: 14px; bottom: 15px; font: 500 11px / 1 var(--f-mono); letter-spacing: 0.08em; opacity: 0.6; }
+/* No DOM o título vem antes das linhas (ordem de leitura); na tela ele fecha o card. */
+.card h3 {
+  order: 2;
+  margin: auto 0 0;
+  font: 400 17px / 1.2 var(--f-body);
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
-.specialty ul {
-  margin: 0;
-  padding-left: 1.1em;
-  font: 400 15px / 1.4 var(--f-body);
-}
-.specialty li + li { margin-top: 4px; }
+.card dl { order: 1; margin: 0; }
+.card dl > div { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 3px 0; }
+.card dt { font: 500 10px / 1.4 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6; }
+.card dd { margin: 0; font: 400 14px / 1.35 var(--f-body); }
 
+/* Tablet: a mesma pilha, com mais respiro. */
 @media (min-width: 768px) {
-  .profile { padding: 96px 32px; }
-  .file {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-    grid-template-areas: "portrait text" "spec spec";
-    gap: 32px 48px;
-    align-items: start;
-  }
-  .text { grid-area: text; display: grid; gap: 24px; }
-  .head, .about { grid-area: auto; }
-  .portrait { padding: 0 6px 6px 0; }
-  .portrait img { aspect-ratio: 1; }
-  .about { gap: 14px; line-height: 1.6; }
-  .specialties { grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .specialty { padding: 20px; }
-  .specialty h3 { margin-bottom: 12px; font-size: 20px; }
-  .specialty ul { font-size: var(--t-body); line-height: 1.5; }
-  .specialty li + li { margin-top: 8px; }
+  .profile { --pad: 32px; padding-block: 96px; }
+  .file { gap: 20px 28px; grid-template-columns: 200px minmax(0, 1fr); }
+  .paper { margin-bottom: -22px; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 56px), 0 100%); }
+  .title { font-size: var(--t-case); }
+  .about { gap: 12px; padding-bottom: 28px; }
+  .slot { width: 82%; }
+  .card { gap: 14px; padding-block: 20px; }
+  .index { position: static; font-size: 13px; }
+  .card h3 { font-size: 24px; }
+  .card dl > div { grid-template-columns: 72px minmax(0, 1fr); gap: 14px; padding: 5px 0; }
+  .card dt { font-size: var(--t-label); }
+  .card dd { font-size: 16px; line-height: 1.45; }
 }
 
-/* Preso: a ficha inteira cabe na tela; o JS encolhe (--fit) quando ela passa. */
-@media (prefers-reduced-motion: no-preference) {
+/* Pilha presa: a ficha inteira cabe na tela; o JS encolhe (--fit) quando ela passa. */
+@media (prefers-reduced-motion: no-preference) and (max-width: 1199px) {
   .profile {
     display: flex;
     flex-direction: column;
@@ -112,6 +130,105 @@
   }
   .file { width: 100%; scale: var(--fit, 1); }
 }
-@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) and (max-width: 1199px) {
   .profile { padding-block: 48px; }
+}
+
+/* Desktop: composição livre na tela inteira, sem contêiner. Tudo é medido em --u (1/100 da largura
+   de um quadro 16:9 que cabe na tela), então a cena cresce e encolhe junto com a janela.
+   Posições horizontais em % (a cena se espalha em telas largas); a folha à esquerda, os cards
+   descendo em escada da direita para a esquerda, paralelos ao corte da folha. */
+@media (min-width: 1200px) {
+  .profile { --u: min(1vw, 1.7778vh, 19px); height: 100svh; padding: 0; }
+  .rain { inset: 0 0 0 30%; }
+
+  .file { position: absolute; inset: 0; display: block; isolation: auto; }
+  .paper {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: auto;
+    width: 40%;
+    margin: 0;
+    /* O JS da entrada anima este mesmo polígono (PAPER em Profile.tsx). */
+    clip-path: polygon(0% 0%, 100% 0%, 82% 100%, 0% 100%);
+  }
+  /* Retícula na beira do corte. */
+  .paper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(var(--ink) 1px, transparent 1.4px) 0 0 / 6px 6px;
+    opacity: 0.22;
+    mask-image: linear-gradient(97deg, transparent 62%, #000 96%);
+  }
+
+  /* O personagem em pé no rodapé da folha, do tamanho que a altura deixar. */
+  .portrait { position: absolute; left: 0; bottom: 0; height: calc(100% - 23.5 * var(--u)); aspect-ratio: 0.82; overflow: hidden; }
+  .portrait img { width: 100%; height: 100%; aspect-ratio: auto; }
+
+  .head { display: contents; }
+  .label { position: absolute; top: calc(4 * var(--u)); left: calc(4 * var(--u)); }
+  /* O título atravessa o corte: "difference" deixa a letra em nanquim sobre o papel e em papel sobre o nanquim. */
+  .title {
+    position: absolute;
+    top: calc(5 * var(--u));
+    left: calc(40% - 3.2 * var(--u));
+    color: var(--paper);
+    font-size: calc(15 * var(--u));
+    mix-blend-mode: difference;
+  }
+  .role { position: absolute; top: calc(19 * var(--u)); left: calc(40% + 1.6 * var(--u)); }
+  .about {
+    position: absolute;
+    top: calc(7.6 * var(--u));
+    left: calc(4 * var(--u));
+    width: calc(27 * var(--u));
+    gap: calc(0.7 * var(--u));
+    padding: 0;
+    font-size: calc(1.18 * var(--u));
+  }
+  /* Rótulo vertical de mangá na margem do corte (DESIGN_V1.md §4). */
+  .profile .jp {
+    display: block;
+    position: absolute;
+    top: calc(24 * var(--u));
+    left: calc(40% + 1 * var(--u));
+    writing-mode: vertical-rl;
+    font-size: calc(1.25 * var(--u));
+    letter-spacing: 0.3em;
+    opacity: 0.7;
+  }
+  /* 77 gigante vazado no canto que a escada deixa livre: só contorno, decorativo. */
+  .bigNum {
+    display: block;
+    position: absolute;
+    right: calc(1.5 * var(--u));
+    bottom: calc(-4.5 * var(--u));
+    font: 700 calc(30 * var(--u)) / 0.8 var(--f-title);
+    color: transparent;
+    -webkit-text-stroke: 2px color-mix(in srgb, var(--paper) 20%, transparent);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .specialties {
+    position: absolute;
+    inset: calc(3 * var(--u)) 0 calc(3 * var(--u)) auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: calc(0.8 * var(--u));
+    width: 62%;
+    margin: 0;
+  }
+  /* Cada degrau recua 11u: o 1º encosta na borda direita. */
+  .slot { width: calc(34 * var(--u)); margin-right: calc(var(--i) * 11 * var(--u)); }
+  .specialties { --bleed: 0px; }
+  .card, .slot:nth-child(n) .card { gap: calc(0.9 * var(--u)); height: auto; padding: calc(1.3 * var(--u)) calc(1.4 * var(--u)); }
+  .index { position: static; font-size: calc(0.9 * var(--u)); }
+  .card h3 { margin: 0; font-size: calc(1.5 * var(--u)); }
+  .card dl > div { grid-template-columns: calc(5.5 * var(--u)) minmax(0, 1fr); gap: calc(1 * var(--u)); padding: calc(0.4 * var(--u)) 0; }
+  .card dt { font-size: calc(0.76 * var(--u)); }
+  .card dd { font-size: calc(1 * var(--u)); line-height: 1.4; }
 }

@@ -1,0 +1,153 @@
+/* Projetos em leque (dobras): adaptado do pen "Chromatic Folds" de Matt Cannon (MIT, design/CREDITS.md). */
+.projects {
+  --folds-w: min(92vw, 1200px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 4vh, 48px);
+  min-height: 100svh;
+  padding: clamp(56px, 9vh, 96px) 4vw clamp(40px, 6vh, 72px);
+  background: var(--ink);
+  color: var(--paper);
+  overflow: clip;
+}
+/* Chuva de caracteres: fundo, sempre atrás do conteúdo e quase apagada. */
+.rain { position: absolute; inset: -80px -40px; opacity: 0.14; pointer-events: none; }
+.canvas { display: block; width: 100%; height: 100%; }
+
+.head { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: var(--folds-w); margin: 0 auto; }
+.title { font: 700 var(--t-case) / 0.85 var(--f-title); letter-spacing: 0.02em; }
+.hint { font: 700 var(--t-label) / 1.4 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.75; }
+
+.stage { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; perspective: 1400px; }
+/* Sem preserve-3d: com ele a metade inclinada para trás deixa de receber o clique. */
+.tilt { width: var(--folds-w); }
+.folds {
+  display: flex;
+  height: clamp(320px, 56vh, 560px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  isolation: isolate;
+  transform: rotate(-3deg);
+}
+
+.fold {
+  /* A inclinação da borda de cima (5% da altura na largura da dobra): número e lombada acompanham. */
+  --slope: atan2(5cqh, 100cqw);
+  container-type: size;
+  position: relative;
+  z-index: calc(var(--n) - var(--i));
+  flex: 1;
+  min-width: 0;
+  margin-right: -1px;
+  clip-path: polygon(0 0, 100% 5%, 100% 100%, 0 95%);
+  background: var(--desk);
+  transition: flex 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.fold:nth-child(even) { --slope: calc(-1 * atan2(5cqh, 100cqw)); clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%); }
+/* Aberta: a que a rolagem escolheu, enquanto o visitante não aponta nem foca outra. */
+.folds:not(:hover, :focus-within) .fold[data-active],
+.fold:has(:focus-visible) { flex: 3; }
+@media (hover: hover) {
+  .fold:hover { flex: 3; }
+}
+
+.link { position: absolute; inset: 0; display: block; width: 100%; padding: 0; border: 0; overflow: hidden; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.link:focus-visible { outline: 3px solid var(--red); outline-offset: -6px; }
+/* Captura em cinza e escura fechada (DESIGN.md §7); ganha cor quando a dobra abre. */
+.shot {
+  position: absolute;
+  inset: 0 -8%;
+  width: 116%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+  filter: grayscale(1) contrast(1.1) brightness(0.25);
+  transition: filter 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* Sombra da dobra: luz de um lado, sombra do outro. */
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(243 240 232 / 0.16), transparent 40%, rgb(13 13 13 / 0.3) 95%, rgb(13 13 13 / 0.5));
+  pointer-events: none;
+}
+.fold:nth-child(even) .link::after {
+  background:
+    linear-gradient(90deg, rgb(13 13 13 / 0.45), transparent 65%, rgb(243 240 232 / 0.16));
+}
+
+.num, .spine, .body { position: absolute; z-index: 1; }
+.num {
+  top: 12%;
+  left: 50%;
+  padding: 5px 8px;
+  background: var(--ink);
+  font: 700 clamp(13px, 1.4vw, 18px) / 1 var(--f-mono);
+  letter-spacing: 0.1em;
+  transform: translateX(-50%) skewY(var(--slope));
+}
+/* Lombada: o nome em pé enquanto a dobra está fechada. */
+.spine {
+  top: 58%;
+  left: 50%;
+  font: 600 clamp(40px, 5.4vw, 84px) / 1 var(--f-title);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transform: translate(-50%, -50%) skewY(var(--slope)) rotate(90deg);
+  transition: clip-path 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  clip-path: inset(-10%);
+}
+/* Faixa de nanquim embaixo: o texto nunca fica sobre a captura (contraste de --paper sobre --ink).
+   Largura fixa (a da dobra aberta): o texto não requebra enquanto a dobra cresce. */
+.body {
+  left: 0;
+  bottom: 0;
+  display: grid;
+  gap: 10px;
+  width: calc(var(--folds-w) * 3 / (var(--n) + 2) + 2px);
+  padding: 20px clamp(16px, 2vw, 28px) calc(5cqh + 22px);
+  background: var(--ink);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.name { font: 600 clamp(44px, 5vw, 76px) / 0.9 var(--f-title); letter-spacing: 0.03em; }
+.summary { max-width: 46ch; font-size: 15px; line-height: 1.45; }
+.cta { justify-self: start; font: 700 var(--t-label) / 1.2 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; }
+.cta::after { content: ''; display: block; width: 100%; height: 2px; margin-top: 6px; background: var(--red); }
+
+/* Estado aberto: mesmas três condições da largura (rolagem, foco, ponteiro). */
+.folds:not(:hover, :focus-within) .fold[data-active] .shot, .fold:has(:focus-visible) .shot { filter: none; }
+.folds:not(:hover, :focus-within) .fold[data-active] .spine, .fold:has(:focus-visible) .spine { clip-path: inset(0 0 100% 0); }
+.folds:not(:hover, :focus-within) .fold[data-active] .body, .fold:has(:focus-visible) .body { clip-path: inset(-10%); transition-delay: 0.15s; }
+@media (hover: hover) {
+  .fold:hover .shot { filter: none; }
+  .fold:hover .spine { clip-path: inset(0 0 100% 0); }
+  .fold:hover .body { clip-path: inset(-10%); transition-delay: 0.15s; }
+}
+
+/* Celular: o leque fica em pé, uma dobra por linha, com as bordas inclinadas dos lados. */
+@media (max-width: 767px) {
+  .folds { flex-direction: column; height: min(68svh, 620px); transform: rotate(-2deg); }
+  .fold { margin: 0 0 -1px; clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%); }
+  .fold:nth-child(even) { clip-path: polygon(4% 0, 96% 0, 100% 100%, 0 100%); }
+  .shot { inset: 0; width: 100%; }
+  .num { top: 50%; left: 9%; transform: translateY(-50%); }
+  .spine { top: 50%; left: 22%; font-size: 44px; transform: translateY(-50%); }
+  .body { width: 100%; padding: 14px 9% 18px; gap: 6px; }
+  .name { font-size: 48px; }
+  .summary { font-size: 14px; line-height: 1.35; }
+  .folds:not(:hover, :focus-within) .fold[data-active] .num, .fold:has(:focus-visible) .num { top: 14%; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fold, .shot, .spine, .body { transition: none; }
+}
+/* Menos movimento no celular: todas abertas ao mesmo tempo, então cada linha tem altura própria. */
+@media (prefers-reduced-motion: reduce) and (max-width: 767px) {
+  .folds { height: auto; }
+  .fold { flex: none; height: 250px; }
+}

@@ -9,6 +9,7 @@ import { RedLabel } from '../ui/RedLabel.tsx';
 import { Sfx } from '../ui/Sfx.tsx';
 import { InkButton } from '../ui/InkButton.tsx';
 import { registerGsap, useMedia, useReducedMotion } from '../lib/motion.ts';
+import { MatrixRain } from '../ui/MatrixRain.tsx';
 import { CHANNELS } from './links.ts';
 import styles from './NextEpisode.module.css';
 
@@ -112,6 +113,7 @@ export function NextEpisode() {
 
   return (
     <section ref={root} id="contact" className={styles.contact} aria-labelledby="contact-title">
+      <MatrixRain className={styles.rain} />
       <span className={styles.bigNum} aria-hidden="true">77</span>
       <div className={styles.inner}>
         <div className={styles.head}>

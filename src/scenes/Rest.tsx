@@ -1,4 +1,5 @@
-import { Cases } from './Cases.tsx';
+import { Helix } from './Helix.tsx';
+import { Projects } from './Projects.tsx';
 import { Profile } from './Profile.tsx';
 import { FloraStudio } from './FloraStudio.tsx';
 import { NextEpisode } from './NextEpisode.tsx';
@@ -7,7 +8,8 @@ import { NextEpisode } from './NextEpisode.tsx';
 export function Rest() {
   return (
     <>
-      <Cases />
+      <Helix />
+      <Projects />
       <Profile />
       <FloraStudio />
       <NextEpisode />

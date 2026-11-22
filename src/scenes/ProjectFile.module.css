@@ -1,0 +1,124 @@
+/* Ficha de um projeto: tela cheia --ink, a folha é o único papel. */
+.file {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--ink);
+  color: var(--paper);
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+}
+.file[open] { animation: unfold 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.file::backdrop { background: var(--ink); }
+/* Abre como uma dobra: entra inclinada pela esquerda e assenta reta.
+   Trocar para o próximo projeto: o conteúdo novo entra no mesmo corte (a ficha já está aberta). */
+.inner { animation: unfold 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes unfold {
+  from { clip-path: polygon(0 0, 0 5%, 0 100%, 0 95%); }
+  to { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+
+.rain { position: fixed; inset: 0; width: 100%; height: 100%; opacity: 0.12; pointer-events: none; }
+.inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-areas: 'back back' 'head head' 'photo sheet' 'next next';
+  align-items: start;
+  gap: 28px clamp(24px, 4vw, 56px);
+  width: min(92vw, 1180px);
+  margin: 0 auto;
+  padding: clamp(24px, 5vh, 56px) 0 clamp(48px, 9vh, 96px);
+}
+
+.back {
+  grid-area: back;
+  justify-self: start;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 2px solid var(--red);
+  background: none;
+  color: var(--paper);
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.head { grid-area: head; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.name { font: 700 var(--t-eyecatch) / 0.82 var(--f-title); letter-spacing: 0.02em; }
+
+/* Captura em cor: aqui o visitante abriu o projeto (DESIGN.md §7). */
+.photo { grid-area: photo; position: sticky; top: 24px; margin: 0; border: 3px solid var(--paper); background: var(--paper); }
+.photo img { display: block; width: 100%; height: auto; }
+
+.sheet { grid-area: sheet; padding: clamp(20px, 3vw, 36px); color: var(--ink); }
+.sheet p { max-width: 64ch; }
+.part { margin: 22px 0 8px; color: var(--ink-soft); font: 700 var(--t-label) / 1.2 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; }
+.part:first-child { margin-top: 0; }
+.clues { margin: 0; padding-left: 20px; }
+.clues li + li { margin-top: 6px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tags li { padding: 6px 10px; background: var(--ink); color: var(--paper); font: 700 var(--t-label) / 1.2 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; }
+.refs { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.host { font: 700 13px / 1.2 var(--f-mono); }
+
+/* Próximo projeto: uma dobra larga no fim da ficha; a captura ganha cor quando o visitante aponta. */
+.next {
+  grid-area: next;
+  position: relative;
+  display: grid;
+  align-content: end;
+  justify-items: start;
+  gap: 8px;
+  min-height: clamp(220px, 38vh, 360px);
+  margin-top: clamp(32px, 7vh, 72px);
+  padding: 9% clamp(20px, 4vw, 48px) 7%;
+  border: 0;
+  background: var(--desk);
+  color: var(--paper);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 9%, 100% 100%, 0 91%);
+}
+.next img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+  filter: grayscale(1) contrast(1.1) brightness(0.25);
+  transition: filter 0.65s cubic-bezier(0.2, 0.8, 0.2, 1), scale 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* Em cor, mas ainda escura: o nome em --paper continua legível sobre capturas claras. */
+.next:hover img, .next:focus-visible img { filter: brightness(0.38); scale: 1.04; }
+.next:focus-visible { outline: 3px solid var(--red); outline-offset: -8px; }
+.nextLabel, .nextName, .nextArrow { position: relative; }
+.nextLabel { padding: 5px 8px; background: var(--red); font: 700 var(--t-label) / 1.2 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; }
+.nextName { font: 700 var(--t-eyecatch) / 0.82 var(--f-title); letter-spacing: 0.02em; }
+.nextArrow {
+  position: absolute;
+  right: clamp(20px, 4vw, 48px);
+  bottom: 14%;
+  font: 700 clamp(48px, 7vw, 96px) / 1 var(--f-title);
+  transition: translate 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.next:hover .nextArrow, .next:focus-visible .nextArrow { translate: 16px 0; }
+
+@media (max-width: 767px) {
+  .inner { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'back' 'head' 'photo' 'sheet' 'next'; gap: 20px; }
+  .next { min-height: 200px; margin-top: 24px; }
+  .nextArrow { display: none; }
+  .photo { position: static; max-width: 260px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .file[open], .inner { animation: none; }
+  .next img, .nextArrow { transition: none; }
+}

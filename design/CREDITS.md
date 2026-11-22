@@ -12,6 +12,15 @@
 
 Os arquivos de Humane, Cabinet Grotesk e o subconjunto do Reggae One ficam em `public/fonts/`; as demais vêm do pacote `@fontsource/*` e o Vite as serve do próprio site.
 
+## Código de terceiros
+
+Pens exportados pelo Jean (pastas `design/chromatic-folds/` e `design/the-matrixanimation-timeline/`, com o `LICENSE.txt` de cada um). Serviram de base; o código do site foi reescrito na identidade do DESIGN.md.
+
+| O quê | Autor | Licença | Origem | Onde |
+|---|---|---|---|---|
+| Chromatic Folds (leque de dobras: `clip-path` em zigue-zague, sombra de dobra, `flex` que abre) | Matt Cannon | MIT, © 2026 Matt Cannon | https://codepen.io/editor/matt-cannon/pen/01a1e5fd-b92a-7dcd-8735-568dbe0da3fb | `src/scenes/Projects.module.css` |
+| The Matrix - animation-timeline (ideia da chuva de caracteres; refeita em canvas, sem o CSS original) | Chris Bolson | MIT, © 2026 Chris Bolson | https://codepen.io/editor/cbolson/pen/01a1d14a-b9ec-7700-85c2-5107be451f2c | `src/ui/MatrixRain.tsx` |
+
 ## Imagens
 
 - **40 quadros** (`public/static/frames2/`): tirados do vídeo do próprio Jean (`euu-semmarca.mp4`), recortados para fundo transparente em 2026-11-21. Personagem do Jean.
