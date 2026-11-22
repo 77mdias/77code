@@ -4,28 +4,18 @@
   overflow: clip;
 }
 
+/* Celular: foto 3x4 ao lado do nome, como numa ficha; o resto embaixo. */
 .file {
   display: grid;
-  gap: 32px;
+  gap: 14px;
   max-width: 1180px;
   margin: 0 auto;
-  grid-template-columns: 1fr;
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-areas: "portrait head" "about about" "spec spec";
 }
+.text { display: contents; }
 
-.head {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-.title {
-  margin: 0;
-  color: var(--paper);
-  font: 600 var(--t-section) / 1 var(--f-section);
-  letter-spacing: 0.04em;
-}
-
-.portrait { padding: 0 6px 6px 0; }
+.portrait { grid-area: portrait; padding: 0 4px 4px 0; }
 .portrait img {
   display: block;
   width: 100%;
@@ -36,39 +26,92 @@
   object-position: 52% 35%;
 }
 
-.about {
-  display: grid;
-  gap: 14px;
+.head {
+  grid-area: head;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.title {
+  margin: 0;
   color: var(--paper);
-  font: 400 var(--t-body) / 1.6 var(--f-body);
+  font: 600 var(--t-section) / 1 var(--f-section);
+  letter-spacing: 0.04em;
+}
+
+.about {
+  grid-area: about;
+  display: grid;
+  gap: 8px;
+  color: var(--paper);
+  font: 400 var(--t-body) / 1.5 var(--f-body);
 }
 .about p { margin: 0; max-width: 60ch; }
 
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .specialties {
+  grid-area: spec;
   display: grid;
-  gap: 24px;
+  gap: var(--gutter);
   grid-template-columns: 1fr;
 }
 .specialty {
   height: 100%;
-  padding: 20px;
+  padding: 10px 14px;
   color: var(--ink);
 }
 .specialty h3 {
-  margin: 0 0 12px;
-  font: 800 20px / 1.1 var(--f-section);
+  margin: 0 0 6px;
+  font: 800 18px / 1.1 var(--f-section);
 }
 .specialty ul {
   margin: 0;
-  padding-left: 1.2em;
-  font: 400 var(--t-body) / 1.5 var(--f-body);
+  padding-left: 1.1em;
+  font: 400 15px / 1.4 var(--f-body);
 }
-.specialty li + li { margin-top: 8px; }
+.specialty li + li { margin-top: 4px; }
 
 @media (min-width: 768px) {
   .profile { padding: 96px 32px; }
-  .file { grid-template-columns: 5fr 7fr; align-items: start; column-gap: 48px; }
-  .head { grid-column: 1 / -1; }
+  .file {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    grid-template-areas: "portrait text" "spec spec";
+    gap: 32px 48px;
+    align-items: start;
+  }
+  .text { grid-area: text; display: grid; gap: 24px; }
+  .head, .about { grid-area: auto; }
+  .portrait { padding: 0 6px 6px 0; }
   .portrait img { aspect-ratio: 1; }
-  .specialties { grid-column: 1 / -1; grid-template-columns: repeat(3, 1fr); }
+  .about { gap: 14px; line-height: 1.6; }
+  .specialties { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .specialty { padding: 20px; }
+  .specialty h3 { margin-bottom: 12px; font-size: 20px; }
+  .specialty ul { font-size: var(--t-body); line-height: 1.5; }
+  .specialty li + li { margin-top: 8px; }
+}
+
+/* Preso: a ficha inteira cabe na tela; o JS encolhe (--fit) quando ela passa. */
+@media (prefers-reduced-motion: no-preference) {
+  .profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100svh;
+    padding-block: 16px;
+  }
+  .file { width: 100%; scale: var(--fit, 1); }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  .profile { padding-block: 48px; }
 }
