@@ -16,6 +16,8 @@ test('a CSP deixa o Cloudflare Web Analytics (injetado no deploy) carregar e env
   const csp = (await request.get('/')).headers()['content-security-policy'];
   expect(csp).toMatch(/script-src [^;]*https:\/\/static\.cloudflareinsights\.com/);
   expect(csp).toMatch(/connect-src [^;]*https:\/\/cloudflareinsights\.com/);
+  expect(csp).toMatch(/script-src [^;]*https:\/\/challenges\.cloudflare\.com/);
+  expect(csp).toMatch(/frame-src [^;]*https:\/\/challenges\.cloudflare\.com/);
 });
 
 test('rota inexistente dá 404', async ({ request }) => {
@@ -29,18 +31,81 @@ test('a página 404 não fica em branco e leva de volta à home', async ({ page 
   await expect(page.locator('a[href="/"]')).toBeVisible();
 });
 
-test('chat responde o aviso local e não chama /api/chat', async ({ page }) => {
-  const calls = [];
-  page.on('request', (r) => r.url().includes('/api/chat') && calls.push(r.url()));
+// Os testes do chat interceptam /api/chat: nunca chamam o Claude de verdade.
+async function send(page, text) {
+  await page.evaluate((t) => {
+    document.getElementById('chat-input').value = t;
+    document.getElementById('chat-send-btn').click();
+  }, text);
+}
+const lastBot = (page) => page.locator('#chat-messages .msg-bot').last();
+
+test('a Flora responde pelo /api/chat e muda a expressão', async ({ page }) => {
+  let body;
+  await page.route('**/api/chat', (r) => { body = r.request().postDataJSON(); r.fulfill({ json: { reply: 'Hi! I am Flora.', expression: 'happy' } }); });
+  await page.goto('/');
+  await waitLoader(page);
+  await send(page, 'oi');
+  await expect(lastBot(page)).toHaveText('Hi! I am Flora.');
+  await expect(page.locator('#chat-messages .block-bot .msg-name').last()).toHaveText('FLORA');
+  await expect(page.locator('#exp-happy')).toHaveClass(/active/);
+  expect(body.messages.at(-1)).toEqual({ role: 'user', content: 'oi' });
+  expect(body.turnstileToken).toBeTruthy();
+});
+
+test('a segunda mensagem leva o histórico', async ({ page }) => {
+  const bodies = [];
+  await page.route('**/api/chat', (r) => { bodies.push(r.request().postDataJSON()); r.fulfill({ json: { reply: `resposta ${bodies.length}`, expression: 'warm' } }); });
+  await page.goto('/');
+  await waitLoader(page);
+  await send(page, 'primeira');
+  await expect(lastBot(page)).toHaveText('resposta 1');
+  await send(page, 'segunda');
+  await expect(lastBot(page)).toHaveText('resposta 2');
+  expect(bodies[1].messages).toEqual([
+    { role: 'user', content: 'primeira' },
+    { role: 'assistant', content: 'resposta 1' },
+    { role: 'user', content: 'segunda' },
+  ]);
+});
+
+test('429 vira uma fala da Flora', async ({ page }) => {
+  await page.route('**/api/chat', (r) => r.fulfill({ status: 429, json: { error: 'rate_limited' } }));
+  await page.goto('/');
+  await waitLoader(page);
+  await send(page, 'oi');
+  await expect(lastBot(page)).toContainText('minute');
+});
+
+test('não duplica o histórico com cliques rápidos', async ({ page }) => {
+  let calls = 0;
+  await page.route('**/api/chat', async (r) => { calls++; await new Promise((ok) => setTimeout(ok, 1500)); r.fulfill({ json: { reply: 'ok', expression: 'warm' } }); });
   await page.goto('/');
   await waitLoader(page);
   await page.evaluate(() => {
-    document.getElementById('chat-input').value = 'oi';
-    document.getElementById('chat-send-btn').click();
+    const input = document.getElementById('chat-input');
+    const btn = document.getElementById('chat-send-btn');
+    for (let i = 0; i < 3; i++) { input.value = 'oi'; btn.click(); }
   });
-  await expect(page.locator('#chat-messages .msg-bot').last()).toContainText("I'm still being set up");
-  await expect(page.locator('#chat-messages .block-bot .msg-name').last()).toHaveText('FLORA');
-  expect(calls).toEqual([]);
+  await expect(lastBot(page)).toHaveText('ok');
+  expect(calls).toBe(1);
+});
+
+test('sem Turnstile a Flora avisa e o campo continua livre', async ({ page }) => {
+  let calls = 0;
+  await page.route('https://challenges.cloudflare.com/**', (r) => r.abort());
+  await page.route('**/api/chat', (r) => { calls++; r.fulfill({ json: { reply: 'x', expression: 'warm' } }); });
+  await page.goto('/');
+  await waitLoader(page);
+  await send(page, 'oi');
+  await expect(lastBot(page)).toContainText('verify');
+  await expect(page.locator('#chat-input')).toBeEnabled();
+  expect(calls).toBe(0);
+});
+
+test('aviso de privacidade aparece embaixo do chat', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.chat-privacy')).toHaveText("Messages are answered by Claude (Anthropic) and aren't stored.");
 });
 
 test('a CSP deixa o navegador falar com o Web3Forms', async ({ page }) => {

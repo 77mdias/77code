@@ -2,6 +2,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import Lenis from '@studio-freight/lenis';
+import { toRequestMessages, floraErrorReply } from './chat-history.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -723,29 +724,64 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    function fallbackTimeBasedTalking(replyText) {
-        setExpression('explain');
+    // A Flora mantém a expressão escolhida enquanto "fala" e depois volta ao estado parado.
+    function holdExpressionWhileTalking(expression, replyText) {
+        setExpression(expression);
         const talkTimeMs = Math.max(2500, Math.min(replyText.length * 50, 7000));
         setTimeout(() => setExpression('longidle'), talkTimeMs);
     }
 
-    // Chat bloqueado até existir o backend próprio (API do Claude): nada sai do navegador.
-    // Para ligar, troque para true e aponte o fetch abaixo para o endpoint novo.
-    const CHAT_ENABLED = false;
-    const CHAT_OFFLINE_REPLY = "I'm still being set up! Soon you'll be able to ask me anything about DIAS77 and the projects here. For now, reach out through the contact section below.";
+    // Turnstile (Cloudflare, invisível): um token novo a cada mensagem. Em localhost, a chave de teste que sempre aprova.
+    const TURNSTILE_SITE_KEY = ['localhost', '127.0.0.1'].includes(location.hostname)
+        ? '1x00000000000000000000BB'
+        : 'TURNSTILE_SITE_KEY_PENDENTE';
+    let turnstileLoading = null;
+    let turnstileWidget = null;
+    let turnstileUsed = false;
+    let pendingToken = null;
 
+    function loadTurnstile() {
+        if (!turnstileLoading) {
+            turnstileLoading = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+                script.async = true;
+                script.onload = () => resolve(window.turnstile);
+                script.onerror = () => { turnstileLoading = null; reject(new Error('turnstile indisponível')); };
+                document.head.appendChild(script);
+            });
+        }
+        return turnstileLoading;
+    }
+
+    async function getTurnstileToken() {
+        const turnstile = await loadTurnstile();
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => { pendingToken = null; reject(new Error('turnstile demorou')); }, 15000);
+            pendingToken = {
+                resolve: (token) => { clearTimeout(timer); pendingToken = null; resolve(token); },
+                reject: (err) => { clearTimeout(timer); pendingToken = null; reject(err); },
+            };
+            if (turnstileWidget === null) {
+                turnstileWidget = turnstile.render('#flora-turnstile', {
+                    sitekey: TURNSTILE_SITE_KEY,
+                    execution: 'execute',
+                    appearance: 'interaction-only',
+                    callback: (token) => pendingToken?.resolve(token),
+                    'error-callback': () => pendingToken?.reject(new Error('turnstile falhou')),
+                });
+            } else if (turnstileUsed) {
+                turnstile.reset(turnstileWidget);
+            }
+            turnstileUsed = true;
+            turnstile.execute(turnstileWidget);
+        });
+    }
+
+    // Só os textos da conversa desta página; recarregar recomeça.
+    const chatHistory = [];
     let chatRequestInFlight = false;
     async function processUserMessage() {
-        if (!CHAT_ENABLED) {
-            const text = chatInput.value.trim();
-            if (!text) return;
-            appendMessage(text, 'user');
-            chatInput.value = '';
-            appendMessage(CHAT_OFFLINE_REPLY, 'bot');
-            setExpression('kind');
-            setTimeout(() => setExpression('longidle'), 3500);
-            return;
-        }
         const text = chatInput.value.trim();
         if (!text || chatRequestInFlight) return;
         if (text.length > 1200) {
@@ -761,53 +797,39 @@ document.addEventListener('DOMContentLoaded', () => {
         appendMessage("typing", "bot", typingId);
         setExpression('thinking');
 
+        const sayError = (reply) => {
+            document.getElementById(typingId)?.remove();
+            appendMessage(reply, 'bot');
+            setExpression('shock');
+            setTimeout(() => setExpression('longidle'), 2500);
+        };
+
         try {
+            let turnstileToken;
+            try {
+                turnstileToken = await getTurnstileToken();
+            } catch {
+                sayError(floraErrorReply(403));
+                return;
+            }
+
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify({ messages: toRequestMessages(chatHistory, text), turnstileToken }),
             });
-
-            if (!response.ok) throw new Error(`Chat API returned ${response.status}`);
+            if (!response.ok) {
+                sayError(floraErrorReply(response.status));
+                return;
+            }
             const data = await response.json();
 
             document.getElementById(typingId)?.remove();
             appendMessage(data.reply, 'bot');
-
-            const targetContextExpr = data.expression || 'warm';
-            setExpression(targetContextExpr);
-
-            if (data.audio_base64 && data.audio_base64.length > 50) {
-                floraVoice.pause();
-                floraVoice.removeAttribute('src');
-                floraVoice.load();
-                floraVoice.src = "data:audio/mpeg;base64," + data.audio_base64;
-
-                floraVoice.oncanplaythrough = () => {
-                    floraVoice.oncanplaythrough = null;
-                    setTimeout(() => {
-                        floraVoice.play().catch(e => {
-                            console.warn("Autoplay blocked. Using fallback timer.", e);
-                            fallbackTimeBasedTalking(data.reply);
-                        });
-                    }, 400);
-                };
-
-                setTimeout(() => {
-                    if (currentExpression === targetContextExpr && !floraVoice.paused === false) {
-                        fallbackTimeBasedTalking(data.reply);
-                    }
-                }, 4000);
-            } else {
-                setTimeout(() => { fallbackTimeBasedTalking(data.reply); }, 800);
-            }
-
-        } catch (error) {
-            console.error('Flora chat failed:', error);
-            document.getElementById(typingId)?.remove();
-            appendMessage("I'm sorry, I'm having trouble connecting to my neural network right now.", 'bot');
-            setExpression('shock');
-            setTimeout(() => setExpression('longidle'), 2500);
+            chatHistory.push({ role: 'user', content: text }, { role: 'assistant', content: data.reply });
+            holdExpressionWhileTalking(data.expression || 'warm', data.reply);
+        } catch {
+            sayError(floraErrorReply(0));
         } finally {
             chatRequestInFlight = false;
         }

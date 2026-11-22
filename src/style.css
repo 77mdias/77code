@@ -1468,3 +1468,10 @@ body.mobile-input-focus #contact .c-form-card {
 @media screen and (max-width: 768px) {
     .fg-img { object-position: 30% 15%; } /* a personagem agora está a ~30% da largura */
 }
+
+/* Chat da Flora: widget do Turnstile (só aparece se pedir interação) e aviso de privacidade */
+#flora-turnstile:empty { display: none; }
+.chat-privacy {
+    margin-top: 1.2vh; font-family: 'Space Grotesk', sans-serif; font-size: clamp(10px, 0.65vw, 12px);
+    letter-spacing: 0.05em; color: rgba(236, 233, 224, 0.45);
+}
