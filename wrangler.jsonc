@@ -2,9 +2,17 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "77code",
   "compatibility_date": "2026-11-21",
-  // Só arquivos estáticos (dist/), sem código de Worker por enquanto.
+  // O código do Worker (chat da Flora) só roda para /api/*; o resto é arquivo estático de dist/.
+  "main": "src/worker/index.js",
   // Rota inexistente: status 404 com a página public/404.html (nunca a home disfarçada).
-  "assets": { "directory": "./dist", "not_found_handling": "404-page" },
+  "assets": { "directory": "./dist", "not_found_handling": "404-page", "run_worker_first": ["/api/*"] },
+  // Desligar o chat: "false" aqui + deploy, ou trocar a variável no painel (vale até o próximo deploy).
+  "vars": { "CHAT_ENABLED": "true" },
+  // 10 mensagens por minuto por IP.
+  "ratelimits": [
+    { "name": "CHAT_LIMITER", "namespace_id": "7701", "simple": { "limit": 10, "period": 60 } }
+  ],
+  // Segredos (fora deste arquivo): ANTHROPIC_API_KEY e TURNSTILE_SECRET_KEY, via `wrangler secret put`.
   "workers_dev": true,
   // Domínios próprios: o deploy cria o registro DNS. Não pode existir outro registro A/AAAA/CNAME
   // com esses nomes na zona (os da Vercel precisam sair antes).
