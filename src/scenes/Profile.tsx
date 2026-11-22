@@ -57,15 +57,17 @@ export function Profile() {
 
     const k = phone ? 0.5 : 1; // no celular o parallax anda metade
 
-    // Chegada, antes de prender: a folha varre a cena e o personagem sobe de trás da borda.
-    gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: el, start: 'top 90%', end: 'top top', scrub: true } })
-      .fromTo(paper, desk ? { clipPath: PAPER.closed } : { yPercent: -100 },
-        desk ? { clipPath: PAPER.open, ease: 'power2.inOut', duration: 0.8 } : { yPercent: 0, ease: 'power2.inOut', duration: 0.8 }, 0)
-      .fromTo(portrait.querySelector('img'), { yPercent: 40 }, { yPercent: 0, ease: 'power3.out', duration: 0.6 }, 0.4);
+    // Chegada, antes de prender: o personagem sobe de trás da borda de baixo do próprio quadro. Começa
+    // escondido por inteiro e só sobe na 2ª metade, quando a folha já está atrás dele: sem isso ele
+    // aparecia solto sobre o fundo preto (o moletom é escuro). No desktop a folha também varre a cena;
+    // na pilha ela já vem com a seção, que entra rolando.
+    const arrive = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: el, start: 'top 90%', end: 'top top', scrub: true } })
+      .fromTo(portrait.querySelector('img'), { yPercent: 101 }, { yPercent: 0, ease: 'power3.out', duration: 0.5 }, 0.5);
+    if (desk) arrive.fromTo(paper, { clipPath: PAPER.closed }, { clipPath: PAPER.open, ease: 'power2.inOut', duration: 0.6 }, 0);
 
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
-      scrollTrigger: { trigger: el, start: 'top top', end: '+=180%', pin: true, scrub: true, invalidateOnRefresh: true },
+      scrollTrigger: { trigger: el, start: 'top top', end: '+=260%', pin: true, scrub: true, invalidateOnRefresh: true },
     })
       // Rótulo e cargo varrem da esquerda; o título sobe de dentro de um corte.
       .fromTo(label, { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: SHOWN, duration: 0.08 }, 0)

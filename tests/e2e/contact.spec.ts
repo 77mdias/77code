@@ -180,6 +180,10 @@ test('o rodapé tem END OF FILE e 終 acessível', async ({ page }) => {
   for (const t of ['Story & code', 'Jean Dias', 'Partner', 'Flora', 'Filed in', 'Presidente Prudente']) await expect(footer.getByText(t, { exact: true })).toBeAttached();
   await expect(footer.getByRole('link')).toHaveCount(4);
   await expect(footer.locator('[data-testid="rewind"]')).toHaveText('Rewind episode ↑');
+  // O gato na lua (rabo e duas orelhas animados) no lugar do DIAS77 gigante.
+  await expect(footer.locator('svg animate')).toHaveCount(2);
+  await expect(footer.locator('svg animateTransform')).toHaveCount(2);
+  await expect(footer.getByText('DIAS77', { exact: true })).toHaveCount(0);
 });
 
 const toBottom = (page: Page) => page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
@@ -219,6 +223,8 @@ test('menos movimento: nada preso, formulário e créditos prontos', async ({ pa
   expect(await formOpacity(page)).toBe(1);
   await expect(page.locator(SEL).locator('h2')).toHaveCSS('clip-path', 'none');
   await expect(page.locator('[data-testid="credits"]')).toHaveCSS('transform', 'none');
+  // O gato fica parado.
+  await expect(page.locator('footer svg animate, footer svg animateTransform')).toHaveCount(0);
   const form = await typeIn(page);
   await form.getByRole('button').click();
   await expect(form.getByRole('button')).toHaveText('Sent');

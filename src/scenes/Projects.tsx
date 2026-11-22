@@ -50,7 +50,7 @@ export function Projects() {
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: el, start: 'top top', end: '+=200%', pin: true, scrub: true, invalidateOnRefresh: true,
+        trigger: el, start: 'top top', end: '+=320%', pin: true, scrub: true, invalidateOnRefresh: true,
         onUpdate: (st) => setActive(st.progress < REVEAL ? -1
           : Math.min(CASES.length - 1, Math.floor(((st.progress - REVEAL) / (1 - REVEAL)) * CASES.length))),
       },

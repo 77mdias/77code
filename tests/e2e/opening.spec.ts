@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { watch, waitLoader } from './helpers.js';
+import { watch, waitLoader, scrollThrough } from './helpers.js';
 import { JP } from '../../src/content/jp.ts';
 
 const frameOf = async (page: Page) => {
@@ -102,10 +102,10 @@ test('o scroll vira o Jean', async ({ page }) => {
   await last;
   expect(await frameOf(page)).toBe(1);
 
-  // O pin dura 150% da tela; 75% dele dá o quadro ~30.
+  // O pin dura 220% da tela; 75% dele dá o quadro ~30.
   await page.evaluate(() => {
     const top = document.querySelector('#opening')!.parentElement!.getBoundingClientRect().top + scrollY;
-    scrollTo(0, top + innerHeight * 1.5 * 0.75);
+    scrollTo(0, top + innerHeight * 2.2 * 0.75);
   });
   await expect.poll(() => frameOf(page)).toBeGreaterThan(20);
 
@@ -113,16 +113,41 @@ test('o scroll vira o Jean', async ({ page }) => {
   await expect.poll(() => frameOf(page)).toBe(1);
 });
 
-test('recarregar no meio da página', async ({ page }) => {
+// Recarregar (F5) sempre recomeça do início, esteja a página onde estiver.
+test('recarregar no meio da página volta ao início', async ({ page }) => {
   const w = watch(page);
   await page.goto('/');
   await waitLoader(page);
   await page.evaluate(() => document.querySelector('#projects')!.scrollIntoView());
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(1000);
   await page.reload();
   await waitLoader(page);
-  await expect.poll(() => frameOf(page), { timeout: 15_000 }).toBeGreaterThanOrEqual(30);
+  // Espera fixa curta: o que não pode acontecer é a posição antiga voltar depois do loading.
+  await page.waitForTimeout(600);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+  expect(await frameOf(page)).toBe(1);
   expect(w.errors).toEqual([]);
   expect(w.bad).toEqual([]);
+});
+
+test('recarregar com link direto ou com a ficha de um projeto aberta também volta ao início', async ({ page }) => {
+  await page.goto('/#contact');
+  await waitLoader(page);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(1000);
+  await page.reload();
+  await waitLoader(page);
+  await page.waitForTimeout(600);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+  expect(new URL(page.url()).hash).toBe('');
+
+  await scrollThrough(page, '#projects', 0.5);
+  await page.locator('#projects [data-testid="project"] button').first().click();
+  await expect(page.getByTestId('project-file')).toBeVisible();
+  await page.reload();
+  await waitLoader(page);
+  await page.waitForTimeout(600);
+  await expect(page.getByTestId('project-file')).toBeHidden();
+  expect(await page.evaluate(() => scrollY)).toBe(0);
 });
 
 test('menos movimento', async ({ page }) => {

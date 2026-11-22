@@ -23,6 +23,11 @@ const FACES: Record<(typeof EXPRESSIONS)[number], string> = {
 };
 
 // O chat entra depois que ela sorri (meio do pin) e termina antes do fim, para estar inteiro quando o pin solta.
+// O trecho preso tem duas partes: a animação (1 tela de rolagem) e a espera com o chat já pronto
+// (2 telas), para a cena não soltar assim que termina. SMILE_AT e CHAT_IN são frações da animação.
+const ANIM = 1;
+const HOLD = 2;
+const DONE = ANIM / (ANIM + HOLD); // fração do pin em que a animação acaba
 const SMILE_AT = 0.5;
 const CHAT_IN = [0.65, 0.9];
 
@@ -68,8 +73,8 @@ export function FloraStudio() {
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: el, start: 'top top', end: '+=100%', pin: true, scrub: true, invalidateOnRefresh: true,
-        onUpdate: (st) => setGreeted(st.progress >= SMILE_AT),
+        trigger: el, start: 'top top', end: `+=${(ANIM + HOLD) * 100}%`, pin: true, scrub: true, invalidateOnRefresh: true,
+        onUpdate: (st) => setGreeted(st.progress / DONE >= SMILE_AT),
       },
     })
       // Câmera entrando: o estúdio todo sai do zoom; fundo e janela andam pouco, a Flora anda mais.
@@ -80,12 +85,14 @@ export function FloraStudio() {
       // Corte reto de cima para baixo; a inserção negativa no fim não recorta o contorno de foco.
       .fromTo(`.${styles.chat}`,
         { opacity: 0, y: 24 * k, clipPath: 'inset(0% 0% 100% 0%)' },
-        { opacity: 1, y: 0, clipPath: 'inset(-10% -10% -10% -10%)', duration: to - from, ease: 'power3.out' }, from);
+        { opacity: 1, y: 0, clipPath: 'inset(-10% -10% -10% -10%)', duration: to - from, ease: 'power3.out' }, from)
+      // A espera: nada se mexe, a cena só continua presa com o chat pronto.
+      .to({}, { duration: HOLD }, ANIM);
 
-    // Quem chega ao campo pelo teclado no meio do pin vai para o fim, onde o chat está inteiro.
+    // Quem chega ao campo pelo teclado no meio da animação vai para o começo da espera, onde o chat está inteiro.
     // rAF: o scroll de foco do navegador vem depois do focusin.
     const st = tl.scrollTrigger!;
-    const onFocus = () => requestAnimationFrame(() => { if (st.progress < 1) scrollTo(0, st.end); });
+    const onFocus = () => requestAnimationFrame(() => { if (st.progress < DONE) scrollTo(0, st.start + (st.end - st.start) * DONE); });
     el.addEventListener('focusin', onFocus);
     return () => el.removeEventListener('focusin', onFocus);
     // revertOnUpdate: sem ele o useGSAP não desfaz o pin e a timeline antigos quando as dependências mudam.

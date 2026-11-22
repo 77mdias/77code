@@ -20,6 +20,7 @@ Pens exportados pelo Jean (pastas `design/chromatic-folds/` e `design/the-matrix
 |---|---|---|---|---|
 | Chromatic Folds (leque de dobras: `clip-path` em zigue-zague, sombra de dobra, `flex` que abre) | Matt Cannon | MIT, © 2026 Matt Cannon | https://codepen.io/editor/matt-cannon/pen/01a1e5fd-b92a-7dcd-8735-568dbe0da3fb | `src/scenes/Projects.module.css` |
 | The Matrix - animation-timeline (ideia da chuva de caracteres; refeita em canvas, sem o CSS original) | Chris Bolson | MIT, © 2026 Chris Bolson | https://codepen.io/editor/cbolson/pen/01a1d14a-b9ec-7700-85c2-5107be451f2c | `src/ui/MatrixRain.tsx` |
+| Loader cat (gato sentado abanando o rabo; convertido para SVG e recolorido por `scripts/make-cat.py`) | o arquivo só registra "LottieFiles" como autor | Gratuita, conforme informado pelo Jean em 2026-11-22 (sem link da página de origem) | `design/Loader cat.json`, exportado pelo Jean | `src/ui/LoaderCat.tsx`, no rodapé |
 
 ## Imagens
 

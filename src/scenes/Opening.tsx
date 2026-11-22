@@ -67,7 +67,7 @@ export function Opening({ ready, onFrames }: { ready: boolean; onFrames: (settle
       .to(layers.fg, { y: -22, ease: 'none' }, 0);
 
     const st = ScrollTrigger.create({
-      trigger: root.current, pin: true, start: 'top top', end: '+=150%', scrub: true, animation: drift,
+      trigger: root.current, pin: true, start: 'top top', end: '+=220%', scrub: true, animation: drift,
       onUpdate: (self) => { wanted.current = frameForProgress(self.progress); show(); },
     });
     wanted.current = frameForProgress(st.progress);

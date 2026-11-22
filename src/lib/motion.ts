@@ -42,11 +42,19 @@ export function useLenis(): Lenis | null {
 
 const SCROLL_KEY = 'dias77:scrollY';
 
-// Ao recarregar, o navegador devolve o scroll antes de os pins existirem (página ainda curta)
-// e para no lugar errado. Guardamos a posição e voltamos quando o loading termina.
+const navType = () => (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type;
+
+// Recarregar (F5) recomeça do início: no topo, sem hash e sem ficha de projeto aberta (pedido do Jean).
+// Só o voltar/avançar do navegador devolve a posição: ele a restauraria antes de os pins existirem
+// (página ainda curta) e pararia no lugar errado, então guardamos e voltamos quando o loading termina.
 export function useScrollMemory(ready: boolean) {
   useEffect(() => {
     history.scrollRestoration = 'manual';
+    if (navType() === 'reload') {
+      try { sessionStorage.removeItem(SCROLL_KEY); } catch { /* sem storage */ }
+      history.replaceState(null, '', location.pathname + location.search);
+      scrollTo(0, 0);
+    }
     const save = () => { try { sessionStorage.setItem(SCROLL_KEY, String(scrollY)); } catch { /* sem storage */ } };
     addEventListener('pagehide', save);
     return () => removeEventListener('pagehide', save);
@@ -54,10 +62,9 @@ export function useScrollMemory(ready: boolean) {
 
   useEffect(() => {
     if (!ready) return;
-    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
     let y = 0;
     try { y = Number(sessionStorage.getItem(SCROLL_KEY)); sessionStorage.removeItem(SCROLL_KEY); } catch { /* sem storage */ }
-    if (!y || (nav?.type !== 'reload' && nav?.type !== 'back_forward')) return;
+    if (!y || navType() !== 'back_forward') return;
     ScrollTrigger.refresh();
     scrollTo(0, y);
   }, [ready]);

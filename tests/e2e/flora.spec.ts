@@ -166,31 +166,56 @@ for (const [width, height] of SIZES) {
   });
 }
 
+// O trecho preso é 1 tela de animação + 2 de espera: `anim(f)` é a fração do pin que equivale a `f` da animação.
+const anim = (f: number) => f / 3;
+
 test('a Flora sorri ao entrar', async ({ page }) => {
   await page.goto('/');
   await waitLoader(page);
-  await scrollThrough(page, SEL, 0.2);
+  await scrollThrough(page, SEL, anim(0.2));
   await expect(face(page)).toHaveAttribute('data-expression', 'warm');
-  await scrollThrough(page, SEL, 0.6);
+  await scrollThrough(page, SEL, anim(0.6));
   await expect(face(page)).toHaveAttribute('data-expression', 'happy');
   // Voltando, ela volta ao rosto de antes.
-  await scrollThrough(page, SEL, 0.2);
+  await scrollThrough(page, SEL, anim(0.2));
   await expect(face(page)).toHaveAttribute('data-expression', 'warm');
 });
 
-test('o chat entra no fim do trecho preso', async ({ page }) => {
+test('o chat entra no fim da animação', async ({ page }) => {
   await page.goto('/');
   await waitLoader(page);
-  await scrollThrough(page, SEL, 0.4);
+  await scrollThrough(page, SEL, anim(0.4));
   expect(await chatOpacity(page)).toBeLessThan(0.1);
-  await scrollThrough(page, SEL, 0.95);
+  await scrollThrough(page, SEL, anim(0.95));
   expect(await chatOpacity(page)).toBeGreaterThanOrEqual(0.9);
+});
+
+// Com o chat pronto a cena não solta: fica presa por mais duas telas de rolagem, sem nada se mexer.
+test('depois da animação a cena espera presa com o chat pronto', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  const state = () => page.locator(SEL).evaluate((el) => ({
+    top: Math.round(el.getBoundingClientRect().top),
+    chat: getComputedStyle(el.querySelector('#chat-form')!.parentElement!).transform,
+  }));
+  const shots = [];
+  for (const f of [0.34, 0.6, 0.99]) {
+    await scrollThrough(page, SEL, f);
+    expect(await chatOpacity(page)).toBe(1);
+    await expect(face(page)).toHaveAttribute('data-expression', 'happy');
+    shots.push(await state());
+  }
+  expect(shots.every((s) => s.top === 0)).toBe(true);
+  expect(new Set(shots.map((s) => s.chat)).size).toBe(1);
+  // A espera ocupa duas telas de rolagem.
+  const screens = await page.locator(SEL).evaluate((el) => (el.parentElement!.offsetHeight - (el as HTMLElement).offsetHeight) / innerHeight);
+  expect(Math.round(screens)).toBe(3);
 });
 
 test('focar o campo no meio do pin mostra o chat', async ({ page }) => {
   await page.goto('/');
   await waitLoader(page);
-  await scrollThrough(page, SEL, 0.3);
+  await scrollThrough(page, SEL, anim(0.3));
   await page.locator('#chat-input').focus();
   await expect.poll(() => chatOpacity(page)).toBe(1);
 });

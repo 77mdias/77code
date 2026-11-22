@@ -54,7 +54,7 @@ export function Helix() {
     if (built.current) ScrollTrigger.sort();
     built.current = true;
     ScrollTrigger.create({
-      trigger: el, start: 'top top', end: '+=300%', pin: true, scrub: true,
+      trigger: el, start: 'top top', end: '+=380%', pin: true, scrub: true,
       onUpdate: (s) => draw(s.progress), onRefresh: (s) => draw(s.progress),
     });
   }, { dependencies: [reduced], scope: root, revertOnUpdate: true });

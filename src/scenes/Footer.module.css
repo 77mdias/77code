@@ -1,4 +1,4 @@
-/* Rodapé de encerramento sobre --ink (DESIGN.md §5). Texto em --paper ou --soft (~7:1); o DIAS77 vazado é decorativo. */
+/* Rodapé de encerramento sobre --ink (DESIGN_V1.md §5). Texto em --paper ou --soft (~7:1); o gato na lua é decorativo. */
 .footer {
   --soft: color-mix(in srgb, var(--paper) 65%, transparent);
   display: grid;
@@ -21,15 +21,9 @@
 .eof::after { content: ''; flex: 1; height: 2px; background: var(--paper); }
 .jp { font-size: 20px; letter-spacing: 0; }
 
-.logo {
-  font: 700 52vw / 0.8 var(--f-title);
-  color: transparent;
-  -webkit-text-stroke: 1.5px var(--paper);
-  text-align: center;
-  user-select: none;
-}
-
-.middle { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+/* Celular: o gato ocupa a linha de cima, grande; créditos e xícara dividem a de baixo. */
+.middle { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; }
+.cat { order: -1; grid-column: 1 / -1; justify-self: center; display: block; width: min(86vw, 420px); height: auto; overflow: visible; }
 
 /* Janela dos créditos: eles sobem por baixo e somem em degradê, como no fim do episódio. */
 .roll {
@@ -80,21 +74,23 @@
 
 @media (min-width: 768px) {
   .footer { padding: 72px 48px 40px; gap: 40px; }
-  .logo { font-size: clamp(280px, 36vw, 560px); -webkit-text-stroke-width: 2px; }
+  /* Créditos à esquerda, a lua enorme no meio (um pouco para a direita), a xícara no canto. */
+  .middle { grid-template-columns: minmax(0, 1fr) auto auto; gap: 48px; }
+  .cat { order: 0; grid-column: auto; width: clamp(360px, 46vw, 760px); margin-right: 6vw; }
   .cup { width: 104px; }
   .copy { margin-left: auto; }
 }
 
-/* Créditos e DIAS77 atrelados ao scroll da entrada do rodapé; sem suporte, ficam parados no lugar. */
+/* Créditos e gato atrelados ao scroll da entrada do rodapé; sem suporte, ficam parados no lugar. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    .credits, .logo {
+    .credits, .cat {
       animation: linear both;
       animation-timeline: --footer;
       animation-range: entry 0% entry 100%;
     }
     .credits { animation-name: roll; }
-    .logo { animation-name: lift; }
+    .cat { animation-name: lift; }
   }
 }
 @keyframes roll { from { transform: translateY(110%); } to { transform: none; } }
