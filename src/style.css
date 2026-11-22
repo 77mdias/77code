@@ -1230,7 +1230,7 @@ body { padding-right: 0 !important; }
 
 
 /* =========================================
-   TENZTAN LAB FLOATING BUTTON
+   DIAS77 LAB FLOATING BUTTON
    ========================================= */
 .lab-fab {
     position: fixed; right: 22px; bottom: 22px; z-index: 9990;
@@ -1259,7 +1259,7 @@ body { padding-right: 0 !important; }
     font-family: 'Noto Serif JP', serif; font-size: 16px; font-weight: 700; letter-spacing: 0;
     transition: background 0.35s ease, color 0.35s ease, transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
-/* Parts that slide open on hover / focus / .is-open: "Tenztan " and the arrow */
+/* Parts that slide open on hover / focus / .is-open: "DIAS77 " and the arrow */
 .lab-fab-more {
     display: inline-block; overflow: hidden; max-width: 0; opacity: 0;
     transition: max-width 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
@@ -1286,7 +1286,7 @@ body { padding-right: 0 !important; }
 }
 @media (prefers-reduced-motion: reduce) { .lab-fab.is-ready { animation: none; } .lab-fab, .lab-fab-more, .lab-fab-icon { transition: none; } }
 
-/* Footer: Tenztan Lab link */
+/* Footer: DIAS77 Lab link */
 .f-sub-heading { margin-top: 2.5vw; }
 .f-links a.f-lab-link { font-weight: 600; }
 .f-lab-jp { font-family: 'Noto Serif JP', serif; color: var(--cobalt); margin-right: 0.3em; }

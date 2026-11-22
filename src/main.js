@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         unlockScroll(); // Free the user to scroll!
 
-        // Reveal the Tenztan Lab button only once the loader is gone
+        // Reveal the DIAS77 Lab button only once the loader is gone
         const labFab = document.querySelector('.lab-fab');
         if (labFab) {
             labFab.classList.add('is-ready');
