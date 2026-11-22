@@ -20,8 +20,8 @@ test('a IA se chama Flora no título, no campo e na primeira fala', async ({ pag
   const flora = page.locator('section#flora');
   await expect(flora.locator('h2')).toContainText('Flora');
   await expect(page.locator('#chat-input')).toHaveAttribute('placeholder', /Flora/);
-  await expect(log(page).locator('[data-from="flora"]').first()).toContainText('My name is Flora');
-  await expect(page.getByLabel(/Flora/).first()).toBeVisible();
+  await expect(log(page).locator('[data-from="flora"]').first()).toHaveText("Hi, I'm Flora — Jean's partner on these cases. Ask me about any of them, how he works, or how to reach him.");
+  await expect(page.getByLabel('Message to Flora', { exact: true })).toBeVisible();
   await expect(log(page)).toHaveAttribute('aria-live', 'polite');
   await expect(page.locator('img[data-testid="flora"]')).toHaveAttribute('data-expression', 'warm');
 });

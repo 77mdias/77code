@@ -7,7 +7,7 @@ export type ChatMessage = { from: 'flora' | 'guest'; text: string };
 export const EXPRESSIONS = ['warm', 'explain', 'happy', 'thinking', 'shock', 'kind', 'return', 'aval_work'] as const;
 const REST = 'warm';
 
-const GREETING = 'Hello! My name is Flora. I am an AI companion connected to this gallery. Feel free to ask me anything about DIAS77 and the work shown here!';
+const GREETING = "Hi, I'm Flora — Jean's partner on these cases. Ask me about any of them, how he works, or how to reach him.";
 
 export function useFloraChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([{ from: 'flora', text: GREETING }]);
