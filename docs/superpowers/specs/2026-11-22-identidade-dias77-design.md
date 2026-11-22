@@ -33,7 +33,7 @@ O 77code.com.br no ar é o desenho do tenztan.in com dados e fotos do Jean: o c�
 - **CSP** (`public/_headers`): `default-src 'self'`; scripts só de `'self'`, Cloudflare Insights e Turnstile; fontes `'self'`. Por isso as fontes são servidas pelo próprio site.
 - **Deploy:** Workers Builds publica a cada push na `main`. Todo o trabalho fica na branch `feat/identidade-dias77`; o site no ar só muda no merge, aprovado pelo Jean.
 - **Pacotes:** pnpm 11 com `pnpm-workspace.yaml` do projeto (por causa do `~/pnpm-workspace.yaml`); versões exatas; `allowBuilds` para esbuild e workerd. Node 24.
-- **Licenças:** Humane (freeware, uso comercial liberado, arquivos não podem ser modificados — usar os `.woff2` do pacote como vieram); Google Fonts (OFL); Fontshare (ITF Free Font License); GSAP (gratuito inclusive comercial); Lenis (MIT).
+- **Licenças:** Humane (freeware, uso comercial liberado, arquivos não podem ser modificados — usar os `.woff2` do pacote como vieram); Google Fonts (OFL; Special Elite é Apache 2.0); Fontshare (ITF Free Font License); GSAP (gratuito inclusive comercial); Lenis (MIT).
 - **Segredos:** nenhum no código. `ANTHROPIC_API_KEY` e `TURNSTILE_SECRET_KEY` continuam como segredos do Worker.
 
 ## 4. Abordagens consideradas

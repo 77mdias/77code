@@ -41,7 +41,7 @@ Sistema visual do portfólio 77code.com.br. Vale para todo código, imagem e tex
 | Título principal (DIAS77, eyecatch, nome do caso) | **Humane** | Rajesh Rajput, Gumroad (freeware, uso comercial liberado; arquivos não podem ser modificados) | SemiBold, Bold |
 | Títulos de seção e rótulos fortes | **Cabinet Grotesk** | Fontshare (ITF Free Font License) | 800 |
 | Japonês (onomatopeia, rótulos) | **Reggae One** | Google Fonts (OFL) | 400 |
-| Texto datilografado (dossiê, relatório) | **Special Elite** | Google Fonts (OFL) | 400 |
+| Texto datilografado (dossiê, relatório) | **Special Elite** | Google Fonts (Apache 2.0) | 400 |
 | Texto corrido e interface (chat, formulário) | **Familjen Grotesk** | Google Fonts (OFL) | 400, 600 |
 | Números técnicos e etiquetas pequenas | `ui-monospace` do sistema | — | 700 |
 
