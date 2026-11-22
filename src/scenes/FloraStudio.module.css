@@ -5,7 +5,7 @@
   /* 40% fica em ~3.5:1 sobre --ink: só para a linha do campo, nunca para texto (texto usa --soft, ~6.5:1). */
   --faint: color-mix(in srgb, var(--paper) 40%, transparent);
   position: relative;
-  height: 100svh;
+  height: var(--scene-h);
   min-height: 560px;
   background: var(--desk);
   color: var(--paper);
@@ -62,8 +62,9 @@
 
 .chat {
   position: absolute;
-  inset: auto 0 0;
-  height: 54%;
+  /* Dentro da área segura: o campo não fica atrás da barra do navegador do celular. */
+  inset: auto 0 var(--scene-extra);
+  height: calc(var(--safe-h) * 0.54);
   display: flex;
   flex-direction: column;
   padding: 0 20px 14px;

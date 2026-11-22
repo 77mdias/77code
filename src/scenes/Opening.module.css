@@ -1,7 +1,7 @@
 .opening {
   --bg-ratio: calc(2752 / 1536);
   position: relative;
-  height: 100svh;
+  height: var(--scene-h);
   overflow: hidden;
   background: var(--ink);
 }
@@ -10,7 +10,7 @@
    os efeitos usam % do palco e ficam sempre sobre a janela, o abajur e a xícara.
    Centralizado com margem, não com transform, porque o GSAP move o palco. */
 .stage {
-  --w: max(calc(100% + 48px), calc((100svh + 48px) * var(--bg-ratio)));
+  --w: max(calc(100% + 48px), calc((var(--scene-h) + 48px) * var(--bg-ratio)));
   position: absolute;
   top: 50%;
   left: 50%;

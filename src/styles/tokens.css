@@ -29,6 +29,15 @@
 
   /* Quadros: DESIGN.md §5 */
   --gutter: 8px;
+
+  /* Altura das cenas presas (DESIGN_V1.md §8). No celular a barra do navegador some ao rolar e a tela
+     cresce; a cena presa fica com a altura medida no carregamento. Por isso a cena tem a altura MAIOR
+     da tela (--scene-h): nunca sobra faixa vazia embaixo. O que precisa estar sempre à vista (campo do
+     chat, botão do formulário, cards) fica dentro da altura MENOR (--safe-h); --scene-extra é a
+     diferença, a faixa que a barra do navegador cobre enquanto está aberta. No desktop as três dão no mesmo. */
+  --safe-h: 100svh;
+  --scene-h: 100lvh;
+  --scene-extra: calc(100lvh - 100svh);
 }
 
 @media (min-width: 768px) {

@@ -6,7 +6,7 @@
   position: relative;
   display: grid;
   place-items: center;
-  height: 100svh;
+  height: var(--scene-h);
   background: var(--ink);
   color: var(--paper);
   overflow: clip;

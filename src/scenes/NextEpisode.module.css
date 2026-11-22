@@ -2,7 +2,7 @@
    o único papel, mais alta que a faixa e por cima dela. À direita da faixa, 次回予告 em pé. */
 .contact {
   position: relative;
-  height: 100svh;
+  height: var(--scene-h);
   background: var(--ink);
   color: var(--paper);
   overflow: clip;
@@ -20,6 +20,10 @@
   pointer-events: none;
   user-select: none;
 }
+
+/* Área segura: faixa, folha, canais e japonês se medem por ela, não pela cena inteira; embaixo sobra
+   só o fundo (a faixa que a barra do navegador cobre no celular). */
+.frame { position: absolute; inset: 0 0 auto; height: var(--safe-h); }
 
 /* Celular: a faixa vai de borda a borda; os canais ficam na tira de cima e o 次回予告 na tira da direita. */
 .band { position: absolute; inset: 5% 0 12%; background: var(--red); overflow: hidden; }
@@ -145,4 +149,5 @@
 /* Sem pin (menos movimento) não há JS encolhendo a folha: a cena garante a altura que ela precisa. */
 @media (prefers-reduced-motion: reduce) {
   .contact { min-height: 760px; }
+  .frame { height: 100%; }
 }

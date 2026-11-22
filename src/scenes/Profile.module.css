@@ -125,13 +125,14 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100svh;
-    padding-block: 16px;
+    height: var(--scene-h);
+    /* A ficha se ajusta à área segura; a faixa que a barra do navegador cobre fica só com o fundo. */
+    padding-block: 16px calc(16px + var(--scene-extra));
   }
   .file { width: 100%; scale: var(--fit, 1); }
 }
 @media (prefers-reduced-motion: no-preference) and (min-width: 768px) and (max-width: 1199px) {
-  .profile { padding-block: 48px; }
+  .profile { padding-block: 48px calc(48px + var(--scene-extra)); }
 }
 
 /* Desktop: composição livre na tela inteira, sem contêiner. Tudo é medido em --u (1/100 da largura
@@ -139,7 +140,7 @@
    Posições horizontais em % (a cena se espalha em telas largas); a folha à esquerda, os cards
    descendo em escada da direita para a esquerda, paralelos ao corte da folha. */
 @media (min-width: 1200px) {
-  .profile { --u: min(1vw, 1.7778vh, 19px); height: 100svh; padding: 0; }
+  .profile { --u: min(1vw, 1.7778vh, 19px); height: var(--scene-h); padding: 0; }
   .rain { inset: 0 0 0 30%; }
 
   .file { position: absolute; inset: 0; display: block; isolation: auto; }
