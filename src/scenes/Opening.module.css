@@ -1,0 +1,15 @@
+.opening {
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  background: var(--ink);
+}
+
+/* DESIGN.md §3: letra papel, contorno de tinta e sombra chapada, nunca borrada */
+.title {
+  font: 700 var(--t-hero) / 0.8 var(--f-title);
+  color: var(--paper);
+  -webkit-text-stroke: 2px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 5px 5px 0 var(--ink);
+}

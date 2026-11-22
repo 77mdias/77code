@@ -1,0 +1,14 @@
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { box-shadow: 4px 4px 0 var(--red); }
+.btn:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }

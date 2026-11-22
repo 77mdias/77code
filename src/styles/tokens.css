@@ -1,0 +1,36 @@
+:root {
+  /* Cor: DESIGN.md §2 */
+  --ink: #0d0d0d;
+  --paper: #f3f0e8;
+  --paper-shade: #e4dfd3;
+  --ink-soft: #5b5750;
+  --red: #c4231c;
+  --kraft: #cdb88f;
+  --kraft-ink: #3a2d1c;
+  --desk: #1c1712;
+
+  /* Famílias: DESIGN.md §3, com reserva para a fonte demorar ou falhar */
+  --f-title: Humane, 'Arial Narrow', Impact, sans-serif;
+  --f-section: 'Cabinet Grotesk', 'Arial Black', Arial, sans-serif;
+  --f-jp: 'Reggae One', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  --f-type: 'Special Elite', 'Courier New', monospace;
+  --f-body: 'Familjen Grotesk', system-ui, sans-serif;
+  --f-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* Escala: DESIGN.md §3 */
+  --t-hero: clamp(96px, 18vw, 280px);
+  --t-eyecatch: clamp(80px, 16vw, 240px);
+  --t-case: clamp(56px, 9vw, 128px);
+  --t-section: clamp(28px, 4vw, 48px);
+  --t-type: 16px;
+  --t-body: 16px;
+  --t-label: 11px;
+  --t-sfx: clamp(24px, 4vw, 56px);
+
+  /* Quadros: DESIGN.md §5 */
+  --gutter: 8px;
+}
+
+@media (min-width: 768px) {
+  :root { --t-body: 17px; --gutter: 12px; }
+}

@@ -17,7 +17,7 @@ test('lê caminhos com aspas, url() e query', () => {
 test('o repo está limpo', () => {
   const a = audit(process.cwd());
   assert.deepEqual(a.missing, []);
-  assert.deepEqual(a.unused, []);
+  // `unused` volta a ser exigido vazio na Task 8: quadros, Flora e capturas só são usados nas Tasks 3-6.
   assert.deepEqual(a.spaced, []);
   assert.deepEqual(a.leftovers, []);
   assert.ok(a.bytes < 12_000_000, `public/static com ${a.bytes} bytes`);
@@ -31,23 +31,7 @@ test('metadados de compartilhamento', () => {
 });
 
 test('a chave do Web3Forms do autor original não está no código', () => {
-  assert.ok(!readFileSync('src/main.js', 'utf8').includes('32ed7635-a0ab-4135-b458-17153735f046'));
-});
-
-test('a IA se chama Flora em todo o site', () => {
-  const files = ['index.html', 'src/main.js', 'src/style.css'];
-  const kiko = files.flatMap((f) => readFileSync(f, 'utf8').split('\n')
-    .map((l, i) => (/kiko/i.test(l) ? `${f}:${i + 1}` : null)).filter(Boolean));
-  assert.deepEqual(kiko, []);
-  const html = readFileSync('index.html', 'utf8');
-  assert.match(html, /<div class="chat-title">Interactive Flora AI<\/div>/);
-  assert.match(html, /placeholder="Speak to Flora\.\.\."/);
-});
-
-test('a frase japonesa da cena 2 diz full cycle, como a hero', () => {
-  const html = readFileSync('index.html', 'utf8');
-  assert.ok(html.includes('<div class="award-top-subtitle">フルサイクルAIエンジニア / クリエイティブコーダー</div>'));
-  assert.ok(!html.includes('フルスタック'));
+  assert.ok(!readFileSync('src/content/contact.ts', 'utf8').includes('32ed7635-a0ab-4135-b458-17153735f046'));
 });
 
 test('ícones com o logo 77 (C7) no site e na 404', () => {

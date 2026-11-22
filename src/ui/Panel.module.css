@@ -1,0 +1,15 @@
+.panel {
+  position: relative;
+  border: 3px solid var(--ink);
+  background: var(--paper);
+}
+
+/* Retícula de pontos na sombra do quadro */
+.tone::after {
+  content: '';
+  position: absolute;
+  inset: 6px -6px -6px 6px;
+  z-index: -1;
+  background: radial-gradient(var(--ink) 1px, transparent 1.4px) 0 0 / 6px 6px;
+  opacity: 0.25;
+}

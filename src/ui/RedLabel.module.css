@@ -1,0 +1,9 @@
+.label {
+  display: inline-block;
+  padding: 4px 8px;
+  background: var(--red);
+  color: var(--paper);
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
