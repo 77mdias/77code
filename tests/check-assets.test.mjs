@@ -49,3 +49,17 @@ test('a frase japonesa da cena 2 diz full cycle, como a hero', () => {
   assert.ok(html.includes('<div class="award-top-subtitle">フルサイクルAIエンジニア / クリエイティブコーダー</div>'));
   assert.ok(!html.includes('フルスタック'));
 });
+
+test('ícones com o logo 77 (C7) no site e na 404', () => {
+  for (const page of ['index.html', 'public/404.html']) {
+    const html = readFileSync(page, 'utf8');
+    assert.match(html, /<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml">/, page);
+    assert.match(html, /<link rel="icon" href="\/favicon\.ico" sizes="48x48">/, page);
+    assert.match(html, /<link rel="apple-touch-icon" href="\/apple-touch-icon\.png">/, page);
+    assert.ok(!html.includes('logo.webp'), page);
+  }
+  for (const f of ['public/favicon.svg', 'public/favicon.ico', 'public/apple-touch-icon.png']) assert.ok(existsSync(f), f);
+  assert.ok(!existsSync('public/static/logo.webp'));
+  const svg = readFileSync('public/favicon.svg', 'utf8');
+  assert.match(svg, /prefers-color-scheme: ?dark/);
+});
