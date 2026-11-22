@@ -12,6 +12,12 @@ test('cabeçalhos de segurança e cache', async ({ request }) => {
   expect(frame.headers()['cache-control']).toBe('public, max-age=86400');
 });
 
+test('a CSP deixa o Cloudflare Web Analytics (injetado no deploy) carregar e enviar', async ({ request }) => {
+  const csp = (await request.get('/')).headers()['content-security-policy'];
+  expect(csp).toMatch(/script-src [^;]*https:\/\/static\.cloudflareinsights\.com/);
+  expect(csp).toMatch(/connect-src [^;]*https:\/\/cloudflareinsights\.com/);
+});
+
 test('rota inexistente dá 404', async ({ request }) => {
   expect((await request.get('/lab/')).status()).toBe(404);
 });
