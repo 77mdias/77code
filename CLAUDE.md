@@ -9,7 +9,11 @@ Site estático em Vite (sem framework), publicado na Cloudflare (Workers static 
 | Dev (Docker, porta 5177) | `docker compose up` (ou `docker compose watch`) |
 | Dev sem Docker | `pnpm dev` |
 | Build | `pnpm build` (gera `dist/`) |
-| Testes no navegador | `pnpm test:e2e` (contra um endereço publicado: `PLAYWRIGHT_BASE_URL=https://... pnpm test:e2e`) |
+| Como na Cloudflare (local, porta 8778) | `pnpm cf:dev` (build + `wrangler dev`; aplica `public/_headers`) |
+| Checagem de arquivos | `pnpm test` (`node scripts/check-assets.mjs` mostra o relatório) |
+| Testes no navegador | `pnpm test:e2e` (sobe o `cf:dev`; contra um endereço publicado: `PLAYWRIGHT_BASE_URL=https://... pnpm test:e2e`) |
+| Tudo | `pnpm check` |
+| Publicar | `pnpm run deploy` |
 
 ## Onde fica cada coisa
 

@@ -1,3 +1,7 @@
 # Raiz própria: sem este arquivo o pnpm sobe até ~/pnpm-workspace.yaml e instala tudo em ~/node_modules.
 packages:
   - .
+# Scripts de instalação liberados (baixam os binários de que o wrangler precisa).
+allowBuilds:
+  esbuild: true
+  workerd: true

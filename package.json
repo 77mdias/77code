@@ -12,11 +12,14 @@
     "preview": "vite preview --port 4177 --strictPort",
     "test:e2e": "playwright test",
     "test": "node --test tests/*.test.mjs",
-    "check": "pnpm test && pnpm test:e2e"
+    "check": "pnpm test && pnpm test:e2e",
+    "cf:dev": "vite build && wrangler dev --port 8778",
+    "deploy": "vite build && wrangler deploy"
   },
   "devDependencies": {
     "@playwright/test": "1.65.1",
-    "vite": "8.3.8"
+    "vite": "8.3.8",
+    "wrangler": "4.166.0"
   },
   "dependencies": {
     "@studio-freight/lenis": "1.0.19",

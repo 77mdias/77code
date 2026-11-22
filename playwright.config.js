@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 // Sem PLAYWRIGHT_BASE_URL, sobe o site local; com ela, testa um endereço publicado.
 const external = process.env.PLAYWRIGHT_BASE_URL;
-const local = { url: 'http://localhost:4177', command: 'pnpm build && pnpm preview' };
+const local = { url: 'http://localhost:8778', command: 'pnpm cf:dev' };
 
 export default defineConfig({
   testDir: 'tests/e2e',

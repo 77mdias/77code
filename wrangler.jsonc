@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "77code",
+  "compatibility_date": "2026-11-21",
+  // Só arquivos estáticos (dist/), sem código de Worker por enquanto.
+  // Sem not_found_handling: rota inexistente dá 404 de verdade.
+  "assets": { "directory": "./dist" },
+  "workers_dev": true
+}
