@@ -215,6 +215,44 @@ test('o chat não tem caixa de papel', async ({ page }) => {
   expect(await page.locator('#chat-input').evaluate((i) => getComputedStyle(i, '::placeholder').fontStyle)).toBe('italic');
 });
 
+// Texto claro com alfa: compõe sobre o --ink (a sombra atrás do chat) e mede o contraste WCAG.
+for (const [width, height] of SIZES) {
+  test(`textos claros do chat têm contraste ≥ 4.5 (${width}px)`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await page.route('**/api/chat', (r) => r.fulfill({ json: { reply: 'ok', expression: 'warm' } }));
+    await open(page);
+    await send(page, 'oi');
+    await expect(lastFlora(page)).toHaveText('ok');
+    const ratios = await page.locator(SEL).evaluate((el) => {
+      const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true })!;
+      const rgba = (c: string) => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = c; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data]; };
+      const lum = ([r, g, b]: number[]) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; })
+        .reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+      const bg = rgba(getComputedStyle(document.documentElement).getPropertyValue('--ink'));
+      const ratio = (color: string) => {
+        const [r, g, b, a] = rgba(color);
+        const fg = [r, g, b].map((v, i) => v * (a / 255) + bg[i] * (1 - a / 255));
+        const [hi, lo] = [lum(fg), lum(bg)].sort((x, y) => y - x);
+        return Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
+      };
+      return {
+        privacy: ratio(getComputedStyle(el.querySelector('p.chat-privacy')!).color),
+        you: ratio(getComputedStyle(el.querySelector('[data-from="guest"]')!, '::before').color),
+        placeholder: ratio(getComputedStyle(el.querySelector('#chat-input')!, '::placeholder').color),
+      };
+    });
+    for (const [name, r] of Object.entries(ratios)) expect(r, name).toBeGreaterThanOrEqual(4.5);
+  });
+}
+
+// O histórico rolado some em degradê também em cima, em vez de cortar meia linha rente ao subtítulo.
+test('o histórico some em degradê em cima e embaixo', async ({ page }) => {
+  await open(page);
+  const mask = await log(page).evaluate((el) => getComputedStyle(el).maskImage);
+  expect(mask.startsWith('linear-gradient(rgba(0, 0, 0, 0)')).toBe(true);
+  expect(mask.trim().endsWith('rgba(0, 0, 0, 0))')).toBe(true);
+});
+
 test('menos movimento: nada preso, chat pronto', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.route('**/api/chat', (r) => r.fulfill({ json: { reply: 'Calm reply.', expression: 'kind' } }));

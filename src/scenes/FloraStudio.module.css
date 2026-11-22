@@ -2,6 +2,7 @@
    Chat sem caixa, texto claro direto sobre o estúdio (DESIGN.md §5, pedido do Jean). */
 .studio {
   --soft: color-mix(in srgb, var(--paper) 60%, transparent);
+  /* 40% fica em ~3.5:1 sobre --ink: só para a linha do campo, nunca para texto (texto usa --soft, ~6.5:1). */
   --faint: color-mix(in srgb, var(--paper) 40%, transparent);
   position: relative;
   height: 100svh;
@@ -68,7 +69,7 @@
   padding: 0 20px 14px;
 }
 
-.head { margin-bottom: 2.4svh; }
+.head { margin-bottom: max(0px, 2.4svh - 16px); } /* 16px: o respiro do degradê de cima do histórico */
 .title {
   font: 800 clamp(17px, 1.5vw, 22px) / 1.2 var(--f-section);
   letter-spacing: 0.2em;
@@ -83,7 +84,8 @@
 }
 .subtitle .jp { font-size: 1.15em; letter-spacing: 0.1em; }
 
-/* O histórico rola por dentro e some num degradê embaixo; o respiro do fim deixa a última fala fora do degradê. */
+/* O histórico rola por dentro e some em degradê embaixo (e um pouco em cima, para não cortar meia linha
+   rente ao subtítulo); os respiros deixam a primeira e a última fala fora do degradê. */
 .log {
   flex: 1;
   min-height: 0;
@@ -93,8 +95,8 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
-  padding: 0 8px 36px 0;
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent);
+  padding: 16px 8px 36px 0;
+  mask-image: linear-gradient(to bottom, transparent, #000 16px, #000 calc(100% - 36px), transparent);
 }
 .log::-webkit-scrollbar { display: none; }
 
@@ -127,7 +129,7 @@
   font-size: 15px;
   line-height: 1.6;
 }
-.msg[data-from='guest']::before { content: 'YOU'; color: var(--faint); }
+.msg[data-from='guest']::before { content: 'YOU'; color: var(--soft); }
 .typing { color: var(--soft); font: 700 18px / 1 var(--f-mono); letter-spacing: 0.3em; }
 
 @keyframes said {
@@ -155,7 +157,7 @@
   font: 400 16px / 1.3 var(--f-body); /* 16px: o iOS não dá zoom no foco */
   letter-spacing: 0.03em;
 }
-.input::placeholder { color: var(--faint); font-style: italic; }
+.input::placeholder { color: var(--soft); font-style: italic; }
 
 .send {
   position: relative;
@@ -187,7 +189,7 @@
 .chat :global(#flora-turnstile):empty { display: none; }
 .privacy {
   margin-top: 10px;
-  color: var(--faint);
+  color: var(--soft);
   font: 400 12px / 1.4 var(--f-body);
 }
 
@@ -219,7 +221,7 @@
     height: auto;
     padding: 9svh 0 6svh;
   }
-  .head { margin-bottom: 5svh; }
+  .head { margin-bottom: calc(5svh - 16px); }
   .log { gap: 4svh; }
 }
 
