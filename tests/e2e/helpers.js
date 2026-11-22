@@ -1,3 +1,12 @@
+// A página fica travada (html.scroll-lock) até o loader terminar; esperar por isso, não por tempo fixo.
+export async function waitLoader(page) {
+  // ...e até o ScrollTrigger montar as cenas (a página passa a ser mais alta que a tela).
+  await page.waitForFunction(
+    () => !document.documentElement.classList.contains('scroll-lock')
+      && document.documentElement.scrollHeight > innerHeight + 100,
+    null, { timeout: 30_000 });
+}
+
 // Junta erros de console/página e respostas 4xx/5xx de uma página.
 export function watch(page) {
   const errors = [];
