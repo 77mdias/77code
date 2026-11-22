@@ -33,6 +33,7 @@ test('chat responde o aviso local e não chama /api/chat', async ({ page }) => {
     document.getElementById('chat-send-btn').click();
   });
   await expect(page.locator('#chat-messages .msg-bot').last()).toContainText("I'm still being set up");
+  await expect(page.locator('#chat-messages .block-bot .msg-name').last()).toHaveText('FLORA');
   expect(calls).toEqual([]);
 });
 
@@ -46,9 +47,9 @@ test('a CSP deixa o navegador falar com o Web3Forms', async ({ page }) => {
   expect(w.errors).toEqual([]);
 });
 
-test('sem chave própria, o formulário não envia nada ao Web3Forms e abre o e-mail', async ({ page }) => {
-  let posted = false;
-  await page.route('https://api.web3forms.com/submit', (r) => { posted = true; r.fulfill({ json: { success: true } }); });
+test('o formulário envia ao Web3Forms com a chave do Jean', async ({ page }) => {
+  let body = null;
+  await page.route('https://api.web3forms.com/submit', (r) => { body = r.request().postDataJSON(); r.fulfill({ json: { success: true } }); });
   await page.goto('/');
   await waitLoader(page);
   await page.evaluate(() => {
@@ -57,6 +58,8 @@ test('sem chave própria, o formulário não envia nada ao Web3Forms e abre o e-
     document.getElementById('c-msg').value = 'Mensagem de teste';
     document.getElementById('contact-form').requestSubmit();
   });
-  await expect(page.locator('.submit-btn span')).toHaveText('OPENING EMAIL...');
-  expect(posted).toBe(false);
+  await expect(page.locator('.submit-btn span')).toHaveText('TRANSMITTED');
+  expect(body.access_key).toMatch(/^[0-9a-f-]{36}$/);
+  expect(body.access_key).not.toBe('32ed7635-a0ab-4135-b458-17153735f046');
+  expect(body.message).toBe('Mensagem de teste');
 });

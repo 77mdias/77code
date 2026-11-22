@@ -166,7 +166,7 @@ body, html, a, button, input, textarea, .g-card-wrapper, .s5-hero-frame, .ambien
         overflow-y: auto !important;
     }
 
-    /* Specific coloring for Kiko Chat */
+    /* Specific coloring for Flora Chat */
     body.mobile-input-focus .chat-content-area {
         background: rgba(15, 12, 10, 0.98) !important;
         padding: 4vw !important;
@@ -1388,7 +1388,7 @@ body::-webkit-scrollbar-thumb { border-color: var(--night); }
 
 /* =========================================
    TEMA ESCURO — etapa 4: transição, cena 5, contato, rodapé, painel de projeto
-   (a cena do Kiko já é escura)
+   (a cena do Flora já é escura)
    ========================================= */
 :root { --gallery-bg: var(--night); --night-muted: #8d96a6; --night-line: rgba(236, 233, 224, 0.14); --night-blue: #7fa6dc; }
 
@@ -1454,7 +1454,7 @@ body.mobile-input-focus #contact .c-form-card {
 .lab-fab { background: #1f3760; box-shadow: 0 8px 26px rgba(0, 0, 0, 0.5); }
 
 /* =========================================
-   CENA DO KIKO: personagem à esquerda (já nas imagens char/*.webp), chat à direita.
+   CENA DO FLORA: personagem à esquerda (já nas imagens char/*.webp), chat à direita.
    Só no desktop; no celular o chat já fica embaixo, em largura total.
    ========================================= */
 @media screen and (min-width: 769px) {

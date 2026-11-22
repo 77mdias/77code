@@ -33,3 +33,13 @@ test('metadados de compartilhamento', () => {
 test('a chave do Web3Forms do autor original não está no código', () => {
   assert.ok(!readFileSync('src/main.js', 'utf8').includes('32ed7635-a0ab-4135-b458-17153735f046'));
 });
+
+test('a IA se chama Flora em todo o site', () => {
+  const files = ['index.html', 'src/main.js', 'src/style.css'];
+  const kiko = files.flatMap((f) => readFileSync(f, 'utf8').split('\n')
+    .map((l, i) => (/kiko/i.test(l) ? `${f}:${i + 1}` : null)).filter(Boolean));
+  assert.deepEqual(kiko, []);
+  const html = readFileSync('index.html', 'utf8');
+  assert.match(html, /<div class="chat-title">Interactive Flora AI<\/div>/);
+  assert.match(html, /placeholder="Speak to Flora\.\.\."/);
+});

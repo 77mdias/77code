@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isMobile = window.innerWidth <= 768;
     const leafCount = isMobile ? 25 : 80;
 
-    for(let i = 0; i < leafCount; i++) {
+    for (let i = 0; i < leafCount; i++) {
         let leaf = document.createElement('div');
         leaf.classList.add('t-leaf');
         leaf.style.backgroundImage = `url('${leafImages[Math.floor(Math.random() * leafImages.length)]}')`;
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-   // ==========================================
+    // ==========================================
     // INITIAL HERO STATES (Pre-Loader)
     // ==========================================
 
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // The floating LAB button hides itself whenever it would sit on top of text or controls
     function startLabFabGuard(fab) {
         const avoid = ['.award-categories-block', '.ambience-toggle-btn', '.chat-input-area',
-                       '.f-copyright', '.back-to-top', '.s5-architecture-flow', '.c-form-card'];
+            '.f-copyright', '.back-to-top', '.s5-architecture-flow', '.c-form-card'];
         const isShown = el => {
             if (el.checkVisibility) return el.checkVisibility({ opacityProperty: true, visibilityProperty: true });
             const cs = getComputedStyle(el);
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cursorSetY = gsap.quickSetter(cursor, "y", "px");
 
         window.addEventListener('mousemove', (e) => {
-            if(!isHoveringMagnetic) { target.x = e.clientX; target.y = e.clientY; }
+            if (!isHoveringMagnetic) { target.x = e.clientX; target.y = e.clientY; }
         }, { passive: true });
 
         const magneticElements = document.querySelectorAll('.submit-btn, .ambience-toggle-btn, .modal-close');
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function initCanvas() {
             width = window.innerWidth; height = window.innerHeight;
             canvas.width = width; canvas.height = height;
-            if(points.length === 0) { for(let i=0; i<numPoints; i++) points.push({ x: width/2, y: height/2 }); }
+            if (points.length === 0) { for (let i = 0; i < numPoints; i++) points.push({ x: width / 2, y: height / 2 }); }
         }
         initCanvas();
         window.addEventListener('resize', initCanvas, { passive: true });
@@ -356,8 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
             points[0].x = rendered.x; points[0].y = rendered.y;
 
             for (let i = 1; i < numPoints; i++) {
-                points[i].x = lerp(points[i].x, points[i-1].x, 0.55);
-                points[i].y = lerp(points[i].y, points[i-1].y, 0.55);
+                points[i].x = lerp(points[i].x, points[i - 1].x, 0.55);
+                points[i].y = lerp(points[i].y, points[i - 1].y, 0.55);
             }
 
             ctx.beginPath();
@@ -412,16 +412,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        masterTl.to(currentFrame, { frame: frameCount, snap: "frame", ease: "none", duration: 4, onUpdate: () => { if(images[currentFrame.frame - 1]?.naturalWidth) charImg.src = images[currentFrame.frame - 1].src; } }).to({}, { duration: 0.5 });
+        masterTl.to(currentFrame, { frame: frameCount, snap: "frame", ease: "none", duration: 4, onUpdate: () => { if (images[currentFrame.frame - 1]?.naturalWidth) charImg.src = images[currentFrame.frame - 1].src; } }).to({}, { duration: 0.5 });
 
         const gustStart = "windGust";
 
         masterTl.to(".hero-scroll-indicator", { opacity: 0, y: 20, duration: 0.5, ease: "power2.out" }, 0);
-        masterTl.set(".t-leaf", { x: () => window.innerWidth + gsap.utils.random(500,2000), y: () => gsap.utils.random(-window.innerHeight*0.5, window.innerHeight*1.5), rotation: () => gsap.utils.random(-180, 180), scale: () => gsap.utils.random(1.5, 5) }, gustStart);
-        masterTl.to("#scene", {scale: 0.98,filter: isMobile ? "none" : "blur(30px)",opacity: 0,duration: 3,ease: "power2.in" }, gustStart);
+        masterTl.set(".t-leaf", { x: () => window.innerWidth + gsap.utils.random(500, 2000), y: () => gsap.utils.random(-window.innerHeight * 0.5, window.innerHeight * 1.5), rotation: () => gsap.utils.random(-180, 180), scale: () => gsap.utils.random(1.5, 5) }, gustStart);
+        masterTl.to("#scene", { scale: 0.98, filter: isMobile ? "none" : "blur(30px)", opacity: 0, duration: 3, ease: "power2.in" }, gustStart);
         masterTl.to([".blue-frame-wrapper", ".character-wrapper"], { x: "-=400", opacity: 0, duration: 2.5, ease: "power2.in" }, gustStart);
         masterTl.to(".hero-front-leaf-img", { x: () => -window.innerWidth - 1500, y: () => gsap.utils.random(-500, 500), rotation: -240, scale: 4, duration: 3.5, ease: "power1.inOut" }, gustStart);
-        masterTl.to(".t-leaf", { x: () => -window.innerWidth - gsap.utils.random(1500, 3500), y: () => gsap.utils.random(-window.innerHeight*0.5, window.innerHeight*1.5), rotation: () => "+=" + gsap.utils.random(360, 720), scale: () => gsap.utils.random(5, 12), duration: 5, stagger: { amount: 1.5, from: "random" }, ease: "power1.inOut" }, gustStart);
+        masterTl.to(".t-leaf", { x: () => -window.innerWidth - gsap.utils.random(1500, 3500), y: () => gsap.utils.random(-window.innerHeight * 0.5, window.innerHeight * 1.5), rotation: () => "+=" + gsap.utils.random(360, 720), scale: () => gsap.utils.random(5, 12), duration: 5, stagger: { amount: 1.5, from: "random" }, ease: "power1.inOut" }, gustStart);
 
         const transitionApex = gustStart + "+=2";
         masterTl.to(".whiteout-screen", { autoAlpha: 1, duration: 1, ease: "power2.inOut" }, transitionApex);
@@ -472,15 +472,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         galleryTl.to(".interlude-line", { height: "12vh", duration: 1, ease: "power2.out" })
-                 .to(".interlude-kanji", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.4")
-                 .to(".interlude-eng", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.6")
-                 .to({}, { duration: 1.5 })
-                 .to(".interlude-kanji", { opacity: 0, y: -20, letterSpacing: "1vw", filter: "blur(5px)", duration: 1, ease: "power2.in" }, "fadeOut")
-                 .to(".interlude-eng", { opacity: 0, y: -20, letterSpacing: "1vw", filter: "blur(5px)", duration: 1, ease: "power2.in" }, "fadeOut")
-                 .to(".interlude-line", { height: "0vh", opacity: 0, duration: 0.8, ease: "power2.inOut" }, "fadeOut")
-                 .to([".gallery-back-wall", ".gallery-bg-text", ".gallery-front-leaves", ".gallery-scroll-wrapper"], { autoAlpha: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
-                 .to(gItems, { y: 0, opacity: 1, rotationZ: 0, duration: 2, stagger: 0.2, ease: "back.out(1.2)" }, "-=1")
-                 .to(galleryWrapper, { x: () => -(galleryWrapper.scrollWidth - window.innerWidth), duration: 12, ease: "none" });
+            .to(".interlude-kanji", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.4")
+            .to(".interlude-eng", { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, "-=0.6")
+            .to({}, { duration: 1.5 })
+            .to(".interlude-kanji", { opacity: 0, y: -20, letterSpacing: "1vw", filter: "blur(5px)", duration: 1, ease: "power2.in" }, "fadeOut")
+            .to(".interlude-eng", { opacity: 0, y: -20, letterSpacing: "1vw", filter: "blur(5px)", duration: 1, ease: "power2.in" }, "fadeOut")
+            .to(".interlude-line", { height: "0vh", opacity: 0, duration: 0.8, ease: "power2.inOut" }, "fadeOut")
+            .to([".gallery-back-wall", ".gallery-bg-text", ".gallery-front-leaves", ".gallery-scroll-wrapper"], { autoAlpha: 1, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
+            .to(gItems, { y: 0, opacity: 1, rotationZ: 0, duration: 2, stagger: 0.2, ease: "back.out(1.2)" }, "-=1")
+            .to(galleryWrapper, { x: () => -(galleryWrapper.scrollWidth - window.innerWidth), duration: 12, ease: "none" });
 
         // ==========================================
         // 3. SCENE 4, 5, AND 6 MASTER TRANSITION
@@ -495,82 +495,82 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         tlMonolith.to(".monolith", { width: "22vw", duration: 1.5, ease: "power4.inOut" })
-                  .to(".pillar-text", { opacity: 1, duration: 0.5 }, "-=0.5")
-                  .to(".outer-text-left", { opacity: 1, x: 20, duration: 1, ease: "power2.out" }, "-=1")
-                  .to(".outer-text-right", { opacity: 1, x: -20, duration: 1, ease: "power2.out" }, "-=1")
-                  .to({}, { duration: 1.5 })
-                  .to([".pillar-text", ".outer-text-left", ".outer-text-right"], { opacity: 0, duration: 0.5, ease: "power2.in" })
-                  .to(".monolith", { width: "100vw", duration: 1.5, ease: "expo.inOut" })
+            .to(".pillar-text", { opacity: 1, duration: 0.5 }, "-=0.5")
+            .to(".outer-text-left", { opacity: 1, x: 20, duration: 1, ease: "power2.out" }, "-=1")
+            .to(".outer-text-right", { opacity: 1, x: -20, duration: 1, ease: "power2.out" }, "-=1")
+            .to({}, { duration: 1.5 })
+            .to([".pillar-text", ".outer-text-left", ".outer-text-right"], { opacity: 0, duration: 0.5, ease: "power2.in" })
+            .to(".monolith", { width: "100vw", duration: 1.5, ease: "expo.inOut" })
 
-                  // ENTER SCENE 4 (Kiko AI)
-                  .to(".interactive-showcase", {
-                        autoAlpha: 1,
-                        pointerEvents: "auto",
-                        duration: 0.1,
-                        onStart: () => {
-                            isInSection4 = true;
-                            playAmbience();
-                        },
-                        onReverseComplete: () => {
-                            isInSection4 = false;
-                            stopAmbience();
-                        }
-                    })
-                  .fromTo(".showcase-video-layer video", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 2, ease: "power2.out" }, "<")
-                  .fromTo(".showcase-foreground-wrapper", { opacity: 0 }, { opacity: 1, duration: 2, ease: "power2.out" }, "-=2")
-                  .fromTo(".cinematic-ui-wrapper", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1.5, ease: "power2.out" }, "-=1.5")
+            // ENTER SCENE 4 (Flora AI)
+            .to(".interactive-showcase", {
+                autoAlpha: 1,
+                pointerEvents: "auto",
+                duration: 0.1,
+                onStart: () => {
+                    isInSection4 = true;
+                    playAmbience();
+                },
+                onReverseComplete: () => {
+                    isInSection4 = false;
+                    stopAmbience();
+                }
+            })
+            .fromTo(".showcase-video-layer video", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 2, ease: "power2.out" }, "<")
+            .fromTo(".showcase-foreground-wrapper", { opacity: 0 }, { opacity: 1, duration: 2, ease: "power2.out" }, "-=2")
+            .fromTo(".cinematic-ui-wrapper", { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1.5, ease: "power2.out" }, "-=1.5")
 
-                  // Buffer for chatting with AI
-                  .to({}, { duration: 3.5 })
+            // Buffer for chatting with AI
+            .to({}, { duration: 3.5 })
 
-                  // TRANSITION TO SCENE 5 (Architecture)
-                   .to(".interactive-showcase", {
-                      scale: 0.9,
-                      filter: "blur(15px)",
-                      opacity: 0.2,
-                      duration: 2,
-                      onStart: () => {
-                          isInSection4 = false;
-                          stopAmbience();
-                      },
-                      onReverseComplete: () => {
-                          isInSection4 = true;
-                          playAmbience();
-                      }
-                  })
-                  .to("#scene-5", {
-                      clipPath: "inset(0% 0 0 0)",
-                      duration: 2,
-                      ease: "power2.inOut",
-                      onStart: () => { gsap.set("#scene-5", { autoAlpha: 1 }); }
-                  }, "<")
-                  .to(".s5-bg-image", { opacity: 1, scale: 1, duration: 1.5 }, "-=0.8")
-                  .to(".s5-bg-kanji", { opacity: 1, scale: 1, duration: 1.5 }, "-=1.5")
-                  .to(".s5-hero-frame", { opacity: 1, y: 0, duration: 1 }, "-=1.2")
-                  .to(".s5-img-main", { clipPath: "inset(0% 0 0 0)", duration: 1.2, ease: "power3.inOut" }, "-=0.8")
-                  .to(".s5-kanji-main span", { y: 0, opacity: 1, duration: 0.8, stagger: 0.2 }, "-=0.5")
-                  .to(".s5-kanji-sub, .s5-chapter-num, .s5-meta-card", { opacity: 1, duration: 0.5 }, "-=0.2")
-                  .to(".g-leaf", { opacity: 1, scale: 1, duration: 1.5, stagger: 0.2, ease: "back.out(1.5)" }, "-=1.5")
-                  .to(".sys-module", { x: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power2.out" }, "-=1")
-                  .to(".s5-spine-right", { opacity: 1, x: 0, duration: 1, ease: "power2.out" }, "-=0.8")
+            // TRANSITION TO SCENE 5 (Architecture)
+            .to(".interactive-showcase", {
+                scale: 0.9,
+                filter: "blur(15px)",
+                opacity: 0.2,
+                duration: 2,
+                onStart: () => {
+                    isInSection4 = false;
+                    stopAmbience();
+                },
+                onReverseComplete: () => {
+                    isInSection4 = true;
+                    playAmbience();
+                }
+            })
+            .to("#scene-5", {
+                clipPath: "inset(0% 0 0 0)",
+                duration: 2,
+                ease: "power2.inOut",
+                onStart: () => { gsap.set("#scene-5", { autoAlpha: 1 }); }
+            }, "<")
+            .to(".s5-bg-image", { opacity: 1, scale: 1, duration: 1.5 }, "-=0.8")
+            .to(".s5-bg-kanji", { opacity: 1, scale: 1, duration: 1.5 }, "-=1.5")
+            .to(".s5-hero-frame", { opacity: 1, y: 0, duration: 1 }, "-=1.2")
+            .to(".s5-img-main", { clipPath: "inset(0% 0 0 0)", duration: 1.2, ease: "power3.inOut" }, "-=0.8")
+            .to(".s5-kanji-main span", { y: 0, opacity: 1, duration: 0.8, stagger: 0.2 }, "-=0.5")
+            .to(".s5-kanji-sub, .s5-chapter-num, .s5-meta-card", { opacity: 1, duration: 0.5 }, "-=0.2")
+            .to(".g-leaf", { opacity: 1, scale: 1, duration: 1.5, stagger: 0.2, ease: "back.out(1.5)" }, "-=1.5")
+            .to(".sys-module", { x: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power2.out" }, "-=1")
+            .to(".s5-spine-right", { opacity: 1, x: 0, duration: 1, ease: "power2.out" }, "-=0.8")
 
-                  // Buffer to read Scene 5
-                  .to({}, { duration: 3 })
+            // Buffer to read Scene 5
+            .to({}, { duration: 3 })
 
-                  // TRANSITION TO SCENE 6 (Contact)
-                  .to(".s5-hero-frame", { y: -50, scale: 0.95, opacity: 0, duration: 1, ease: "power2.inOut" })
-                  .to(".sys-module", { x: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power2.inOut" }, "<")
-                  .to(".s5-bg-kanji, .s5-spine-right, .g-leaf", { opacity: 0, duration: 0.8 }, "<")
-                  .to(".s5-bg-image", { scale: 1.05, filter: window.innerWidth <= 768 ? "none" : "blur(15px)", duration: 2 }, "<")
+            // TRANSITION TO SCENE 6 (Contact)
+            .to(".s5-hero-frame", { y: -50, scale: 0.95, opacity: 0, duration: 1, ease: "power2.inOut" })
+            .to(".sys-module", { x: 50, opacity: 0, duration: 1, stagger: 0.1, ease: "power2.inOut" }, "<")
+            .to(".s5-bg-kanji, .s5-spine-right, .g-leaf", { opacity: 0, duration: 0.8 }, "<")
+            .to(".s5-bg-image", { scale: 1.05, filter: window.innerWidth <= 768 ? "none" : "blur(15px)", duration: 2 }, "<")
 
-                  .to("#contact", { clipPath: "inset(0% 0 0 0)", duration: 1.5, ease: "power3.inOut" }, "<0.6")
+            .to("#contact", { clipPath: "inset(0% 0 0 0)", duration: 1.5, ease: "power3.inOut" }, "<0.6")
 
-                  .from(".c-blue-frame", { scale: 0.9, opacity: 0, duration: 1, ease: "power2.out" }, "-=0.8")
-                  .from(".c-form-card", { y: 60, x: -30, opacity: 0, duration: 1, ease: "power2.out" }, "-=0.6")
-                  .from(".c-hero-kanji span", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power2.out" }, "-=0.8")
-                  .from(".c-vert-accent", { opacity: 0, y: -20, duration: 0.8 }, "-=0.6")
+            .from(".c-blue-frame", { scale: 0.9, opacity: 0, duration: 1, ease: "power2.out" }, "-=0.8")
+            .from(".c-form-card", { y: 60, x: -30, opacity: 0, duration: 1, ease: "power2.out" }, "-=0.6")
+            .from(".c-hero-kanji span", { y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "power2.out" }, "-=0.8")
+            .from(".c-vert-accent", { opacity: 0, y: -20, duration: 0.8 }, "-=0.6")
 
-                  .to({}, { duration: 2 });
+            .to({}, { duration: 2 });
     }
 
 
@@ -595,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             hoverSfx.currentTime = 0; // Rewind to start so rapid hovers work
             // The .catch() hides errors if the browser blocks audio before the user's first click
-            hoverSfx.play().catch(() => {});
+            hoverSfx.play().catch(() => { });
         });
 
         // Play soft click on tap/click
@@ -603,27 +603,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isMobileScreen()) return; // Skip playing sound on mobile
 
             clickSfx.currentTime = 0;
-            clickSfx.play().catch(() => {});
+            clickSfx.play().catch(() => { });
         });
     });
 
     // =========================================================
-    // --- 7. INTERACTIVE KIKO AI CHAT & AUDIO ANIMATION LOGIC ---
+    // --- 7. INTERACTIVE FLORA AI CHAT & AUDIO ANIMATION LOGIC ---
     // =========================================================
     let currentExpression = 'longidle';
     let isAnimatingExpression = false;
 
-    const kikoVoice = new Audio();
+    const floraVoice = new Audio();
 
-    kikoVoice.addEventListener('play', () => {
+    floraVoice.addEventListener('play', () => {
         setExpression('explain');
     });
 
-    kikoVoice.addEventListener('ended', () => {
+    floraVoice.addEventListener('ended', () => {
         setExpression('longidle');
     });
 
-    kikoVoice.addEventListener('error', (e) => {
+    floraVoice.addEventListener('error', (e) => {
         console.error("Audio failed to decode or play:", e);
     });
 
@@ -638,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         currentExpression = newExpr;
-        if(oldImg) gsap.killTweensOf(oldImg);
+        if (oldImg) gsap.killTweensOf(oldImg);
         gsap.killTweensOf(newImg);
 
         gsap.set(newImg, { zIndex: 3, autoAlpha: 0 });
@@ -662,8 +662,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const chatSendBtn = document.getElementById('chat-send-btn');
     const chatMessages = document.getElementById('chat-messages');
 
-  // --- MOBILE KEYBOARD GSAP FIX ---
-    // Select all inputs across the entire page (Kiko Chat AND Contact Form)
+    // --- MOBILE KEYBOARD GSAP FIX ---
+    // Select all inputs across the entire page (Flora Chat AND Contact Form)
     const allInputs = document.querySelectorAll('input, textarea');
 
     allInputs.forEach(input => {
@@ -700,7 +700,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const nameLabel = document.createElement('div');
         nameLabel.className = 'msg-name';
-        nameLabel.textContent = sender === 'bot' ? 'KIKO' : 'GUEST';
+        nameLabel.textContent = sender === 'bot' ? 'FLORA' : 'GUEST';
 
         const msgDiv = document.createElement('div');
         msgDiv.className = `chat-msg msg-${sender}`;
@@ -778,15 +778,15 @@ document.addEventListener('DOMContentLoaded', () => {
             setExpression(targetContextExpr);
 
             if (data.audio_base64 && data.audio_base64.length > 50) {
-                kikoVoice.pause();
-                kikoVoice.removeAttribute('src');
-                kikoVoice.load();
-                kikoVoice.src = "data:audio/mpeg;base64," + data.audio_base64;
+                floraVoice.pause();
+                floraVoice.removeAttribute('src');
+                floraVoice.load();
+                floraVoice.src = "data:audio/mpeg;base64," + data.audio_base64;
 
-                kikoVoice.oncanplaythrough = () => {
-                    kikoVoice.oncanplaythrough = null;
+                floraVoice.oncanplaythrough = () => {
+                    floraVoice.oncanplaythrough = null;
                     setTimeout(() => {
-                        kikoVoice.play().catch(e => {
+                        floraVoice.play().catch(e => {
                             console.warn("Autoplay blocked. Using fallback timer.", e);
                             fallbackTimeBasedTalking(data.reply);
                         });
@@ -794,7 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
                 setTimeout(() => {
-                    if (currentExpression === targetContextExpr && !kikoVoice.paused === false) {
+                    if (currentExpression === targetContextExpr && !floraVoice.paused === false) {
                         fallbackTimeBasedTalking(data.reply);
                     }
                 }, 4000);
@@ -803,7 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (error) {
-            console.error('Kiko chat failed:', error);
+            console.error('Flora chat failed:', error);
             document.getElementById(typingId)?.remove();
             appendMessage("I'm sorry, I'm having trouble connecting to my neural network right now.", 'bot');
             setExpression('shock');
@@ -814,12 +814,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     chatSendBtn.addEventListener('click', processUserMessage);
-    chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') processUserMessage(); });
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') processUserMessage(); });
     // Instantly fires on mobile touch, bypassing the click delay entirely
     chatSendBtn.addEventListener('touchstart', (e) => {
         e.preventDefault(); // Prevents the 'click' event from firing twice
         processUserMessage();
-        chatInput.blur(); // Manually forces the mobile keyboard to close so you can see Kiko's reaction!
+        chatInput.blur(); // Manually forces the mobile keyboard to close so you can see Flora's reaction!
     }, { passive: false });
 
     // -- AMBIENCE TOGGLE LOGIC --
@@ -844,7 +844,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/static/rain.m4a');
             const arrayBuffer = await response.arrayBuffer();
             audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        } catch(e) {
+        } catch (e) {
             console.error("Error loading ambience audio:", e);
         }
     }
@@ -918,10 +918,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // Chave pública do Web3Forms do Jean (web3forms.com). Vazia = o formulário abre o e-mail em vez de enviar,
     // para nenhuma mensagem ir parar na caixa de outra pessoa.
-    const WEB3FORMS_KEY = "";
+    const WEB3FORMS_KEY = "9dc042ca-af00-4940-9770-50fe9ae6a09d";
     const CONTACT_EMAIL = "jean.77mdiasdev@gmail.com";
 
-    document.getElementById('contact-form').addEventListener('submit', function(e) {
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
         e.preventDefault();
 
         const btnText = document.querySelector('.submit-btn span');
@@ -952,16 +952,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 message: document.getElementById('c-msg').value
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            btnText.textContent = "TRANSMITTED";
-            this.reset(); // Clear the form
-            setTimeout(() => { btnText.textContent = originalText; }, 3000);
-        })
-        .catch(error => {
-            btnText.textContent = "ERROR";
-            setTimeout(() => { btnText.textContent = originalText; }, 3000);
-        });
+            .then(response => response.json())
+            .then(data => {
+                btnText.textContent = "TRANSMITTED";
+                this.reset(); // Clear the form
+                setTimeout(() => { btnText.textContent = originalText; }, 3000);
+            })
+            .catch(error => {
+                btnText.textContent = "ERROR";
+                setTimeout(() => { btnText.textContent = originalText; }, 3000);
+            });
     });
 
 
@@ -1240,8 +1240,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function introTimeline(tl, at) {
         const chars = elTitle.querySelectorAll('.pm-c');
         tl.fromTo('.pm-topline > *', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.06, ease: "power3.out" }, at)
-          .fromTo(chars, { yPercent: 115, rotate: 6 }, { yPercent: 0, rotate: 0, duration: 1.05, stagger: 0.035, ease: "expo.out" }, at + 0.05)
-          .fromTo(elKanji, { y: 40, opacity: 0 }, { y: 0, opacity: 0.9, duration: 1, ease: "power3.out" }, at + 0.25);
+            .fromTo(chars, { yPercent: 115, rotate: 6 }, { yPercent: 0, rotate: 0, duration: 1.05, stagger: 0.035, ease: "expo.out" }, at + 0.05)
+            .fromTo(elKanji, { y: 40, opacity: 0 }, { y: 0, opacity: 0.9, duration: 1, ease: "power3.out" }, at + 0.25);
         return tl;
     }
 
@@ -1287,11 +1287,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         modalTl = gsap.timeline({ onComplete: () => { killFly(); modalClose.focus({ preventScroll: true }); } });
         modalTl.to(modal, { clipPath: "inset(0px 0px 0px 0px round 0px)", duration: 0.95, ease: "expo.inOut" }, 0)
-               .to(flyEl, { left: to.left, top: to.top, width: to.width, height: to.height, borderRadius: 4, duration: 1.15, ease: "expo.inOut" }, 0.05)
-               .set(elHero, { opacity: 1 }, 1.05)
-               .to(flyEl, { opacity: 0, duration: 0.5, ease: "power1.out" }, 1.05)
-               .to(elHeroImg, { scale: 1, duration: 1.6, ease: "power3.out" }, 1.05)
-               .to(modalClose, { opacity: 1, duration: 0.5 }, 0.8);
+            .to(flyEl, { left: to.left, top: to.top, width: to.width, height: to.height, borderRadius: 4, duration: 1.15, ease: "expo.inOut" }, 0.05)
+            .set(elHero, { opacity: 1 }, 1.05)
+            .to(flyEl, { opacity: 0, duration: 0.5, ease: "power1.out" }, 1.05)
+            .to(elHeroImg, { scale: 1, duration: 1.6, ease: "power3.out" }, 1.05)
+            .to(modalClose, { opacity: 1, duration: 0.5 }, 0.8);
         introTimeline(modalTl, 0.55);
     }
 
@@ -1322,7 +1322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTl.to([modalContainer, modalClose], { opacity: 0, duration: 0.25, ease: "power2.in" });
         if (backToCard) {
             modalTl.to(modal, { clipPath: cardClip(card), duration: 0.75, ease: "expo.inOut" }, "-=0.05")
-                   .to(modal, { opacity: 0, duration: 0.2, ease: "power1.out" }, "-=0.15");
+                .to(modal, { opacity: 0, duration: 0.2, ease: "power1.out" }, "-=0.15");
         } else {
             modalTl.to(modal, { opacity: 0, duration: 0.45, ease: "power2.inOut" }, "-=0.1");
         }
@@ -1370,8 +1370,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const startLeft = modalContainer.getBoundingClientRect().left + parseFloat(getComputedStyle(modalContainer).paddingLeft);
         modalTl = gsap.timeline();
         modalTl.set(curtain, { visibility: 'visible', yPercent: 100 })
-               .to(curtain, { yPercent: 0, duration: 0.8, ease: "expo.inOut" }, 0)
-               .to(titleFly, { left: startLeft, top: vh * 0.5 - r.height / 2, color: '#161616', duration: 0.95, ease: "expo.inOut" }, 0.05);
+            .to(curtain, { yPercent: 0, duration: 0.8, ease: "expo.inOut" }, 0)
+            .to(titleFly, { left: startLeft, top: vh * 0.5 - r.height / 2, color: '#161616', duration: 0.95, ease: "expo.inOut" }, 0.05);
         await modalTl.then();
         if (!modalOpen) return;
 
@@ -1398,13 +1398,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. The title settles into the header as the curtain lifts away, then the page fills in
         modalTl = gsap.timeline({ onComplete: () => { cleanupSwitch(); gsap.set(elHero, { clearProps: 'clipPath' }); } });
         modalTl.to(titleFly, { left: t.left, top: t.top, scale, duration: 1.0, ease: "expo.inOut" }, 0)
-               .to(curtain, { yPercent: -100, duration: 1.0, ease: "expo.inOut" }, 0.2)
-               .set(elTitle, { opacity: 1 }, 1.0)
-               .set(titleFly, { opacity: 0 }, 1.0)
-               .to('.pm-topline > *', { opacity: 1, y: 0, duration: 0.7, stagger: 0.06, ease: "power3.out" }, 0.75)
-               .to(elKanji, { opacity: 0.9, y: 0, duration: 0.9, ease: "power3.out" }, 0.85)
-               .to(elHero, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.1, ease: "expo.inOut" }, 0.7)
-               .to(elHeroImg, { scale: 1, duration: 1.6, ease: "power3.out" }, 0.8);
+            .to(curtain, { yPercent: -100, duration: 1.0, ease: "expo.inOut" }, 0.2)
+            .set(elTitle, { opacity: 1 }, 1.0)
+            .set(titleFly, { opacity: 0 }, 1.0)
+            .to('.pm-topline > *', { opacity: 1, y: 0, duration: 0.7, stagger: 0.06, ease: "power3.out" }, 0.75)
+            .to(elKanji, { opacity: 0.9, y: 0, duration: 0.9, ease: "power3.out" }, 0.85)
+            .to(elHero, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.1, ease: "expo.inOut" }, 0.7)
+            .to(elHeroImg, { scale: 1, duration: 1.6, ease: "power3.out" }, 0.8);
     }
 
     cardsWrapper.forEach(card => {
