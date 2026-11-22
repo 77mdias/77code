@@ -1,0 +1,74 @@
+.profile {
+  padding: 72px 16px;
+  background: var(--desk);
+  overflow: clip;
+}
+
+.file {
+  display: grid;
+  gap: 32px;
+  max-width: 1180px;
+  margin: 0 auto;
+  grid-template-columns: 1fr;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.title {
+  margin: 0;
+  color: var(--paper);
+  font: 600 var(--t-section) / 1 var(--f-section);
+  letter-spacing: 0.04em;
+}
+
+.portrait { padding: 0 6px 6px 0; }
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto; /* o atributo height da imagem venceria o aspect-ratio */
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  /* Rosto no centro da arte larga, um pouco acima do meio. */
+  object-position: 52% 35%;
+}
+
+.about {
+  display: grid;
+  gap: 14px;
+  color: var(--paper);
+  font: 400 var(--t-body) / 1.6 var(--f-body);
+}
+.about p { margin: 0; max-width: 60ch; }
+
+.specialties {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+}
+.specialty {
+  height: 100%;
+  padding: 20px;
+  color: var(--ink);
+}
+.specialty h3 {
+  margin: 0 0 12px;
+  font: 800 20px / 1.1 var(--f-section);
+}
+.specialty ul {
+  margin: 0;
+  padding-left: 1.2em;
+  font: 400 var(--t-body) / 1.5 var(--f-body);
+}
+.specialty li + li { margin-top: 8px; }
+
+@media (min-width: 768px) {
+  .profile { padding: 96px 32px; }
+  .file { grid-template-columns: 5fr 7fr; align-items: start; column-gap: 48px; }
+  .head { grid-column: 1 / -1; }
+  .portrait img { aspect-ratio: 1; }
+  .specialties { grid-column: 1 / -1; grid-template-columns: repeat(3, 1fr); }
+}
