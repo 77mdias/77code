@@ -137,4 +137,14 @@ Os rascunhos que o Jean viu estão em `design/rascunhos/` (`hero-vivo.html` é a
 - Texto final dos casos e do profile em inglês, dentro do formato do §6 e do DESIGN.md §9 (o Jean revisa no PR).
 - O desenho exato do corte de nanquim do eyecatch e da abertura do dossiê, dentro do DESIGN.md §6.
 - O prompt do eventual cenário extra (se precisar de outro fundo gerado, o Jean gera).
-- Cabeçalho fixo: proposta do Claude é logo C7 à esquerda e "Cases · Profile · Flora · Contact" à direita (no celular, só logo e "Contact"), em `--t-label`.
+- ~~Cabeçalho fixo~~ — removido pelo Jean (ver §12).
+
+## 12. Revisão do Jean depois das capturas (2026-11-22)
+
+Depois de ver as capturas das Tasks 3–7, o Jean decidiu:
+- **Chat da Flora:** volta ao visual do chat antigo (o do site de referência), só com as nossas fontes. O Jean aceita essa peça parecida com a referência. O código é reescrito por nós. Detalhe em DESIGN.md §5.
+- **Todas as cenas** têm trava de scroll (pin) com parallax ou outra animação: dossiês, profile, Flora e próximo episódio passam a ser presos (abertura e eyecatch já eram). Proposta por cena em DESIGN.md §6, aprovada.
+- **Sem cabeçalho.** A navegação é só o scroll; links diretos com `#` continuam funcionando.
+- **Rodapé novo** ("END OF FILE · 終", créditos de encerramento, café, "Rewind episode ↑"), porque o anterior estava "feio e simples".
+- **Carregamento:** a tela preta opaca sai; a abertura aparece na hora e o progresso vira uma etiqueta num canto (proposta do Claude, sem objeção do Jean). Isso substitui os truques de medição da Task 8 (imagem 1% maior, atraso do `createRoot`): o LCP tem que vir da abertura visível de verdade.
+- JP novo: 終 (owari, "the end") no rodapé.

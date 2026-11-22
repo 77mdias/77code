@@ -78,6 +78,7 @@ Sistema visual do portfólio 77code.com.br. Vale para todo código, imagem e tex
 | パサッ | pasa' | papel/pasta abrindo | Quando o dossiê abre |
 | 次回予告 | jikai yokoku | prévia do próximo episódio | Contato |
 | 相棒 | aibō | parceira | Cena da Flora |
+| 終 | owari | the end | Rodapé ("END OF FILE · 終") |
 
 - **Acessibilidade:** onomatopeia é decorativa (`aria-hidden="true"`). Rótulo com sentido leva `lang="ja"` e a tradução em `aria-label` ou texto escondido para leitor de tela.
 
@@ -92,6 +93,9 @@ Sistema visual do portfólio 77code.com.br. Vale para todo código, imagem e tex
 - **Botão:** retângulo `--ink` com texto `--paper` em `--t-label`, sombra chapada `4px 4px 0 --red` no hover; foco com contorno `3px --red` deslocado 3px.
 - **Fio vermelho:** SVG, `stroke --red`, 1.5px, com pontos de alfinete (círculo `--red` 9px).
 - **Eyecatch:** tela cheia `--ink`, "CASE 0N" em Humane `--paper`, nome do projeto em monospace, rótulo vertical em japonês.
+- **Chat da Flora (exceção pedida pelo Jean):** mantém o visual do chat antigo, só com as nossas fontes: sem caixa nem papel, texto claro (`--paper`) direto sobre o estúdio; título em caixa alta espaçada (Cabinet Grotesk) com subtítulo pequeno; o nome (FLORA / YOU) acima de cada fala em `--t-label`; histórico que some em degradê embaixo (máscara); campo só com uma linha embaixo, placeholder em itálico, botão de texto "SEND" com sublinhado que cresce no hover. Código escrito por nós (não copiar o CSS antigo).
+- **Sem cabeçalho** (decisão do Jean): não há barra fixa nem menu.
+- **Rodapé:** "END OF FILE · 終" em `--t-label`, DIAS77 enorme em Humane só com contorno (`-webkit-text-stroke`, preenchimento transparente) sobre `--ink`, créditos em monospace, a xícara fumegante, links (e-mail, WhatsApp, GitHub, LinkedIn) e o botão "Rewind episode ↑".
 
 ## 6. Movimento
 
@@ -99,13 +103,17 @@ Bibliotecas: GSAP + ScrollTrigger (via `@gsap/react`) e Lenis para o scroll suav
 
 | Momento | O que acontece | Duração / gatilho |
 |---|---|---|
-| Carregando | Contador 0–100% em monospace sobre `--ink`, "opening the file…"; fecha com o carimbo do arquivo | Até o fundo, o primeiro quadro e a Humane Bold carregarem (máx. 2,5s, depois segue) |
+| Carregando | A abertura aparece na hora; uma etiqueta pequena num canto ("opening the file… 67%", monospace sobre `--ink`) mostra o progresso dos 40 quadros por cima da cena e some com um carimbo pequeno ao chegar a 100% | Não bloqueia nada; ambiente e scroll ligam quando prontos |
 | Abertura | A cena fica presa e o scroll vira o Jean para a câmera (quadro 1 → 40, volta ao subir; quadro ainda não carregado usa o mais próximo). Parado, ele respira (escala 1→1.006, 4s) | Atrelado ao scroll da abertura (~1,5 tela) |
 | Abertura, ambiente | Chuva atrás da persiana, nuvem passando na lua (a sala escurece até 30% e volta, 11s), poeira no feixe de luz, abajur piscando (a cada ~6s), fumaça do café (3.6s) | Contínuo |
 | Abertura, câmera | Fundo, personagem e título se movem em camadas com o mouse (±14px, ±10px, ±22px); no celular, com o scroll | Contínuo |
 | Eyecatch | Um corte de nanquim varre a tela, "CASE 0N" entra, segura, sai | Preso no scroll (~1 tela) |
-| Dossiê | A pasta abre (パサッ), a folha desliza, a prova cai com o clipe, o fio se desenha até as etiquetas, o carimbo bate (ドン) | Atrelado ao scroll da seção |
-| Seções | Quadros entram na ordem de leitura com um corte reto (clip-path), sem fade genérico | Ao entrar na tela |
+| Dossiê | **Preso.** A pasta abre (パサッ), a folha desliza, a prova cai com o clipe, o fio se desenha até as etiquetas, o carimbo bate (ドン); folha, foto e etiquetas em parallax (profundidades diferentes) | Preso, atrelado ao scroll (~1,5 tela por caso) |
+| Profile | **Preso.** O retrato desliza mais devagar que o resto (parallax), o texto "about" é datilografado conforme o scroll, os três quadros de especialidade são assentados um a um como quadros de mangá | Preso (~1,5 tela) |
+| Flora | **Presa.** A câmera entra no estúdio em camadas (janela/chuva mais lenta, Flora mais rápida), ela troca de expressão ao ver o visitante (warm → happy) e só então o chat aparece | Preso (~1 tela); o chat funciona depois do pin |
+| Próximo episódio | **Preso.** Prévia de anime: 次回予告 entra grande, "Your project." varre a tela, um "77" gigante ao fundo em parallax, o formulário entra por último | Preso (~1 tela) |
+| Rodapé | "END OF FILE · 終", DIAS77 enorme vazado em Humane, créditos rolando como encerramento de anime (Story & code: Jean Dias · Partner: Flora · Filed in Presidente Prudente), xícara fumegando, "Rewind episode ↑" volta ao topo | Créditos atrelados ao scroll do rodapé |
+| Seções (regra) | **Toda cena tem trava de scroll (pin) com parallax ou outra animação** (decisão do Jean, 2026-11-22). Quadros entram na ordem de leitura com corte reto (clip-path), sem fade genérico | — |
 
 - **Curvas:** `power3.out` para entradas, `power2.inOut` para cortes, `back.out(2)` só no carimbo.
 - **Preferência por menos movimento** (`prefers-reduced-motion`): sem parallax, sem chuva/poeira, sem eyecatch preso; os quadros aparecem prontos; a animação dos 40 quadros vira o quadro final parado; o carimbo já está lá.

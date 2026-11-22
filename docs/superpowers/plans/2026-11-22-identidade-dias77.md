@@ -48,7 +48,7 @@
 | `design/CREDITS.md` | Origem e licença de cada fonte e imagem |
 
 **Contrato de DOM para os testes (todas as tasks usam estes nomes):**
-`html[data-loaded="true"]` quando o loading acaba · `[data-testid="loading"]` · `section#opening` com `h1` "DIAS77" e `img[data-testid="jean-frame"]` (src `/static/frames2/ImageN.webp` ou `/static/frames2/m/ImageN.webp`) · `section#cases` · `[data-testid="eyecatch"]` · `article[data-testid="case"]#case-<slug>` com `h2`, `[data-testid="stamp"]` e link "View the site" · `section#profile` · `section#flora` com `img[data-testid="flora"][data-expression]`, `form#chat-form`, `input#chat-input`, `[data-testid="chat-log"] > [data-from="flora"|"guest"]`, `#flora-turnstile`, `p.chat-privacy` · `section#contact` com `form#contact-form` (campos `name`, `email`, `message`) · `header` com links `#cases`, `#profile`, `#flora`, `#contact`.
+`html[data-loaded="true"]` quando o loading acaba · `[data-testid="loading"]` · `section#opening` com `h1` "DIAS77" e `img[data-testid="jean-frame"]` (src `/static/frames2/ImageN.webp` ou `/static/frames2/m/ImageN.webp`) · `section#cases` · `[data-testid="eyecatch"]` · `article[data-testid="case"]#case-<slug>` com `h2`, `[data-testid="stamp"]` e link "View the site" · `section#profile` · `section#flora` com `img[data-testid="flora"][data-expression]`, `form#chat-form`, `input#chat-input`, `[data-testid="chat-log"] > [data-from="flora"|"guest"]`, `#flora-turnstile`, `p.chat-privacy` · `section#contact` com `form#contact-form` (campos `name`, `email`, `message`) · ~~`header` com links~~ (removido na Task 9) · `footer` com `[data-testid="rewind"]` (Task 13).
 
 ---
 
@@ -255,3 +255,57 @@ Antes de apagar o código antigo, tirar dele o texto que é do Jean.
 - [ ] **Step 3: Apagar os arquivos e atualizar README/CLAUDE.md. `pnpm test` verde.**
 - [ ] **Step 4: Verificação final:** `pnpm check` verde; `pnpm build` sem aviso de pacote > 500 KB; Lighthouse no celular contra `pnpm cf:dev` (ou a prévia do Workers Builds) com LCP ≤ 2,5s e CLS ≤ 0,1; capturas de todas as cenas em 1440×900 e 390×844 enviadas ao Jean.
 - [ ] **Step 5: Commit** `chore: tira o que sobrou do site antigo e fecha a auditoria`; push da branch e PR para a `main` com as capturas. Não fazer merge: o Jean aprova.
+
+---
+
+## Revisão do Jean (2026-11-22) — Tasks 9 a 13
+
+Spec §12 e DESIGN.md §5/§6 atualizados. Regras que valem para as cinco tasks: toda cena presa usa `ScrollTrigger` com `pin: true` e `scrub`, criada dentro de `useGSAP` com cleanup; com `prefers-reduced-motion` nada fica preso e tudo aparece no estado final; no celular (< 768px) o pin continua, mas o parallax fica mais curto (metade da distância); nenhum teste usa espera fixa onde uma condição serve; `pnpm build` antes de todo e2e (servidor próprio na 8779 com `PLAYWRIGHT_BASE_URL`).
+
+Helper de teste compartilhado (criar na Task 10, reusar depois) em `tests/e2e/helpers.js`: `isPinned(page, selector): Promise<boolean>` (o elemento tem um `.pin-spacer` como pai) e `scrollThrough(page, selector, fraction)` (rola até `fraction` 0..1 do trecho preso da cena e espera dois `requestAnimationFrame`).
+
+### Task 9: Carregamento que não esconde a abertura, sem cabeçalho, sem truque de medição
+
+**Files:** Modify `index.html`, `src/main.tsx`, `src/App.tsx`, `src/scenes/Loading.tsx` (+ css), `src/scenes/Rest.tsx`; Delete `src/scenes/Header.tsx`, `Header.module.css`; Tests `tests/e2e/opening.spec.ts`, `tests/e2e/contact.spec.ts`, `tests/e2e/base.spec.ts`.
+
+- Loading vira uma etiqueta num canto (embaixo à esquerda, `--ink` com texto `--paper`, monospace, "opening the file… N%") por cima da abertura **visível**; N é o progresso dos quadros 1–40; some com um carimbo pequeno ao chegar a 100%. `data-loaded="true"` continua marcando quando o essencial (fundo, quadro 1, Humane Bold, chunk `Rest`) está pronto — teto de 2,5s.
+- A casca estática do `index.html` fica, mas mostra a **abertura de verdade** (fundo + quadro 1 + título, sem cobertura preta), no mesmo lugar e tamanho que o React vai desenhar; sai quando o React desenha. Sai a imagem 1% maior, sai a espera de decode antes do `createRoot` e o `setTimeout` de 600ms.
+- Header removido do `App` e do código; os testes de navegação pelo cabeçalho saem; o teste de link direto `/#contact` fica.
+- Corrigir o hash: `decodeURIComponent(location.hash…)` dentro de `try/catch`; hash inválido é ignorado.
+- **Testes:** `a abertura aparece antes de os quadros carregarem` (rota `**/frames2/Image2.webp`..`40` atrasada 5s: `h1` e `jean-frame` visíveis e **não cobertos** — `document.elementFromPoint` no centro do `jean-frame` devolve o próprio `img` ou um filho do `#opening`); `a etiqueta de progresso some ao chegar a 100%`; `hash malformado não quebra` (`/#%` sem erros no `watch` e `h1` visível); `não existe header` (`page.locator('header')` com contagem 0).
+- **Verificação:** Lighthouse celular simulado (2 rodadas) com LCP ≤ 2,5s **e** o elemento LCP visível (relatar qual é). Se não bater, relatar o detalhamento e parar.
+- **Commit:** `feat: abertura visível desde o início, sem cabeçalho`.
+
+### Task 10: Dossiê preso com parallax
+
+**Files:** Modify `src/scenes/CaseDossier.tsx` (+ css), `tests/e2e/helpers.js` (os dois helpers acima), `tests/e2e/cases.spec.ts`.
+
+- Cada `article[data-testid="case"]` fica preso (`end: '+=150%'`); a timeline atrelada ao scroll toca, em ordem: capa da pasta abre (パサッ), folha desliza, foto cai com o clipe, fio vermelho se desenha (corrigir as âncoras: o fio termina **em cima** de cada etiqueta, calculado pela posição real das etiquetas — minor deferido da Task 4), carimbo bate (ドン, `back.out(2)`). Folha, foto e etiquetas se movem em profundidades diferentes (parallax de 40/80/120px no desktop).
+- **Testes:** `cada dossiê fica preso` (`isPinned` para os 4); `o carimbo bate no fim do trecho preso` (em 0.3 opacidade < 0.1; em 0.95 ≥ 0.9); `o fio toca as etiquetas` (para cada ponta do fio, a distância até o centro-topo da etiqueta correspondente ≤ 6px); `menos movimento` (nenhum preso, carimbos visíveis).
+- **Commit:** `feat: dossiês presos com parallax`.
+
+### Task 11: Profile preso
+
+**Files:** Modify `src/scenes/Profile.tsx` (+ css), `tests/e2e/profile.spec.ts`.
+
+- `section#profile` presa (`end: '+=150%'`): o retrato desliza mais devagar (parallax), o texto `about` aparece letra por letra conforme o scroll (o texto completo fica no DOM desde o início para leitor de tela; a animação é só visual, por exemplo `clip-path` por linha ou caracteres com `aria-hidden` sobre um texto `sr-only`), e os três quadros de especialidade são assentados um a um (entram de cima com leve rotação e assentam, como quadros colados).
+- **Testes:** `o profile fica preso`; `o texto aparece com o scroll` (em 0.1 a parte visível do about é menor que em 0.6); `os quadros assentam um a um` (em 0.5 o 1º está assentado e o 3º não; em 0.95 os três); `leitor de tela lê o texto inteiro` (o texto completo existe no DOM acessível desde o início); `menos movimento`.
+- **Commit:** `feat: profile preso com texto datilografado`.
+
+### Task 12: Flora presa e chat com o visual antigo
+
+**Files:** Modify `src/scenes/FloraStudio.tsx` (+ css), `tests/e2e/flora.spec.ts`.
+
+- Chat volta ao visual descrito no DESIGN.md §5 ("Chat da Flora"): sem `Panel`/papel, texto `--paper` sobre o estúdio, título em caixa alta espaçada (Cabinet Grotesk) "Interactive Flora AI" com o subtítulo "PARTNER · 相棒", nome acima de cada fala, histórico com máscara em degradê embaixo, campo com linha embaixo e placeholder em itálico, botão de texto "Send" com sublinhado no hover. Escrever o CSS do zero (não copiar `git show a277e6f:src/style.css`; pode olhar para entender o visual). Toda a lógica (`useFloraChat`, Turnstile) fica igual; o contrato de DOM fica igual.
+- `section#flora` presa (`end: '+=100%'`): a câmera entra em camadas (fundo/janela mais lentos, Flora mais rápida, leve zoom de 1.08 → 1), a Flora troca de `warm` para `happy` no meio do trecho, e o chat entra no fim; depois do pin o chat funciona normalmente.
+- **Testes:** todos os de `flora.spec.ts` continuam passando (rolando até o fim do pin antes de usar o chat); `a Flora fica presa`; `a Flora sorri ao entrar` (em 0.6 `data-expression="happy"`); `o chat não tem caixa de papel` (o fundo computado do container do chat é transparente); `menos movimento`.
+- **Commit:** `feat: Flora presa e chat com o visual de antes`.
+
+### Task 13: Próximo episódio preso e rodapé novo
+
+**Files:** Modify `src/scenes/NextEpisode.tsx` (+ css), `src/scenes/Footer.tsx` (+ css), `src/content/jp.ts` (`JP.end` = 終, owari, "the end", não decorativo), `tests/e2e/contact.spec.ts`, `tests/content.test.ts` (o subconjunto da fonte japonesa precisa incluir 終: rodar `scripts/make-jp-font.py`).
+
+- `section#contact` presa (`end: '+=100%'`): 次回予告 entra grande, "Your project." varre a tela (clip-path), um "77" gigante ao fundo em parallax, o formulário entra por último; depois do pin o formulário funciona.
+- Rodapé (DESIGN.md §5/§6): "END OF FILE · 終", DIAS77 enorme só com contorno, créditos rolando atrelados ao scroll (Story & code: Jean Dias · Partner: Flora · Filed in Presidente Prudente), xícara fumegante (reusar o SVG/efeito da abertura se existir componente; senão um componente `Steam` em `src/ui/`), links e o botão `[data-testid="rewind"]` "Rewind episode ↑" que volta ao topo (Lenis, ou `scrollTo(0,0)` sem animação com reduced motion).
+- **Testes:** `o contato fica preso`; `o formulário funciona depois do pin` (os testes de Web3Forms continuam passando); `o rodapé tem END OF FILE e 終 acessível`; `rewind volta ao topo` (depois do clique, `scrollY < 10` com poll); `créditos rolam com o scroll` (a posição dos créditos muda entre duas frações); `menos movimento`; `o subconjunto da fonte tem todos os caracteres do JP` (teste unitário que lê a lista de caracteres gravada pelo script — resolve o minor deferido da Task 8).
+- **Commit:** `feat: próximo episódio preso e rodapé de encerramento`.
