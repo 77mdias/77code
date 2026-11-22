@@ -88,7 +88,7 @@ export function Opening({ ready, onFrames }: { ready: boolean; onFrames: (settle
     el.addEventListener('pointermove', onMove);
     el.addEventListener('pointerleave', onLeave);
     return () => { el.removeEventListener('pointermove', onMove); el.removeEventListener('pointerleave', onLeave); };
-  }, { dependencies: [reduced], scope: root });
+  }, { dependencies: [reduced], scope: root, revertOnUpdate: true });
 
   return (
     <section id="opening" ref={root} className={styles.opening}>

@@ -23,7 +23,7 @@ export function Profile() {
         scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' },
       });
     });
-  }, { dependencies: [reduced], scope: root });
+  }, { dependencies: [reduced], scope: root, revertOnUpdate: true });
 
   return (
     <section ref={root} id="profile" className={styles.profile} aria-labelledby="profile-title">

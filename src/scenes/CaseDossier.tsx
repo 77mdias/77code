@@ -97,12 +97,13 @@ export function CaseDossier({ data }: { data: CaseFile }) {
     const onFocus = () => requestAnimationFrame(() => { if (st.progress < 1) scrollTo(0, st.end); });
     el.addEventListener('focusin', onFocus);
     return () => { cleanup(); el.removeEventListener('focusin', onFocus); };
-  }, { dependencies: [reduced, phone], scope: root });
+    // revertOnUpdate: sem ele o useGSAP não desfaz o pin, a timeline e os listeners antigos quando as dependências mudam.
+  }, { dependencies: [reduced, phone], scope: root, revertOnUpdate: true });
 
   useGSAP(() => {
     if (!stamped || reduced) return;
     gsap.fromTo(`.${styles.stampAt}`, { scale: 1.8 }, { scale: 1, duration: 0.35, ease: 'back.out(2)' });
-  }, { dependencies: [stamped, reduced], scope: root });
+  }, { dependencies: [stamped, reduced], scope: root, revertOnUpdate: true });
 
   return (
     <article ref={root} id={`case-${data.slug}`} className={styles.case} data-testid="case" aria-labelledby={`case-${data.slug}-name`}>

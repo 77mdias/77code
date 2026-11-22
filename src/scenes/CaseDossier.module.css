@@ -213,14 +213,12 @@
   .inside { display: grid; }
   .inside > * { grid-area: 1 / 1; }
   .evidence { align-self: start; }
-  /* Carimbo na folha (ela fica no fim), acima da linha do link, sem cobrir nome nem botão. */
+  /* Carimbo menor, na sobra à direita do link: a folha fica no fim e o texto não pode sumir embaixo dele.
+     zoom (não scale): encolhe a caixa também, e o GSAP anima o scale do mesmo elemento. */
   .stampAt {
+    zoom: 0.62;
     align-self: end;
     justify-self: end;
-    margin: 0 8px 88px 0;
-  }
-  .case .don {
-    left: auto;
-    right: 100%;
+    margin: 0 16px 22px 0;
   }
 }

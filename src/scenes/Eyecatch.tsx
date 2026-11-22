@@ -33,7 +33,7 @@ export function Eyecatch({ number, name }: Pick<CaseFile, 'number' | 'name'>) {
       .fromTo(title, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', ease: 'power3.out', duration: 0.3 })
       .to(title, { clipPath: 'inset(100% 0 0% 0)', ease: 'power2.inOut', duration: 0.2 }, 0.65)
       .to(ink, { clipPath: CUT.after, ease: 'power2.inOut', duration: 0.2 }, 0.8);
-  }, { dependencies: [reduced], scope: root });
+  }, { dependencies: [reduced], scope: root, revertOnUpdate: true });
 
   return (
     <div ref={root} className={styles.eyecatch} data-testid="eyecatch" aria-hidden="true">

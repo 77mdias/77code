@@ -1,4 +1,4 @@
-import { test, expect, type Locator } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import { waitLoader, isPinned, scrollThrough } from './helpers.js';
 import { CASES } from '../../src/content/cases.ts';
 
@@ -87,6 +87,33 @@ test.describe('celular: o relatório fecha o dossiê', () => {
     }
   });
 
+  test('o carimbo não cobre o texto da folha', async ({ page }) => {
+    await page.goto('/');
+    await waitLoader(page);
+    for (const c of CASES) {
+      const sel = `#case-${c.slug}`;
+      await scrollThrough(page, sel, 0.95);
+      // Linhas de texto da folha (uma caixa por linha) e o botão contra o carimbo e o ドン.
+      const overlaps = () => page.locator(sel).evaluate((el) => {
+        const sheet = el.querySelector('[role="group"]')!;
+        const boxes: DOMRect[] = [...sheet.querySelectorAll('a')].map((a) => a.getBoundingClientRect());
+        const walk = document.createTreeWalker(sheet, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+          if (!n.textContent!.trim()) continue;
+          range.selectNodeContents(n);
+          boxes.push(...range.getClientRects());
+        }
+        const stamp = el.querySelector('[data-testid="stamp"]')!;
+        const marks = [stamp, stamp.nextElementSibling].filter(Boolean).map((m) => m!.getBoundingClientRect());
+        if (!marks.length || marks[0].width === 0) return -1;
+        return marks.reduce((sum, m) => sum + boxes.filter((b) =>
+          b.left < m.right && m.left < b.right && b.top < m.bottom && m.top < b.bottom).length, 0);
+      });
+      await expect.poll(overlaps, { timeout: 2000 }).toBe(0);
+    }
+  });
+
   test('focar o link pelo teclado mostra o relatório', async ({ page }) => {
     await page.goto('/');
     await waitLoader(page);
@@ -98,6 +125,38 @@ test.describe('celular: o relatório fecha o dossiê', () => {
     await expect(link).toBeFocused();
     await expect.poll(() => revealed(link), { timeout: 3000 }).toBe(true);
   });
+});
+
+// Quantos .pin-spacer embrulham cada dossiê, e quantos existem no total.
+const spacers = (page: Page) => page.evaluate(() => {
+  const all = [...document.querySelectorAll('.pin-spacer')];
+  return {
+    total: all.length,
+    perCase: [...document.querySelectorAll('article[data-testid="case"]')].map((a) => all.filter((s) => s.contains(a)).length),
+    // A folha espera fora da pasta (xPercent 130) só na timeline do celular: sinal de que ela foi montada.
+    phone: [...document.querySelectorAll('article[data-testid="case"] [role="group"]')]
+      .every((g) => new DOMMatrix(getComputedStyle(g.parentElement!).transform).m41 > 0),
+  };
+});
+
+test('trocar de breakpoint não duplica os pins', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  const { total } = await spacers(page);
+  for (const [width, height, phone] of [[390, 844, true], [1440, 900, false]] as const) {
+    await page.setViewportSize({ width, height });
+    await expect.poll(() => spacers(page), { timeout: 3000 }).toEqual({ total, perCase: [1, 1, 1, 1], phone });
+  }
+});
+
+test('ligar e desligar menos movimento não deixa pins velhos', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  const { total } = await spacers(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect.poll(async () => (await spacers(page)).total, { timeout: 3000 }).toBe(0);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect.poll(async () => (await spacers(page)).total, { timeout: 3000 }).toBe(total);
 });
 
 test('eyecatch antes de cada caso', async ({ page }) => {
