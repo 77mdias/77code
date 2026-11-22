@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync, existsSync } from 'node:fs';
 import { audit, collectRefs } from '../scripts/check-assets.mjs';
 
 test('expande os quadros da hero', () => {
@@ -20,4 +21,11 @@ test('o repo está limpo', () => {
   assert.deepEqual(a.spaced, []);
   assert.deepEqual(a.leftovers, []);
   assert.ok(a.bytes < 12_000_000, `public/static com ${a.bytes} bytes`);
+});
+
+test('metadados de compartilhamento', () => {
+  const html = readFileSync('index.html', 'utf8');
+  assert.match(html, /property="og:image" content="https:\/\/77code\.com\.br\/static\/og\.jpg"/);
+  assert.match(html, /property="og:url" content="https:\/\/77code\.com\.br"/);
+  assert.ok(existsSync('public/static/og.jpg'));
 });
