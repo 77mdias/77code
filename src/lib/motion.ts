@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -11,13 +11,16 @@ export function registerGsap() {
   registered = true;
 }
 
-const REDUCED = '(prefers-reduced-motion: reduce)';
-const subscribe = (cb: () => void) => {
-  const m = matchMedia(REDUCED);
-  m.addEventListener('change', cb);
-  return () => m.removeEventListener('change', cb);
-};
-export const useReducedMotion = () => useSyncExternalStore(subscribe, () => matchMedia(REDUCED).matches);
+// `query` tem que ser estável (constante): ela vira a assinatura do store.
+export function useMedia(query: string) {
+  const subscribe = useCallback((cb: () => void) => {
+    const m = matchMedia(query);
+    m.addEventListener('change', cb);
+    return () => m.removeEventListener('change', cb);
+  }, [query]);
+  return useSyncExternalStore(subscribe, () => matchMedia(query).matches);
+}
+export const useReducedMotion = () => useMedia('(prefers-reduced-motion: reduce)');
 
 // Chamar uma vez (App): o Lenis anda no ticker do GSAP para o ScrollTrigger ver o mesmo scroll.
 export function useLenis(): Lenis | null {

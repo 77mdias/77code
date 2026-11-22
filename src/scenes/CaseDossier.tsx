@@ -9,20 +9,19 @@ import { Stamp } from '../ui/Stamp.tsx';
 import { RedString, type Point } from '../ui/RedString.tsx';
 import { Typewriter } from '../ui/Typewriter.tsx';
 import { InkButton } from '../ui/InkButton.tsx';
-import { registerGsap, useReducedMotion } from '../lib/motion.ts';
+import { registerGsap, useMedia, useReducedMotion } from '../lib/motion.ts';
 import styles from './CaseDossier.module.css';
 
 registerGsap();
 
-const small = () => matchMedia('(max-width: 767px)').matches;
-// No celular o parallax anda metade.
-const depth = (px: number) => () => (small() ? px / 2 : px);
 // O fio nasce embaixo da foto: a foto anda 40px a menos que as etiquetas e o começo nunca aparece solto.
 const UNDER_PHOTO = 40;
 const STAMP_AT = 0.85;
 
 export function CaseDossier({ data }: { data: CaseFile }) {
   const reduced = useReducedMotion();
+  const phone = useMedia('(max-width: 767px)');
+  const built = useRef(false);
   const [stamped, setStamped] = useState(false);
   const [string, setString] = useState<{ from: Point; to: Point[] } | null>(null);
   const root = useRef<HTMLElement>(null);
@@ -58,9 +57,15 @@ export function CaseDossier({ data }: { data: CaseFile }) {
     ScrollTrigger.addEventListener('refresh', onRefresh);
     const cleanup = () => ScrollTrigger.removeEventListener('refresh', onRefresh);
     if (reduced) return cleanup;
+    // Recriado depois de outros pins (troca de breakpoint): volta para a ordem do documento antes do próximo refresh.
+    if (built.current) ScrollTrigger.sort();
+    built.current = true;
 
+    // No celular a prova vem primeiro, no meio do pin.
+    const at = phone ? { photo: 0.15, thread: 0.3, tags: 0.37 } : { photo: 0.5, thread: 0.65, tags: 0.72 };
+    const k = phone ? 0.5 : 1; // no celular o parallax anda metade
     // Entradas em xPercent/yPercent e parallax em y: o GSAP soma os dois sem um apagar o outro.
-    gsap.timeline({
+    const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
         trigger: el, start: 'top top', end: '+=150%', pin: true, scrub: true, invalidateOnRefresh: true,
@@ -70,19 +75,29 @@ export function CaseDossier({ data }: { data: CaseFile }) {
       .fromTo($(styles.cover), { rotateY: 0 }, { rotateY: -180, ease: 'power2.inOut', duration: 0.15 }, 0)
       .fromTo($(styles.pasa), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, ease: 'power3.out', duration: 0.04 }, 0.02)
       .to($(styles.pasa), { autoAlpha: 0, duration: 0.04 }, 0.11)
-      .fromTo(sheet, { yPercent: 10 }, { yPercent: 0, ease: 'power3.out', duration: 0.2 }, 0.1)
-      // No celular a folha e a prova dividem o mesmo lugar: a folha sai de lado para a prova cair.
-      .fromTo(sheet, { xPercent: 0 }, { xPercent: () => (small() ? -130 : 0), ease: 'power2.inOut', duration: 0.1 }, 0.4)
       // A foto cai de fora da cena. Absoluto: o GSAP absorve o `rotate` do CSS e o invalidate somaria um valor relativo.
-      .fromTo(photo, { yPercent: -250, rotation: 13 }, { yPercent: 0, rotation: 3, ease: 'power3.out', duration: 0.15 }, 0.5)
+      .fromTo(photo, { yPercent: -250, rotation: 13 }, { yPercent: 0, rotation: 3, ease: 'power3.out', duration: 0.15 }, at.photo)
       // O corte começa 6px acima do alfinete de origem: ele não aparece antes da foto. Mesmo formato nas duas pontas para o GSAP interpolar.
-      .fromTo(thread, { clipPath: () => `inset(0 0 calc(${100 - fromY()}% + 6px) 0)` }, { clipPath: 'inset(0 0 calc(0% + 0px) 0)', duration: 0.12 }, 0.65)
-      .fromTo(tags, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'power2.inOut', duration: 0.1 }, 0.72)
-      .fromTo(sheet, { y: depth(40) }, { y: 0, duration: 1 }, 0)
-      .fromTo(photo, { y: depth(80) }, { y: 0, duration: 1 }, 0)
-      .fromTo([thread, tags], { y: depth(120) }, { y: 0, duration: 1 }, 0);
-    return cleanup;
-  }, { dependencies: [reduced], scope: root });
+      .fromTo(thread, { clipPath: () => `inset(0 0 calc(${100 - fromY()}% + 6px) 0)` }, { clipPath: 'inset(0 0 calc(0% + 0px) 0)', duration: 0.12 }, at.thread)
+      .fromTo(tags, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', ease: 'power2.inOut', duration: 0.1 }, at.tags)
+      .fromTo(sheet, { y: 40 * k }, { y: 0, duration: 1 }, 0)
+      .fromTo(photo, { y: 80 * k }, { y: 0, duration: 1 }, 0)
+      .fromTo([thread, tags], { y: 120 * k }, { y: 0, duration: 1 }, 0);
+    if (phone) {
+      // Prova e relatório dividem o mesmo lugar: a prova sai e o relatório entra e fica (é o que sobra depois do pin).
+      tl.fromTo(evidence, { xPercent: 0 }, { xPercent: -130, ease: 'power2.inOut', duration: 0.1 }, 0.52)
+        .fromTo(sheet, { xPercent: 130 }, { xPercent: 0, ease: 'power3.out', duration: 0.15 }, 0.6);
+    } else {
+      tl.fromTo(sheet, { yPercent: 10 }, { yPercent: 0, ease: 'power3.out', duration: 0.2 }, 0.1);
+    }
+
+    // Teclado: foco dentro do dossiê antes do fim leva ao fim do pin, onde o relatório está inteiro.
+    // rAF: o scroll de foco do navegador vem depois do focusin.
+    const st = tl.scrollTrigger!;
+    const onFocus = () => requestAnimationFrame(() => { if (st.progress < 1) scrollTo(0, st.end); });
+    el.addEventListener('focusin', onFocus);
+    return () => { cleanup(); el.removeEventListener('focusin', onFocus); };
+  }, { dependencies: [reduced, phone], scope: root });
 
   useGSAP(() => {
     if (!stamped || reduced) return;

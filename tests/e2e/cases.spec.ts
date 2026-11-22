@@ -38,14 +38,15 @@ test('o carimbo bate no fim do trecho preso', async ({ page }) => {
   await expect.poll(() => opacity(stamp), { timeout: 1500 }).toBeGreaterThanOrEqual(0.9);
 });
 
-for (const [width, height] of [[1440, 900], [390, 844]]) {
+// No celular a prova aparece no meio do trecho preso e o relatório fecha o dossiê.
+for (const [width, height, fraction] of [[1440, 900, 0.95], [390, 844, 0.5]]) {
   test(`o fio toca as etiquetas (${width}px)`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto('/');
     await waitLoader(page);
     for (const c of CASES) {
       const sel = `#case-${c.slug}`;
-      await scrollThrough(page, sel, 0.95);
+      await scrollThrough(page, sel, fraction);
       // Maior distância entre cada ponta do fio e o centro-topo da etiqueta dela.
       const worst = () => page.locator(sel).evaluate((el) => {
         const ends = [...el.querySelectorAll('[data-end]')].map((e) => e.getBoundingClientRect());
@@ -58,6 +59,46 @@ for (const [width, height] of [[1440, 900], [390, 844]]) {
     }
   });
 }
+
+// Centro dentro da tela e sem nada por cima: o elementFromPoint acha o próprio elemento.
+const revealed = (loc: Locator) => loc.evaluate((e) => {
+  const r = e.getBoundingClientRect();
+  if (r.top < 0 || r.left < 0 || r.bottom > innerHeight || r.right > innerWidth) return false;
+  const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+  return !!hit && e.contains(hit);
+});
+
+test.describe('celular: o relatório fecha o dossiê', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+  });
+
+  test('nome e link legíveis no fim do trecho preso e logo depois', async ({ page }) => {
+    await page.goto('/');
+    await waitLoader(page);
+    for (const c of CASES) {
+      const sel = `#case-${c.slug}`;
+      const article = page.locator(sel);
+      for (const fraction of [0.95, 1.02]) {
+        await scrollThrough(page, sel, fraction);
+        await expect.poll(() => revealed(article.locator('h2')), { timeout: 1500 }).toBe(true);
+        await expect.poll(() => revealed(article.getByRole('link', { name: 'View the site' })), { timeout: 1500 }).toBe(true);
+      }
+    }
+  });
+
+  test('focar o link pelo teclado mostra o relatório', async ({ page }) => {
+    await page.goto('/');
+    await waitLoader(page);
+    const sel = '#case-ateliesys';
+    // No meio do trecho preso a prova ocupa o lugar do relatório.
+    await scrollThrough(page, sel, 0.5);
+    const link = page.locator(sel).getByRole('link', { name: 'View the site' });
+    await link.focus();
+    await expect(link).toBeFocused();
+    await expect.poll(() => revealed(link), { timeout: 3000 }).toBe(true);
+  });
+});
 
 test('eyecatch antes de cada caso', async ({ page }) => {
   await page.goto('/');
@@ -96,6 +137,8 @@ test('menos movimento', async ({ page }) => {
   const parents = await page.locator('[data-testid="eyecatch"]').evaluateAll((els) => els.map((e) => e.parentElement!.className));
   for (const p of parents) expect(p).not.toContain('pin-spacer');
   for (const c of CASES) expect(await isPinned(page, `#case-${c.slug}`)).toBe(false);
+  // O helper avisa em vez de rolar para um lugar sem sentido.
+  await expect(scrollThrough(page, '#case-criptenv', 0.5)).rejects.toThrow(/pin-spacer/);
 });
 
 test.describe('celular de toque', () => {

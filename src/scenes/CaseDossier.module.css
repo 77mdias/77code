@@ -208,13 +208,19 @@
 @media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
   .case { padding-block: 48px 32px; }
 }
-/* No celular a folha e a prova ocupam o mesmo lugar e se revezam na timeline. */
+/* No celular a folha e a prova ocupam o mesmo lugar e se revezam na timeline; a folha fecha o dossiê. */
 @media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
   .inside { display: grid; }
   .inside > * { grid-area: 1 / 1; }
   .evidence { align-self: start; }
+  /* Carimbo na folha (ela fica no fim), acima da linha do link, sem cobrir nome nem botão. */
   .stampAt {
     align-self: end;
-    justify-self: center;
+    justify-self: end;
+    margin: 0 8px 88px 0;
+  }
+  .case .don {
+    left: auto;
+    right: 100%;
   }
 }

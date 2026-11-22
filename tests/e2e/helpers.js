@@ -9,11 +9,12 @@ export const isPinned = (page, selector) =>
 
 // Rola até `fraction` (0..1) do trecho preso da cena e espera dois quadros desenharem.
 export async function scrollThrough(page, selector, fraction) {
-  await page.locator(selector).evaluate((el, f) => {
+  await page.locator(selector).evaluate((el, [f, sel]) => {
     const spacer = el.parentElement;
+    if (!spacer?.classList.contains('pin-spacer')) throw new Error(`scrollThrough: ${sel} não está preso (pai sem .pin-spacer)`);
     const top = spacer.getBoundingClientRect().top + scrollY;
     scrollTo(0, top + f * (spacer.offsetHeight - el.offsetHeight));
-  }, fraction);
+  }, [fraction, selector]);
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
 }
 
