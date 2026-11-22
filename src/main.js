@@ -754,20 +754,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return turnstileLoading;
     }
 
-    async function getTurnstileToken() {
-        const turnstile = await loadTurnstile();
-        return new Promise((resolve, reject) => {
-            const timer = setTimeout(() => { pendingToken = null; reject(new Error('turnstile demorou')); }, 15000);
-            pendingToken = {
-                resolve: (token) => { clearTimeout(timer); pendingToken = null; resolve(token); },
-                reject: (err) => { clearTimeout(timer); pendingToken = null; reject(err); },
-            };
+    // O prazo vale para tudo (carregar o script + gerar o token): rede pendurada não pode travar o chat.
+    function getTurnstileToken() {
+        let timer;
+        const timeout = new Promise((_, reject) => {
+            timer = setTimeout(() => {
+                if (!window.turnstile) turnstileLoading = null; // na próxima tentativa, carrega o script de novo
+                reject(new Error('turnstile demorou'));
+            }, 15000);
+        });
+        const token = loadTurnstile().then((turnstile) => new Promise((resolve, reject) => {
+            pendingToken = { resolve, reject };
             if (turnstileWidget === null) {
                 turnstileWidget = turnstile.render('#flora-turnstile', {
                     sitekey: TURNSTILE_SITE_KEY,
                     execution: 'execute',
                     appearance: 'interaction-only',
-                    callback: (token) => pendingToken?.resolve(token),
+                    callback: (t) => pendingToken?.resolve(t),
                     'error-callback': () => pendingToken?.reject(new Error('turnstile falhou')),
                 });
             } else if (turnstileUsed) {
@@ -775,7 +778,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             turnstileUsed = true;
             turnstile.execute(turnstileWidget);
-        });
+        }));
+        return Promise.race([token, timeout]).finally(() => { clearTimeout(timer); pendingToken = null; });
     }
 
     // Só os textos da conversa desta página; recarregar recomeça.
@@ -817,6 +821,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: toRequestMessages(chatHistory, text), turnstileToken }),
+                signal: AbortSignal.timeout(30_000), // o Worker desiste do Claude em ~25 s; aqui um pouco depois
             });
             if (!response.ok) {
                 sayError(floraErrorReply(response.status));

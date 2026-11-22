@@ -2,7 +2,8 @@
 // Nunca registrar o conteúdo das conversas (nem em erro).
 
 const MAX_MESSAGES = 12;
-const MAX_CHARS = 1200;
+const MAX_CHARS = 1200;           // mensagem do visitante
+const MAX_ASSISTANT_CHARS = 4000; // resposta da Flora que volta no histórico (o site corta nesse tamanho)
 
 const reply = (status, data) => new Response(JSON.stringify(data), {
   status,
@@ -16,7 +17,8 @@ export function validateBody(body) {
   for (const [i, m] of messages.entries()) {
     const role = i % 2 === 0 ? 'user' : 'assistant';
     if (m?.role !== role || typeof m.content !== 'string') return { ok: false };
-    if (!m.content.trim() || m.content.length > MAX_CHARS) return { ok: false };
+    const max = role === 'user' ? MAX_CHARS : MAX_ASSISTANT_CHARS;
+    if (!m.content.trim() || m.content.length > max) return { ok: false };
   }
   if (messages.at(-1).role !== 'user') return { ok: false };
   return { ok: true, messages: messages.map(({ role, content }) => ({ role, content })) };

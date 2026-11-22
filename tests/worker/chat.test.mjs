@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { handleChat, validateBody } from '../../src/worker/chat.js';
 import { verifyTurnstile } from '../../src/worker/turnstile.js';
-import worker from '../../src/worker/index.js';
+import worker, { createClaudeClient } from '../../src/worker/index.js';
 
 const post = (body, headers = {}) => new Request('https://x/api/chat', {
   method: 'POST',
@@ -104,4 +104,16 @@ test('index: GET em /api/chat dá 405 e /api/outra dá 404', async () => {
   assert.deepEqual({ status: get.status, body: await get.json() }, { status: 405, body: { error: 'method_not_allowed' } });
   const other = await worker.fetch(new Request('https://x/api/outra', { method: 'POST' }), env);
   assert.equal(other.status, 404);
+});
+
+test('resposta longa da Flora no histórico (até 4000) é aceita; acima disso dá 400', async () => {
+  const hist = (n) => ({ messages: [{ role: 'user', content: 'a' }, { role: 'assistant', content: 'x'.repeat(n) }, { role: 'user', content: 'b' }], turnstileToken: 't' });
+  assert.equal((await handleChat(post(hist(3000)), deps())).status, 200);
+  assert.equal((await handleChat(post(hist(4001)), deps())).status, 400);
+});
+
+test('cliente do Claude com prazo curto e no máximo 1 nova tentativa', () => {
+  const c = createClaudeClient({ ANTHROPIC_API_KEY: 'sk-ant-teste' });
+  assert.equal(c.timeout, 25_000);
+  assert.equal(c.maxRetries, 1);
 });

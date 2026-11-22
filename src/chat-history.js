@@ -2,7 +2,9 @@
 
 // O Worker aceita até 12 mensagens começando e terminando em `user`; 11 cabe com folga.
 export function toRequestMessages(history, text, max = 11) {
-  const all = [...history, { role: 'user', content: text }].slice(-max);
+  // resposta da Flora longa demais seria recusada pelo Worker e travaria a conversa
+  const all = [...history, { role: 'user', content: text }].slice(-max)
+    .map((m) => (m.role === 'assistant' ? { ...m, content: m.content.slice(0, 4000) } : m));
   while (all.length && all[0].role !== 'user') all.shift();
   return all;
 }

@@ -34,3 +34,8 @@ test('a site key de produção do Turnstile está no código', async () => {
   assert.ok(!main.includes('TURNSTILE_SITE_KEY_PENDENTE'));
   assert.ok(main.includes("'0x4AAAAAAGMqWO7gw7Me7Zju'"));
 });
+
+test('resposta longa da Flora vai cortada em 4000 caracteres no histórico', () => {
+  const out = toRequestMessages([{ role: 'user', content: 'a' }, { role: 'assistant', content: 'x'.repeat(6000) }], 'b');
+  assert.equal(out[1].content.length, 4000);
+});

@@ -8,6 +8,10 @@ const json = (status, data) => new Response(JSON.stringify(data), {
   status, headers: { 'content-type': 'application/json; charset=utf-8' },
 });
 
+// Prazo curto: com o padrão do SDK (10 min, 2 novas tentativas) o visitante ficaria esperando.
+export const createClaudeClient = (env) =>
+  new Anthropic({ apiKey: env.ANTHROPIC_API_KEY, timeout: 25_000, maxRetries: 1 });
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
@@ -15,7 +19,7 @@ export default {
     if (request.method !== 'POST') return json(405, { error: 'method_not_allowed' });
 
     // cliente por requisição: o `env` (e a chave) só existe dentro do fetch
-    const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+    const client = createClaudeClient(env);
     return handleChat(request, {
       env,
       verify: (token, ip) => verifyTurnstile(token, env.TURNSTILE_SECRET_KEY, ip),

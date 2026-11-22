@@ -134,3 +134,25 @@ test('o formulário envia ao Web3Forms com a chave do Jean', async ({ page }) =>
   expect(body.access_key).not.toBe('32ed7635-a0ab-4135-b458-17153735f046');
   expect(body.message).toBe('Mensagem de teste');
 });
+
+test('Turnstile pendurado não trava o chat', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.route('https://challenges.cloudflare.com/**', () => {}); // nunca responde
+  await page.route('**/api/chat', (r) => r.fulfill({ json: { reply: 'x', expression: 'warm' } }));
+  await page.goto('/');
+  await waitLoader(page);
+  await send(page, 'oi');
+  await expect(lastBot(page)).toContainText('verify', { timeout: 25_000 });
+  await page.unroute('https://challenges.cloudflare.com/**');
+  await send(page, 'de novo'); // o campo voltou a funcionar: outra tentativa sai
+  await expect(page.locator('#chat-messages .msg-user').last()).toHaveText('de novo');
+});
+
+test('resposta que nunca chega vira fala de erro', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.route('**/api/chat', () => {}); // nunca responde
+  await page.goto('/');
+  await waitLoader(page);
+  await send(page, 'oi');
+  await expect(lastBot(page)).toContainText('trouble connecting', { timeout: 40_000 });
+});
