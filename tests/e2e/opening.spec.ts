@@ -22,6 +22,21 @@ test('o loading termina em até 3s', async ({ page }) => {
   }
 });
 
+test('fundo chegando depois do teto não quebra o loading', async ({ page }) => {
+  const w = watch(page);
+  // Dois itens atrasados: o primeiro a chegar faria o contador voltar de 100% para 67%.
+  await page.route('**/opening/bg-1920.webp', (r) => { setTimeout(() => r.continue().catch(() => {}), 4000); });
+  await page.route('**/frames2/Image1.webp', (r) => { setTimeout(() => r.continue().catch(() => {}), 4500); });
+  const late = page.waitForResponse((r) => r.url().endsWith('/frames2/Image1.webp'));
+  await page.goto('/', { waitUntil: 'commit' });
+  await waitLoader(page);
+  await page.getByTestId('loading').waitFor({ state: 'detached' });
+  await late;
+  // Dois quadros de animação para o tween do contador rodar depois da resposta atrasada.
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+  expect(w.errors).toEqual([]);
+});
+
 test('o scroll vira o Jean', async ({ page }) => {
   const last = page.waitForResponse((r) => r.url().endsWith('/frames2/Image40.webp'));
   await page.goto('/');

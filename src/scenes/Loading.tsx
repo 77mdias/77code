@@ -31,11 +31,13 @@ export function Loading({ onDone }: { onDone: () => void }) {
     let stop = false;
     let count = 0;
     let timer = 0;
+    // Item que chega depois do teto não mexe mais no contador (voltaria de 100% e o tween acharia o nó já fora).
     const tick = () => { if (!stop) setPercent(Math.round((++count / tasks.length) * 100)); };
     const all = Promise.all(tasks.map((t) => t.catch(() => {}).then(tick)));
     const cap = new Promise((resolve) => { timer = window.setTimeout(resolve, CAP_MS); });
     Promise.race([all, cap]).then(() => {
       if (stop) return;
+      stop = true;
       setPercent(100);
       document.documentElement.dataset.loaded = 'true';
       setDone(true);
