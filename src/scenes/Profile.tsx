@@ -12,8 +12,11 @@ import styles from './Profile.module.css';
 registerGsap();
 
 // Cada quadro entra torto e assenta reto, um depois do outro (como quadros colados).
+// O 1º só cai quando o texto já chegou ao lugar (TEXT_END): senão ele assenta por cima das últimas linhas.
 const TILT = [-7, 5, -4];
-const SETTLE_AT = [0.36, 0.5, 0.64];
+const TEXT_END = 0.28;
+const DROP_AT = [TEXT_END, 0.42, 0.62];
+const DROP = 0.1;
 
 export function Profile() {
   const reduced = useReducedMotion();
@@ -44,17 +47,17 @@ export function Profile() {
       defaults: { ease: 'none' },
       scrollTrigger: { trigger: el, start: 'top top', end: '+=150%', pin: true, scrub: true, invalidateOnRefresh: true },
     })
-      // O texto sobe mais que o retrato: o retrato desliza mais devagar.
+      // O texto sobe 120px até TEXT_END e o retrato 40px no pin inteiro: o retrato desliza mais devagar.
       .fromTo(`.${styles.portrait}`, { y: 40 * k }, { y: 0, duration: 1 }, 0)
-      .fromTo([`.${styles.head}`, `.${styles.about}`], { y: 120 * k }, { y: 0, duration: 1 }, 0)
+      .fromTo([`.${styles.head}`, `.${styles.about}`], { y: 120 * k }, { y: 0, duration: TEXT_END }, 0)
       // Datilografado: as letras visuais acendem uma a uma; o leitor de tela lê a cópia sr-only.
-      .fromTo('[data-typed] span', { opacity: 0 }, { opacity: 1, duration: 0.001, stagger: { amount: 0.36 } }, 0.04);
+      .fromTo('[data-typed] span', { opacity: 0 }, { opacity: 1, duration: 0.001, stagger: { amount: TEXT_END - 0.04 } }, 0.04);
     // Caem de cima da cena (o overflow da seção esconde) e assentam. offsetTop é relativo à ficha
     // (o `scale` dela a torna offsetParent) e não carrega transform; o topo da ficha vem do retângulo.
     const fileTop = () => file.getBoundingClientRect().top - el.getBoundingClientRect().top;
     boxes.forEach((box, i) => {
       tl.fromTo(box, { y: () => -(fileTop() + box.offsetTop + box.offsetHeight + 40), rotation: TILT[i] },
-        { y: 0, rotation: 0, ease: 'power3.out', duration: 0.12 }, SETTLE_AT[i]);
+        { y: 0, rotation: 0, ease: 'power3.out', duration: DROP }, DROP_AT[i]);
     });
     return () => ScrollTrigger.removeEventListener('refresh', onRefresh);
     // revertOnUpdate: sem ele o useGSAP não desfaz o pin e a timeline antigos quando as dependências mudam.

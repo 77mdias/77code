@@ -70,6 +70,30 @@ for (const [width, height] of SIZES) {
   });
 }
 
+for (const [width, height] of SIZES) {
+  // O texto ainda descendo do parallax não pode ficar embaixo de um quadro já assentado.
+  test(`nenhum quadro cobre o texto durante o pin (${width}px)`, async ({ page }) => {
+    await open(page, width, height);
+    for (const f of [0.4, 0.6, 0.8, 0.95]) {
+      await scrollThrough(page, SEL, f);
+      const bad = await page.locator(SEL).evaluate((el) => {
+        const rect = (s: string) => el.querySelector(s)!.getBoundingClientRect();
+        const boxes = [...el.querySelectorAll('[data-testid="specialty"]')].map((b) => b.getBoundingClientRect());
+        const out: string[] = [];
+        if (rect('[data-typed]').bottom > boxes[0].top) out.push('about abaixo do topo do 1º quadro');
+        for (const s of ['h2', 'img', '[data-typed]']) {
+          const t = rect(s);
+          boxes.forEach((b, i) => {
+            if (b.left < t.right && t.left < b.right && b.top < t.bottom && t.top < b.bottom) out.push(`quadro ${i + 1} sobre ${s}`);
+          });
+        }
+        return out;
+      });
+      expect(bad, `fração ${f}`).toEqual([]);
+    }
+  });
+}
+
 test('o texto aparece com o scroll', async ({ page }) => {
   await open(page);
   await scrollThrough(page, SEL, 0.1);
