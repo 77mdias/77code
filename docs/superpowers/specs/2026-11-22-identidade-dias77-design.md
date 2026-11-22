@@ -55,6 +55,7 @@ O 77code.com.br no ar é o desenho do tenztan.in com dados e fotos do Jean: o c�
 - **Eyecatch** entre os casos: aprovado.
 - **Contato como "próximo episódio"**: aprovado.
 - **A Flora continua no estúdio/setup dela** (cenário não muda).
+- **Os 40 quadros do Jean acompanham o scroll** na abertura.
 - A "ficha" das habilidades é só linguagem visual; o texto é normal, sem fingir ficha policial.
 - **Site em inglês**, com frases e palavras soltas em japonês.
 - Fontes: **Humane** (título principal), **Cabinet Grotesk**, **Reggae One** (japonês), **Special Elite** (dossiê), **Familjen Grotesk** (texto).
@@ -99,11 +100,11 @@ Conteúdo dos casos e das habilidades: migrado de `projectData` em `src/main.js`
 - **Fundo da abertura:** gerado pelo Jean no Gemini em 2026-11-22.
 - Os nomes das expressões (`warm`, `happy`…) são o contrato com o Worker (`EXPRESSIONS` em `src/worker/flora.js`) e ficam.
 
-**Sobre parecer com o Tenztan:** o Jean decidiu manter o estúdio da Flora e o personagem animado. A sequência de quadros é uma técnica; o que muda é tudo em volta (cena autoral em nanquim, título, ambiente, câmera). Para não repetir o Tenztan, a sequência **não** é atrelada ao scroll como lá: ela toca uma vez quando a abertura aparece (o Jean vira para a câmera) e depois ele só respira.
+**Sobre parecer com o Tenztan:** o Jean decidiu manter o estúdio da Flora e o personagem animado. A sequência de quadros é uma técnica; o que muda é tudo em volta (cena autoral em nanquim, título, ambiente, câmera). **A sequência acompanha o scroll** (decisão do Jean, 2026-11-22): a abertura fica presa enquanto o visitante rola, e o scroll vira o Jean para a câmera, do quadro 1 ao 40 (e volta ao rolar para cima). Parado, ele respira.
 
 ### 7.2 Carregamento (decisão do Claude)
 
-A tela de loading espera só o que pinta a abertura: o fundo (1920px), o primeiro quadro e a Humane Bold. Teto de 2,5s; passou disso, abre assim mesmo. Os outros 39 quadros continuam baixando depois; a virada para a câmera só toca quando todos chegaram (até lá, fica o primeiro quadro). Com `prefers-reduced-motion`, mostra o último quadro e não toca a sequência.
+A tela de loading espera só o que pinta a abertura: o fundo (1920px), o primeiro quadro e a Humane Bold. Teto de 2,5s; passou disso, abre assim mesmo. Os outros 39 quadros continuam baixando depois; enquanto não chegaram, o scroll mostra o quadro carregado mais próximo do que foi pedido. Com `prefers-reduced-motion`, a abertura não fica presa e mostra o último quadro parado.
 
 ### 7.3 Rascunhos aprovados
 
