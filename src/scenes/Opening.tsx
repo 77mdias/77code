@@ -7,6 +7,7 @@ import { PROFILE } from '../content/profile.ts';
 import { Sfx } from '../ui/Sfx.tsx';
 import { RedLabel } from '../ui/RedLabel.tsx';
 import { Caption } from '../ui/Caption.tsx';
+import { Steam } from '../ui/Steam.tsx';
 import { BG_MOBILE, BG_MOBILE_QUERY, BG_SIZES, BG_SRC, BG_SRCSET, FRAME_COUNT, frameForProgress, frameUrl, loadImage, nearestLoaded } from '../lib/frames.ts';
 import { registerGsap, useReducedMotion } from '../lib/motion.ts';
 import { RainCanvas } from './opening/RainCanvas.tsx';
@@ -100,11 +101,7 @@ export function Opening({ ready, onFrames }: { ready: boolean; onFrames: (settle
         {!reduced && <RainCanvas className={styles.rain} />}
         <div className={styles.lamp} />
         {!reduced && <DustCanvas className={styles.dust} />}
-        <svg className={styles.steam} viewBox="0 0 40 60" aria-hidden="true">
-          <path d="M12 58 q-7 -10 0 -20 q7 -10 0 -20" />
-          <path d="M20 58 q-7 -10 0 -20 q7 -10 0 -20" />
-          <path d="M28 58 q-7 -10 0 -20 q7 -10 0 -20" />
-        </svg>
+        <Steam className={styles.steam} />
         <Sfx entry={JP.rain} className={styles.rainSfx} />
       </div>
       <div className={styles.cloud} />

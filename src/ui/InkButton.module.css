@@ -11,4 +11,5 @@
   cursor: pointer;
 }
 .btn:hover { box-shadow: 4px 4px 0 var(--red); }
+.btn:disabled { cursor: progress; box-shadow: none; }
 .btn:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }

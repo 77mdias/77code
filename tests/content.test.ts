@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { CASES } from '../src/content/cases.ts';
 import { PROFILE } from '../src/content/profile.ts';
 import { CONTACT } from '../src/content/contact.ts';
@@ -34,6 +34,16 @@ test('japonês com sentido', () => {
     assert.ok(e.text && e.reading && e.meaning, key);
     assert.match(e.text, /[぀-ヿ一-龯]/, key);
   }
+});
+
+test('o rodapé tem 終 com sentido', () => {
+  assert.deepEqual(JP.end, { text: '終', reading: 'owari', meaning: 'the end', decorative: false });
+});
+
+// A lista é gravada pelo scripts/make-jp-font.py junto com o .woff2: palavra nova sem rodar o script falha aqui.
+test('o subconjunto da fonte tem todos os caracteres do JP', () => {
+  const chars = new Set(readFileSync('scripts/jp-font-chars.txt', 'utf8'));
+  for (const [key, e] of Object.entries(JP)) for (const c of e.text) assert.ok(chars.has(c), `${key}: ${c}`);
 });
 
 test('o perfil tem as três especialidades', () => {

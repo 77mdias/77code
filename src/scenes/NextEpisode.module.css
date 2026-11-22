@@ -1,17 +1,37 @@
 /* Contato: tela --ink, o formulário é o único papel (DESIGN.md §5, Eyecatch/Botão). */
 .contact {
+  position: relative;
   padding: 96px 16px 72px;
   background: var(--ink);
   color: var(--paper);
+  overflow: clip;
+}
+/* O 77 gigante do fundo: só contorno, decorativo (o texto por cima continua com o contraste do --paper). */
+.bigNum {
+  position: absolute;
+  right: -2vw;
+  bottom: -6vh;
+  font: 700 clamp(320px, 62vw, 900px) / 0.8 var(--f-title);
+  color: transparent;
+  -webkit-text-stroke: 2px color-mix(in srgb, var(--paper) 22%, transparent);
+  pointer-events: none;
+  user-select: none;
 }
 .inner {
+  position: relative;
   display: grid;
   gap: 40px;
+  width: 100%;
   max-width: 1180px;
   margin: 0 auto;
 }
 .head { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.sfx { color: var(--paper); }
+.sfx {
+  display: block;
+  color: var(--paper);
+  font-size: calc(var(--t-sfx) * 1.4);
+  transform-origin: left center;
+}
 .title {
   font: 600 var(--t-case) / 0.9 var(--f-title);
   letter-spacing: 0.02em;
@@ -56,4 +76,23 @@
   .contact { padding: 120px 48px 96px; }
   .inner { grid-template-columns: 1fr 1fr; align-items: end; gap: 64px; }
   .panel { padding: 32px; }
+}
+
+/* Preso: a cena inteira cabe na tela; o JS encolhe (--fit) quando ela passa. */
+@media (prefers-reduced-motion: no-preference) {
+  .contact {
+    display: flex;
+    align-items: center;
+    height: 100svh;
+    min-height: 560px;
+    padding-block: 24px;
+  }
+  .inner { scale: var(--fit, 1); }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+  .inner { gap: 20px; }
+  .head { gap: 10px; }
+  .panel { padding: 16px; }
+  .form { gap: 12px; }
+  .field textarea { height: 6.5em; }
 }

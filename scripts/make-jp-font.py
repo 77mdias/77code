@@ -1,4 +1,5 @@
-"""Gera public/fonts/ReggaeOne-JP.woff2 só com os caracteres de src/content/jp.ts.
+"""Gera public/fonts/ReggaeOne-JP.woff2 só com os caracteres de src/content/jp.ts
+e grava a lista em scripts/jp-font-chars.txt (o tests/content.test.ts confere contra o jp.ts).
 
 Uso: python3 -I scripts/make-jp-font.py  (fonttools e brotli num venv; a fonte de origem é o devDependency @fontsource/reggae-one, que não vai para o bundle)
 Depois de mexer em jp.ts, rode de novo e faça commit do .woff2. A OFL do Reggae One permite o subconjunto
@@ -27,4 +28,5 @@ sub.subset(font)
 missing = [c for c in chars if ord(c) not in font.getBestCmap()]
 assert not missing, f'sem glifo na fonte de origem: {missing}'
 subset.save_font(font, str(OUT), opts)
+(ROOT / 'scripts/jp-font-chars.txt').write_text(chars, encoding='utf8')
 print(f'{OUT.name}: {OUT.stat().st_size} bytes, {len(chars)} caracteres: {chars}')

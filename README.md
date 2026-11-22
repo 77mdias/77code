@@ -24,4 +24,4 @@ O visual é decidido em `DESIGN.md`. Créditos de fontes e imagens em `design/CR
 
 ## Fonte japonesa
 
-`public/fonts/ReggaeOne-JP.woff2` é um subconjunto com só os caracteres de `src/content/jp.ts`. Adicionou palavra lá? Rode `python3 -I scripts/make-jp-font.py` (precisa de `fonttools` e `brotli` num venv) e faça commit do `.woff2`.
+`public/fonts/ReggaeOne-JP.woff2` é um subconjunto com só os caracteres de `src/content/jp.ts`. Adicionou palavra lá? Rode `python3 -I scripts/make-jp-font.py` (precisa de `fonttools` e `brotli` num venv) e faça commit do `.woff2` e do `scripts/jp-font-chars.txt` (o `pnpm test` confere essa lista contra o `jp.ts`).

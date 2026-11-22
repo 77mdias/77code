@@ -44,22 +44,7 @@
   52% { opacity: 0.85; }
 }
 
-.steam { position: absolute; left: 37.4%; top: 51%; width: 5%; overflow: visible; }
-.steam path {
-  fill: none;
-  stroke: var(--paper);
-  stroke-width: 2;
-  stroke-linecap: round;
-  opacity: 0;
-  animation: rise 3.6s ease-in-out infinite;
-}
-.steam path:nth-child(2) { animation-delay: 1.2s; }
-.steam path:nth-child(3) { animation-delay: 2.4s; }
-@keyframes rise {
-  0% { opacity: 0; transform: translateY(10px); }
-  35% { opacity: 0.85; }
-  100% { opacity: 0; transform: translateY(-18px); }
-}
+.steam { position: absolute; left: 37.4%; top: 51%; width: 5%; }
 
 /* Nuvem passando na lua: a sala escurece até 30% e volta. */
 .cloud {

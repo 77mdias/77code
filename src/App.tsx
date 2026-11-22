@@ -21,7 +21,7 @@ export function App() {
   const [loaded, setLoaded] = useState(false);
   const [frames, setFrames] = useState(0);
   const [Rest, setRest] = useState<ComponentType | null>(null);
-  useLenis();
+  const lenis = useLenis();
   // A abertura do React já está no DOM, no lugar da casca estática: trocar não pisca.
   useEffect(() => { document.getElementById('shell')?.remove(); }, []);
   // O chunk das demais cenas baixa em paralelo ao loading; a marca de pronto e a volta do scroll esperam as duas coisas.
@@ -46,7 +46,7 @@ export function App() {
         <Opening ready={loaded} onFrames={setFrames} />
         {Rest && <Rest />}
       </main>
-      <Footer />
+      <Footer lenis={lenis} />
     </>
   );
 }

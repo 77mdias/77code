@@ -1,12 +1,18 @@
 import { test, expect, type Page } from '@playwright/test';
-import { watch, waitLoader } from './helpers.js';
+import { watch, waitLoader, isPinned, scrollThrough } from './helpers.js';
 import { CONTACT } from '../../src/content/contact.ts';
 
 const SUBMIT = 'https://api.web3forms.com/submit';
+const SEL = 'section#contact';
+const SIZES = [[1440, 900], [390, 844]] as const;
 
+// O formulário só entra no fim do trecho preso: quem vai escrever rola até lá antes.
 async function fill(page: Page) {
+  await scrollThrough(page, SEL, 1);
+  return typeIn(page);
+}
+async function typeIn(page: Page) {
   const form = page.locator('form#contact-form');
-  await form.scrollIntoViewIfNeeded();
   await form.getByLabel('Name').fill('Teste');
   await form.getByLabel('Email').fill('teste@example.com');
   await form.getByLabel('Message').fill('Mensagem de teste');
@@ -93,6 +99,125 @@ test('hash malformado não quebra', async ({ page }) => {
   await waitLoader(page);
   await expect(page.locator('h1')).toBeVisible();
   expect(w.errors).toEqual([]);
+});
+
+const formOpacity = (page: Page) => page.locator('form#contact-form').evaluate((f) => Number(getComputedStyle(f.closest('[data-reveal]')!).opacity));
+
+for (const [width, height] of SIZES) {
+  test(`o contato fica preso (${width}px)`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto('/');
+    await waitLoader(page);
+    expect(await isPinned(page, SEL)).toBe(true);
+  });
+
+  // No fim do pin a cena inteira cabe na tela: título, campos e botão.
+  test(`no fim do pin o formulário cabe na tela (${width}px)`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
+    await page.goto('/');
+    await waitLoader(page);
+    await scrollThrough(page, SEL, 1);
+    const outside = await page.locator(SEL).evaluate((el) => ['h2', '#contact-form input[name="name"]', '#contact-form textarea', '#contact-form button'].filter((s) => {
+      const r = el.querySelector(s)!.getBoundingClientRect();
+      return !(r.top >= 0 && r.left >= 0 && r.bottom <= innerHeight && r.right <= innerWidth);
+    }));
+    expect(outside).toEqual([]);
+  });
+}
+
+test('o formulário entra por último no trecho preso', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  await scrollThrough(page, SEL, 0.3);
+  expect(await formOpacity(page)).toBeLessThan(0.1);
+  await scrollThrough(page, SEL, 0.95);
+  expect(await formOpacity(page)).toBeGreaterThanOrEqual(0.9);
+});
+
+test('focar um campo no meio do pin mostra o formulário', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  await scrollThrough(page, SEL, 0.3);
+  await page.locator('form#contact-form input[name="name"]').focus();
+  await expect.poll(() => formOpacity(page)).toBe(1);
+});
+
+test('o formulário funciona depois do pin e trava o botão enquanto envia', async ({ page }) => {
+  let calls = 0;
+  let release!: () => void;
+  const held = new Promise<void>((ok) => { release = ok; });
+  await page.route(SUBMIT, async (r) => { calls++; await held; r.fulfill({ json: { success: true } }); });
+  await page.goto('/');
+  await waitLoader(page);
+  await scrollThrough(page, SEL, 1);
+  await page.evaluate(() => scrollBy(0, 300)); // passou do pin: a cena já rola com a página
+  const form = await typeIn(page);
+  const btn = form.getByRole('button');
+  await btn.click();
+  await expect(btn).toHaveText('Sending…');
+  await expect(btn).toBeDisabled();
+  await expect(btn).toHaveAttribute('aria-busy', 'true');
+  release();
+  await expect(btn).toHaveText('Sent');
+  await expect(btn).toBeEnabled();
+  expect(calls).toBe(1);
+});
+
+test('o rodapé tem END OF FILE e 終 acessível', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  const footer = page.locator('footer');
+  await expect(footer).toContainText('END OF FILE');
+  await expect(footer.getByRole('img', { name: 'the end' })).toHaveText('終');
+  await expect(footer.locator('[lang="ja"]')).toHaveText('終');
+  for (const t of ['Story & code', 'Jean Dias', 'Partner', 'Flora', 'Filed in', 'Presidente Prudente']) await expect(footer.getByText(t, { exact: true })).toBeAttached();
+  await expect(footer.getByRole('link')).toHaveCount(4);
+  await expect(footer.locator('[data-testid="rewind"]')).toHaveText('Rewind episode ↑');
+});
+
+const toBottom = (page: Page) => page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+
+test('rewind volta ao topo', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  await toBottom(page);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(1000);
+  await page.locator('[data-testid="rewind"]').click();
+  await expect.poll(() => page.evaluate(() => scrollY), { timeout: 10_000 }).toBeLessThan(10);
+});
+
+// Posição dos créditos dentro do rodapé (o transform, não o scroll da página) em duas frações da entrada do rodapé.
+test('créditos rolam com o scroll', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  const at = async (f: number) => {
+    await page.locator('footer').evaluate((el: HTMLElement, k) => {
+      const top = el.getBoundingClientRect().top + scrollY;
+      scrollTo(0, top - innerHeight + k * Math.min(el.offsetHeight, innerHeight));
+    }, f);
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+    return page.locator('[data-testid="credits"]').evaluate((c) => c.getBoundingClientRect().top - c.closest('footer')!.getBoundingClientRect().top);
+  };
+  const early = await at(0.3);
+  const late = await at(1);
+  expect(early - late).toBeGreaterThan(40);
+});
+
+test('menos movimento: nada preso, formulário e créditos prontos', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.route(SUBMIT, (r) => r.fulfill({ json: { success: true } }));
+  await page.goto('/');
+  await waitLoader(page);
+  expect(await isPinned(page, SEL)).toBe(false);
+  expect(await formOpacity(page)).toBe(1);
+  await expect(page.locator(SEL).locator('h2')).toHaveCSS('clip-path', 'none');
+  await expect(page.locator('[data-testid="credits"]')).toHaveCSS('transform', 'none');
+  const form = await typeIn(page);
+  await form.getByRole('button').click();
+  await expect(form.getByRole('button')).toHaveText('Sent');
+  await toBottom(page);
+  await page.locator('[data-testid="rewind"]').click();
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeLessThan(10);
 });
 
 test('chunk das cenas que falha uma vez não trava o site', async ({ page }) => {
