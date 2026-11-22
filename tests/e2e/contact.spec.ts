@@ -100,3 +100,20 @@ test('a 404 mostra CASE NOT FOUND e volta para /', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'CASE NOT FOUND' })).toBeVisible();
   await expect(page.getByRole('link', { name: /DIAS77/ })).toHaveAttribute('href', '/');
 });
+
+test('link direto /#contact cai na cena de contato', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#contact');
+  await waitLoader(page);
+  await expect.poll(() => page.locator('#contact').evaluate((e) => Math.round(e.getBoundingClientRect().top))).toBeLessThan(450);
+  await expect.poll(() => page.locator('#contact').evaluate((e) => e.getBoundingClientRect().top)).toBeGreaterThan(-100);
+});
+
+test('chunk das cenas que falha uma vez não trava o site', async ({ page }) => {
+  let aborted = 0;
+  await page.route('**/assets/Rest-*.js', (r) => { if (aborted++ === 0) return r.abort(); return r.continue(); });
+  await page.goto('/');
+  await waitLoader(page);
+  expect(aborted).toBeGreaterThan(0);
+  await expect(page.locator('#contact')).toBeAttached();
+});

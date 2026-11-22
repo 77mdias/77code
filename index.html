@@ -11,12 +11,28 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preload" href="/fonts/Humane-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <!-- Mesmos arquivos e consultas de src/lib/frames.ts (tests/frames.test.ts confere) -->
-  <link rel="preload" as="image" fetchpriority="high" href="/static/opening/bg-960.webp" media="(max-width: 767px)">
-  <link rel="preload" as="image" fetchpriority="high" href="/static/opening/bg-1920.webp" imagesrcset="/static/opening/bg-1920.webp 1920w, /static/opening/bg-2752.webp 2752w" imagesizes="(min-aspect-ratio: 2752/1536) 100vw, 180vh" media="(min-width: 768px)">
+  <link rel="preload" as="image" href="/static/opening/bg-960.webp" media="(max-width: 767px)">
+  <link rel="preload" as="image" href="/static/opening/bg-1920.webp" imagesrcset="/static/opening/bg-1920.webp 1920w, /static/opening/bg-2752.webp 2752w" imagesizes="(min-aspect-ratio: 2752/1536) 100vw, 180vh" media="(min-width: 768px)">
   <link rel="preload" as="image" fetchpriority="high" href="/static/frames2/m/Image1.webp" media="(max-width: 767px)">
   <link rel="preload" as="image" fetchpriority="high" href="/static/frames2/Image1.webp" media="(min-width: 768px)">
+  <style>
+    /* Casca estática: pinta o quadro 1 e o loading antes do JS; fica sob o loading do React (z 100) e sai logo depois (main.tsx/App), fora do #root para o LCP ter tempo de registrar o quadro. Mesma geometria de Opening.module.css/.jean (1% maior, para o quadro do React, que respira até 0,6%, nunca virar um LCP maior) e Loading.module.css */
+    #shell { position: fixed; inset: 0; z-index: 99; overflow: hidden; background: #0d0d0d; }
+    #shell picture img { position: absolute; bottom: 0; left: 77%; height: calc(100svh * 1.01); width: calc(100svh * 1.01 * 16 / 9); margin-left: calc(100svh * 1.01 * 16 / 9 * -0.526); }
+    #shell .ld { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; background: #0d0d0d; color: #f3f0e8; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; }
+    #shell .ld b { font: 700 clamp(40px, 8vw, 72px) / 1 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; }
+    #shell .ld p { margin: 0; font: 700 11px / 1.2 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; letter-spacing: 0.22em; text-transform: uppercase; }
+    @media (max-width: 767px) { #shell picture img { height: calc(62svh * 1.01); width: calc(62svh * 1.01 * 16 / 9); margin-left: calc(62svh * 1.01 * 16 / 9 * -0.526); left: 50%; } }
+  </style>
 </head>
 <body>
+  <div id="shell" aria-hidden="true">
+    <picture>
+      <source media="(max-width: 767px)" srcset="/static/frames2/m/Image1.webp">
+      <img src="/static/frames2/Image1.webp" alt="" width="1920" height="1080" fetchpriority="high">
+    </picture>
+    <div class="ld"><b>0%</b><p>opening the file…</p></div>
+  </div>
   <div id="root"></div>
   <noscript>
     <p>DIAS77 · Creative developer, full cycle and AI.</p>
