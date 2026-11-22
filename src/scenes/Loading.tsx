@@ -39,7 +39,6 @@ export function Loading({ onDone }: { onDone: () => void }) {
       if (stop) return;
       stop = true;
       setPercent(100);
-      document.documentElement.dataset.loaded = 'true';
       setDone(true);
       onDone();
     });

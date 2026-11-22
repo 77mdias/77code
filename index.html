@@ -10,6 +10,11 @@
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preload" href="/fonts/Humane-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Mesmos arquivos e consultas de src/lib/frames.ts (tests/frames.test.ts confere) -->
+  <link rel="preload" as="image" fetchpriority="high" href="/static/opening/bg-960.webp" media="(max-width: 767px)">
+  <link rel="preload" as="image" fetchpriority="high" href="/static/opening/bg-1920.webp" imagesrcset="/static/opening/bg-1920.webp 1920w, /static/opening/bg-2752.webp 2752w" imagesizes="(min-aspect-ratio: 2752/1536) 100vw, 180vh" media="(min-width: 768px)">
+  <link rel="preload" as="image" fetchpriority="high" href="/static/frames2/m/Image1.webp" media="(max-width: 767px)">
+  <link rel="preload" as="image" fetchpriority="high" href="/static/frames2/Image1.webp" media="(min-width: 768px)">
 </head>
 <body>
   <div id="root"></div>
