@@ -1,0 +1,16 @@
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--f-mono);
+}
+.counter { font: 700 clamp(40px, 8vw, 72px) / 1 var(--f-mono); }
+.note { font: 700 var(--t-label) / 1.2 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; }
+/* Fora do fluxo para o contador não pular quando o carimbo entra. */
+.stamp { position: absolute; top: calc(50% + 72px); left: 50%; translate: -50% 0; }

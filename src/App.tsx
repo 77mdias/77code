@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from './scenes/Header.tsx';
 import { Loading } from './scenes/Loading.tsx';
 import { Opening } from './scenes/Opening.tsx';
@@ -7,16 +7,18 @@ import { Profile } from './scenes/Profile.tsx';
 import { FloraStudio } from './scenes/FloraStudio.tsx';
 import { NextEpisode } from './scenes/NextEpisode.tsx';
 import { Footer } from './scenes/Footer.tsx';
+import { useLenis, useScrollMemory } from './lib/motion.ts';
 
 export function App() {
-  // Sem tela de loading ainda (Task 3): a página já nasce carregada.
-  useEffect(() => { document.documentElement.dataset.loaded = 'true'; }, []);
+  const [loaded, setLoaded] = useState(false);
+  useLenis();
+  useScrollMemory(loaded);
   return (
     <>
       <Header />
-      <Loading />
+      <Loading onDone={() => setLoaded(true)} />
       <main>
-        <Opening />
+        <Opening ready={loaded} />
         <Cases />
         <Profile />
         <FloraStudio />

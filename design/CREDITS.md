@@ -19,3 +19,4 @@ Os arquivos de Humane e Cabinet Grotesk ficam em `public/fonts/`; as demais vêm
 - **Flora** (`public/static/char/*.webp`, `char_back3.webp`, `back2.webm`): personagem e estúdio gerados pelo Jean a partir de prompts do projeto (2026-11-21); a janela em vídeo foi montada de um vídeo que ele gerou no Kling.
 - **Fundo da abertura** (`design/fundo-hero/delegacia-noir-gemini.jpeg`): gerado pelo Jean no Gemini em 2026-11-22.
 - **Capturas dos projetos** (`public/static/projects/`): telas dos sites do próprio Jean.
+- **Derivadas** (geradas por `scripts/make-images.py`): `public/static/opening/bg-*.webp` (do fundo da abertura), `public/static/frames2/m/` (os 40 quadros em 960px) e `public/og.jpg` (fundo + quadro 40 + "DIAS77" desenhado com a Humane Bold; a fonte não é alterada nem distribuída).

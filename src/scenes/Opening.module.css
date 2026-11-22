@@ -1,8 +1,101 @@
 .opening {
-  display: grid;
-  min-height: 100svh;
-  place-items: center;
+  --bg-ratio: calc(2752 / 1536);
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
   background: var(--ink);
+}
+
+/* Palco com a proporção do fundo, cobrindo a tela (com folga para o parallax):
+   os efeitos usam % do palco e ficam sempre sobre a janela, o abajur e a xícara.
+   Centralizado com margem, não com transform, porque o GSAP move o palco. */
+.stage {
+  --w: max(calc(100% + 48px), calc((100svh + 48px) * var(--bg-ratio)));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--w);
+  aspect-ratio: 2752 / 1536;
+  margin: calc(var(--w) / var(--bg-ratio) / -2) 0 0 calc(var(--w) / -2);
+}
+.bg { display: block; width: 100%; height: 100%; }
+
+.rain, .dust { position: absolute; mix-blend-mode: screen; pointer-events: none; }
+.rain { left: 20%; top: 1.5%; width: 36.5%; height: 55.5%; opacity: 0.55; }
+.dust { left: 52%; top: 12%; width: 42%; height: 80%; }
+
+.lamp {
+  position: absolute;
+  left: 8%;
+  top: 36%;
+  width: 16%;
+  height: 26%;
+  background: radial-gradient(closest-side, rgb(243 240 232 / 0.53), rgb(243 240 232 / 0.2) 40%, transparent);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  animation: flicker 6s infinite;
+}
+@keyframes flicker {
+  0%, 47%, 100% { opacity: 0.85; }
+  48% { opacity: 0.35; }
+  49% { opacity: 0.9; }
+  51% { opacity: 0.5; }
+  52% { opacity: 0.85; }
+}
+
+.steam { position: absolute; left: 37.4%; top: 51%; width: 5%; overflow: visible; }
+.steam path {
+  fill: none;
+  stroke: var(--paper);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0;
+  animation: rise 3.6s ease-in-out infinite;
+}
+.steam path:nth-child(2) { animation-delay: 1.2s; }
+.steam path:nth-child(3) { animation-delay: 2.4s; }
+@keyframes rise {
+  0% { opacity: 0; transform: translateY(10px); }
+  35% { opacity: 0.85; }
+  100% { opacity: 0; transform: translateY(-18px); }
+}
+
+/* Nuvem passando na lua: a sala escurece até 30% e volta. */
+.cloud {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  animation: cloud 11s ease-in-out infinite;
+}
+@keyframes cloud {
+  0%, 100% { opacity: 0; }
+  45% { opacity: 0.3; }
+  60% { opacity: 0.27; }
+}
+
+.layer { position: absolute; inset: 0; }
+
+/* Caixa com a proporção do quadro (16:9) e o Jean (52,6% da largura do quadro) no ponto pedido. */
+.jean {
+  --h: 100svh;
+  position: absolute;
+  bottom: 0;
+  left: 77%;
+  height: var(--h);
+  width: calc(var(--h) * 16 / 9);
+  margin-left: calc(var(--h) * 16 / 9 * -0.526);
+  transform-origin: 50% 100%;
+}
+
+.titleBlock {
+  position: absolute;
+  top: 9%;
+  left: 7%;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
 }
 
 /* DESIGN.md §3: letra papel, contorno de tinta e sombra chapada, nunca borrada */
@@ -12,4 +105,47 @@
   -webkit-text-stroke: 2px var(--ink);
   paint-order: stroke fill;
   text-shadow: 5px 5px 0 var(--ink);
+}
+
+.opening .rainSfx,
+.opening .vertical {
+  position: absolute;
+  color: var(--paper);
+  paint-order: stroke fill;
+}
+.opening .rainSfx {
+  left: 40%;
+  top: 34%;
+  font-size: clamp(16px, 3.4vw, 40px);
+  -webkit-text-stroke: 2px var(--ink);
+  rotate: -8deg;
+  opacity: 0.95;
+}
+.opening .vertical {
+  top: 9%;
+  right: 6%;
+  writing-mode: vertical-rl;
+  font-size: clamp(12px, 1.7vw, 16px);
+  letter-spacing: 0.3em;
+  -webkit-text-stroke: 1px var(--ink);
+}
+
+/* Moldura da página: respiro de papel e traço de nanquim (DESIGN.md §5). */
+.frame {
+  position: absolute;
+  inset: 0;
+  border: 10px solid var(--paper);
+  box-shadow: inset 0 0 0 3px var(--ink);
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .jean { --h: 62svh; left: 50%; }
+  .titleBlock { top: 7%; left: 6%; }
+  .frame { border-width: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp, .cloud { animation: none; }
+  .steam { display: none; }
 }
