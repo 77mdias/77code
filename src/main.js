@@ -734,7 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Turnstile (Cloudflare, invisível): um token novo a cada mensagem. Em localhost, a chave de teste que sempre aprova.
     const TURNSTILE_SITE_KEY = ['localhost', '127.0.0.1'].includes(location.hostname)
         ? '1x00000000000000000000BB'
-        : 'TURNSTILE_SITE_KEY_PENDENTE';
+        : '0x4AAAAAAGMqWO7gw7Me7Zju';
     let turnstileLoading = null;
     let turnstileWidget = null;
     let turnstileUsed = false;

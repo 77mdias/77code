@@ -27,3 +27,10 @@ test('falas de erro da Flora', () => {
   assert.match(floraErrorReply(403), /verify/);
   assert.match(floraErrorReply(500), /trouble connecting/);
 });
+
+test('a site key de produção do Turnstile está no código', async () => {
+  const { readFileSync } = await import('node:fs');
+  const main = readFileSync('src/main.js', 'utf8');
+  assert.ok(!main.includes('TURNSTILE_SITE_KEY_PENDENTE'));
+  assert.ok(main.includes("'0x4AAAAAAGMqWO7gw7Me7Zju'"));
+});
