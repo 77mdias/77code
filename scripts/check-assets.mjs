@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const REF = /\/static\/[^"'`)\s?]+/g;
 const FRAMES = 40; // a abertura monta `/static/frames2/Image${i}.webp` de 1 a 40
-// Textos do autor original e fontes do site de referência, proibidos em src/ e index.html.
+// Textos do autor original e fontes do site de referência, proibidos em src/, index.html e public/404.html.
 const LEFTOVER = /tenztan|tanmay|premee|Tez_leaves|Tenz_leaves|kiko|Space Grotesk|Noto Serif JP|Noto Sans JP|Dancing Script|Kaushan Script/i;
 
 function walk(dir) {
@@ -30,7 +30,7 @@ export function collectRefs(texts) {
 }
 
 export function audit(root) {
-  const sources = [join(root, 'index.html'), ...walk(join(root, 'src')).filter((f) => /\.(ts|tsx|css)$/.test(f))];
+  const sources = [join(root, 'index.html'), join(root, 'public/404.html'), ...walk(join(root, 'src')).filter((f) => /\.(ts|tsx|css)$/.test(f))];
   const texts = sources.map((f) => readFileSync(f, 'utf8'));
   const refs = collectRefs(texts);
 

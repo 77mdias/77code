@@ -25,9 +25,9 @@ test('o repo está limpo', () => {
 
 test('metadados de compartilhamento', () => {
   const html = readFileSync('index.html', 'utf8');
-  assert.match(html, /property="og:image" content="https:\/\/77code\.com\.br\/static\/og\.jpg"/);
+  assert.match(html, /property="og:image" content="https:\/\/77code\.com\.br\/og\.jpg"/);
   assert.match(html, /property="og:url" content="https:\/\/77code\.com\.br"/);
-  assert.ok(existsSync('public/static/og.jpg'));
+  assert.ok(existsSync('public/og.jpg'));
 });
 
 test('a chave do Web3Forms do autor original não está no código', () => {

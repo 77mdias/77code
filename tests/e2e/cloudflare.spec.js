@@ -26,6 +26,6 @@ test('rota inexistente dá 404', async ({ request }) => {
 test('a página 404 não fica em branco e leva de volta à home', async ({ page }) => {
   const res = await page.goto('/lab/');
   expect(res.status()).toBe(404);
-  await expect(page.locator('h1')).toContainText('404');
+  await expect(page.locator('h1')).toContainText('CASE NOT FOUND');
   await expect(page.locator('a[href="/"]')).toBeVisible();
 });

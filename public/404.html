@@ -3,26 +3,33 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>404 · DIAS77</title>
+    <title>Case not found · DIAS77</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="/favicon.ico" sizes="48x48">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <style>
-        :root { color-scheme: dark; }
+        /* Arquivos de fonte sem alteração (licença Humane). CSS embutido: a CSP não permite script inline. */
+        @font-face { font-family: Humane; font-weight: 700; font-display: swap; src: url('/fonts/Humane-Bold.woff2') format('woff2'); }
+        :root { --ink: #0d0d0d; --paper: #f3f0e8; --red: #c4231c; }
         body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; box-sizing: border-box;
-            background: radial-gradient(80% 90% at 50% 40%, #1f3760 0%, #07090d 70%); color: #ece9e0;
-            font-family: 'Space Grotesk', system-ui, sans-serif; text-align: center; }
-        h1 { font-size: clamp(64px, 18vw, 160px); margin: 0; letter-spacing: -0.04em; line-height: 1; }
-        p { color: #8d96a6; letter-spacing: 0.2em; text-transform: uppercase; font-size: 13px; margin: 16px 0 32px; }
-        a { color: #ece9e0; text-decoration: none; border: 1px solid rgba(236, 233, 224, 0.3); padding: 12px 24px;
-            border-radius: 999px; letter-spacing: 0.15em; text-transform: uppercase; font-size: 12px; }
-        a:hover, a:focus-visible { background: #ece9e0; color: #07090d; outline: none; }
+            background: var(--ink); color: var(--paper); text-align: center;
+            font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; }
+        main { display: grid; justify-items: center; gap: 24px; }
+        .label { background: var(--red); color: var(--paper); padding: 4px 8px; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.22em; text-transform: uppercase; }
+        h1 { margin: 0; font: 700 clamp(64px, 16vw, 200px) / 0.85 Humane, 'Arial Narrow', Impact, sans-serif; letter-spacing: 0.02em; }
+        p { margin: 0; color: var(--paper); font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; }
+        a { display: inline-block; padding: 12px 20px; background: var(--paper); color: var(--ink); text-decoration: none;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+        a:hover { box-shadow: 4px 4px 0 var(--red); }
+        a:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
     </style>
 </head>
 <body>
     <main>
-        <h1>404</h1>
-        <p>This page doesn't exist yet</p>
+        <span class="label">Error 404</span>
+        <h1>CASE NOT FOUND</h1>
+        <p>No file with this number is in the archive.</p>
         <a href="/">Back to DIAS77</a>
     </main>
 </body>

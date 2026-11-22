@@ -11,11 +11,11 @@ import { useLenis, useScrollMemory } from './lib/motion.ts';
 
 export function App() {
   const [loaded, setLoaded] = useState(false);
-  useLenis();
+  const lenis = useLenis();
   useScrollMemory(loaded);
   return (
     <>
-      <Header />
+      <Header lenis={lenis} />
       <Loading onDone={() => setLoaded(true)} />
       <main>
         <Opening ready={loaded} />

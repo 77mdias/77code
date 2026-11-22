@@ -1,0 +1,25 @@
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 16px;
+  background: var(--paper);
+  border-top: 3px solid var(--ink);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.mark {
+  width: 24px;
+  height: 24px;
+  background: var(--ink);
+  mask: url('/favicon.svg') center / contain no-repeat;
+}
+.footer small, .links a {
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; padding: 0; list-style: none; }
+.links a { text-underline-offset: 6px; }
+@media (min-width: 768px) { .footer { padding: 24px 48px; } }

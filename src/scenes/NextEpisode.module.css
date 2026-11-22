@@ -1,0 +1,59 @@
+/* Contato: tela --ink, o formulário é o único papel (DESIGN.md §5, Eyecatch/Botão). */
+.contact {
+  padding: 96px 16px 72px;
+  background: var(--ink);
+  color: var(--paper);
+}
+.inner {
+  display: grid;
+  gap: 40px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.head { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.sfx { color: var(--paper); }
+.title {
+  font: 600 var(--t-case) / 0.9 var(--f-title);
+  letter-spacing: 0.02em;
+}
+.channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.channels a {
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.panel { padding: 20px; color: var(--ink); margin: 0 6px 6px 0; }
+.form { display: grid; gap: 16px; justify-items: start; }
+.field { display: grid; gap: 6px; width: 100%; }
+.field span {
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.field input, .field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px / 1.3 var(--f-body); /* 16px: o iOS não dá zoom no foco */
+  resize: vertical;
+}
+.status { min-height: 1.55em; color: var(--ink-soft); font-size: 14px; }
+
+@media (min-width: 768px) {
+  .contact { padding: 120px 48px 96px; }
+  .inner { grid-template-columns: 1fr 1fr; align-items: end; gap: 64px; }
+  .panel { padding: 32px; }
+}
