@@ -43,3 +43,9 @@ test('a IA se chama Flora em todo o site', () => {
   assert.match(html, /<div class="chat-title">Interactive Flora AI<\/div>/);
   assert.match(html, /placeholder="Speak to Flora\.\.\."/);
 });
+
+test('a frase japonesa da cena 2 diz full cycle, como a hero', () => {
+  const html = readFileSync('index.html', 'utf8');
+  assert.ok(html.includes('<div class="award-top-subtitle">フルサイクルAIエンジニア / クリエイティブコーダー</div>'));
+  assert.ok(!html.includes('フルスタック'));
+});
