@@ -1,6 +1,6 @@
 import styles from './RedString.module.css';
 
-type Point = [number, number];
+export type Point = [number, number];
 
 // Coordenadas em % do pai. Os alfinetes são spans (não círculos do SVG) para não achatar com o viewBox esticado.
 export function RedString({ from, to }: { from: Point; to: Point[] }) {
@@ -12,7 +12,9 @@ export function RedString({ from, to }: { from: Point; to: Point[] }) {
           <line key={`${x}-${y}`} x1={from[0]} y1={from[1]} x2={x} y2={y} vectorEffect="non-scaling-stroke" />
         ))}
       </svg>
-      {pins.map(([x, y]) => <span key={`${x}-${y}`} className={styles.pin} style={{ left: `${x}%`, top: `${y}%` }} />)}
+      {pins.map(([x, y], i) => (
+        <span key={`${x}-${y}`} className={styles.pin} data-end={i > 0 || undefined} style={{ left: `${x}%`, top: `${y}%` }} />
+      ))}
     </div>
   );
 }

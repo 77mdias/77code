@@ -64,11 +64,15 @@
 
 /* Prova: captura em cinza, presa com clipe */
 .evidence {
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 64px;
 }
 .photo {
   position: relative;
+  z-index: 2;
   margin: 0;
   padding: 8px 8px 30px;
   background: var(--paper);
@@ -102,10 +106,11 @@
   border-radius: 7px;
 }
 
-/* Fio da prova até as etiquetas: de cima (foto) para baixo (etiquetas). */
+/* Fio da prova até as etiquetas: cobre a prova inteira, por cima das etiquetas e por baixo da foto. */
 .thread {
-  position: relative;
-  flex: 1 0 64px;
+  position: absolute;
+  z-index: 1;
+  inset: 0;
 }
 
 .tags {
@@ -183,5 +188,33 @@
     position: absolute;
     left: 36%;
     bottom: 44px;
+  }
+}
+
+/* Preso: a cena inteira cabe na tela; o JS encolhe a pasta (--fit) quando ela passa. */
+@media (prefers-reduced-motion: no-preference) {
+  .case {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100svh;
+    padding-block: 40px 24px;
+  }
+  .folder {
+    width: 100%;
+    scale: var(--fit, 1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  .case { padding-block: 48px 32px; }
+}
+/* No celular a folha e a prova ocupam o mesmo lugar e se revezam na timeline. */
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+  .inside { display: grid; }
+  .inside > * { grid-area: 1 / 1; }
+  .evidence { align-self: start; }
+  .stampAt {
+    align-self: end;
+    justify-self: center;
   }
 }
