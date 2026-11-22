@@ -12,6 +12,15 @@
   "ratelimits": [
     { "name": "CHAT_LIMITER", "namespace_id": "7701", "simple": { "limit": 10, "period": 60 } }
   ],
+  // Prévia de branch (Workers Builds roda `wrangler preview` em toda branch que não é a main; sem este
+  // bloco o build do PR falha). A prévia é pública e não tem os segredos de produção, então o chat fica
+  // desligado nela (responde 503) e o limite usa um namespace próprio, separado do de produção.
+  "previews": {
+    "vars": { "CHAT_ENABLED": "false" },
+    "ratelimits": [
+      { "name": "CHAT_LIMITER", "namespace_id": "7702", "simple": { "limit": 10, "period": 60 } }
+    ]
+  },
   // Segredos (fora deste arquivo): ANTHROPIC_API_KEY e TURNSTILE_SECRET_KEY, via `wrangler secret put`.
   "workers_dev": true,
   // Domínios próprios: o deploy cria o registro DNS. Não pode existir outro registro A/AAAA/CNAME
