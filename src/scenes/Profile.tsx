@@ -17,7 +17,7 @@ export function Profile() {
   useGSAP(() => {
     if (reduced) return;
     // Corte reto, um quadro por vez na ordem de leitura (DESIGN.md §6).
-    gsap.utils.toArray<HTMLElement>(`.${styles.reveal}`).forEach((el) => {
+    gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
       gsap.fromTo(el, { clipPath: 'inset(0 100% 0 0)' }, {
         clipPath: 'inset(0 0% 0 0)', duration: 0.5, ease: 'power2.inOut',
         scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' },
@@ -28,25 +28,25 @@ export function Profile() {
   return (
     <section ref={root} id="profile" className={styles.profile} aria-labelledby="profile-title">
       <div className={styles.file}>
-        <div className={`${styles.reveal} ${styles.head}`}>
+        <div data-reveal className={styles.head}>
           <RedLabel>Personnel file · 77</RedLabel>
           <h2 id="profile-title" className={styles.title}>{PROFILE.name}</h2>
           <Caption>{PROFILE.role}</Caption>
         </div>
 
-        <div className={`${styles.reveal} ${styles.portrait}`}>
+        <div data-reveal className={styles.portrait}>
           <Panel tone>
             <img src={PROFILE.portrait.src} alt={PROFILE.portrait.alt} width={2752} height={1536} loading="lazy" />
           </Panel>
         </div>
 
-        <div className={`${styles.reveal} ${styles.about}`}>
+        <div data-reveal className={styles.about}>
           {PROFILE.about.map((p) => <p key={p}>{p}</p>)}
         </div>
 
         <div className={styles.specialties}>
           {PROFILE.specialties.map((s) => (
-            <article key={s.title} data-testid="specialty" className={styles.reveal}>
+            <article key={s.title} data-testid="specialty" data-reveal>
               <Panel className={styles.specialty}>
                 <h3>{s.title}</h3>
                 <ul>{s.items.map((i) => <li key={i}>{i}</li>)}</ul>

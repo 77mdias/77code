@@ -27,11 +27,24 @@ test('no celular os três quadros empilham', async ({ page }) => {
   expect(rects[2].y).toBeGreaterThan(rects[1].y);
 });
 
+const clips = (page: import('@playwright/test').Page) =>
+  page.locator('section#profile [data-reveal]').evaluateAll((els) => els.map((e) => getComputedStyle(e).clipPath));
+
+test('com movimento, todos os blocos esperam o corte antes de rolar', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await waitLoader(page);
+  const c = await clips(page);
+  expect(c).toHaveLength(6); // head, retrato, about e 3 especialidades
+  for (const v of c) expect(v).not.toBe('none');
+});
+
 test('movimento reduzido: tudo visível sem rolar', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await waitLoader(page);
-  const clip = await page.locator('section#profile [data-testid="specialty"]').first().evaluate((e) => getComputedStyle(e).clipPath);
-  expect(clip).toBe('none');
+  const c = await clips(page);
+  expect(c).toHaveLength(6);
+  for (const v of c) expect(v).toBe('none');
 });
