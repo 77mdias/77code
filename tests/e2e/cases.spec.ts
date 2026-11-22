@@ -68,6 +68,24 @@ test('menos movimento', async ({ page }) => {
   for (const p of parents) expect(p).not.toContain('pin-spacer');
 });
 
+test.describe('celular de toque', () => {
+  // Com toque, o ScrollTrigger ignora resize só de altura (barra de endereço); o nosso também tem que ignorar.
+  test.use({ hasTouch: true, isMobile: true });
+
+  test('barra de endereço não recalcula os pins', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await waitLoader(page);
+    await page.evaluate(() => scrollTo(0, innerHeight * 0.75));
+    const spacer = () => page.locator('section#opening').evaluate((el) => el.parentElement!.getBoundingClientRect().height);
+    const before = await spacer();
+    await page.setViewportSize({ width: 390, height: 700 });
+    // Esperar um refresh que não deve acontecer: só dá para esperar o tempo do debounce passar.
+    await page.waitForTimeout(1000);
+    expect(await spacer()).toBe(before);
+  });
+});
+
 test('redimensionar depois de carregar', async ({ page }) => {
   await page.goto('/');
   await waitLoader(page);

@@ -9,11 +9,20 @@ registerGsap();
 
 export function Cases() {
   // Os pin-spacers guardam a largura antiga até o refresh; o Lenis recalcula sozinho.
+  // Só largura: no celular a barra de endereço muda a altura no meio do scroll e o refresh faria os pins pularem.
   // As fontes do dossiê chegam depois e mudam a altura das folhas: refresh de novo.
   useEffect(() => {
     let t = 0;
     let alive = true;
-    const onResize = () => { clearTimeout(t); t = window.setTimeout(() => ScrollTrigger.refresh(), 200); };
+    let width = innerWidth;
+    const onResize = () => {
+      clearTimeout(t);
+      t = window.setTimeout(() => {
+        if (innerWidth === width) return;
+        width = innerWidth;
+        ScrollTrigger.refresh();
+      }, 200);
+    };
     addEventListener('resize', onResize);
     document.fonts.ready.then(() => alive && ScrollTrigger.refresh());
     return () => { alive = false; clearTimeout(t); removeEventListener('resize', onResize); };
