@@ -16,22 +16,39 @@
   <link rel="preload" as="image" fetchpriority="high" href="/static/frames2/m/Image1.webp" media="(max-width: 767px)">
   <link rel="preload" as="image" fetchpriority="high" href="/static/frames2/Image1.webp" media="(min-width: 768px)">
   <style>
-    /* Casca estática: pinta o quadro 1 e o loading antes do JS; fica sob o loading do React (z 100) e sai logo depois (main.tsx/App), fora do #root para o LCP ter tempo de registrar o quadro. Mesma geometria de Opening.module.css/.jean (1% maior, para o quadro do React, que respira até 0,6%, nunca virar um LCP maior) e Loading.module.css */
-    #shell { position: fixed; inset: 0; z-index: 99; overflow: hidden; background: #0d0d0d; }
-    #shell picture img { position: absolute; bottom: 0; left: 77%; height: calc(100svh * 1.01); width: calc(100svh * 1.01 * 16 / 9); margin-left: calc(100svh * 1.01 * 16 / 9 * -0.526); }
-    #shell .ld { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; background: #0d0d0d; color: #f3f0e8; font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; }
-    #shell .ld b { font: 700 clamp(40px, 8vw, 72px) / 1 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; }
-    #shell .ld p { margin: 0; font: 700 11px / 1.2 ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; letter-spacing: 0.22em; text-transform: uppercase; }
-    @media (max-width: 767px) { #shell picture img { height: calc(62svh * 1.01); width: calc(62svh * 1.01 * 16 / 9); margin-left: calc(62svh * 1.01 * 16 / 9 * -0.526); left: 50%; } }
+    /* Casca estática: a abertura (fundo, quadro 1, título) pintada antes do JS; o App tira quando o React desenha a mesma cena.
+       Mesma geometria de Opening.module.css (.stage, .jean, .titleBlock, .frame) e de RedLabel/Caption; os tokens vêm do CSS do bundle. */
+    #shell { position: fixed; inset: 0; overflow: hidden; background: var(--ink); }
+    #shell picture { display: contents; }
+    #shell .stage { --w: max(calc(100% + 48px), calc((100svh + 48px) * 2752 / 1536)); position: absolute; top: 50%; left: 50%; width: var(--w); aspect-ratio: 2752 / 1536; margin: calc(var(--w) * 1536 / 2752 / -2) 0 0 calc(var(--w) / -2); }
+    #shell .bg { display: block; width: 100%; height: 100%; }
+    #shell .jean { --h: 100svh; position: absolute; bottom: 0; left: 77%; height: var(--h); width: calc(var(--h) * 16 / 9); margin-left: calc(var(--h) * 16 / 9 * -0.526); }
+    #shell .block { position: absolute; top: 9%; left: 7%; display: grid; justify-items: start; gap: 10px; }
+    #shell .label { padding: 4px 8px; background: var(--red); color: var(--paper); font: 700 var(--t-label) / 1.2 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; }
+    #shell .title { font: 700 var(--t-hero) / 0.8 var(--f-title); color: var(--paper); -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; text-shadow: 5px 5px 0 var(--ink); }
+    #shell .caption { padding: 4px 10px; border: 2px solid var(--ink); background: var(--paper); font: 400 14px / 1.4 var(--f-body); }
+    #shell .frame { position: absolute; inset: 0; border: 10px solid var(--paper); box-shadow: inset 0 0 0 3px var(--ink); }
+    @media (max-width: 767px) { #shell .jean { --h: 62svh; left: 50%; } #shell .block { top: 7%; left: 6%; } #shell .frame { border-width: 6px; } }
   </style>
 </head>
 <body>
   <div id="shell" aria-hidden="true">
+    <div class="stage">
+      <picture>
+        <source media="(max-width: 767px)" srcset="/static/opening/bg-960.webp">
+        <img class="bg" src="/static/opening/bg-1920.webp" srcset="/static/opening/bg-1920.webp 1920w, /static/opening/bg-2752.webp 2752w" sizes="(min-aspect-ratio: 2752/1536) 100vw, 180vh" alt="" fetchpriority="high">
+      </picture>
+    </div>
     <picture>
       <source media="(max-width: 767px)" srcset="/static/frames2/m/Image1.webp">
-      <img src="/static/frames2/Image1.webp" alt="" width="1920" height="1080" fetchpriority="high">
+      <img class="jean" src="/static/frames2/Image1.webp" alt="" fetchpriority="high">
     </picture>
-    <div class="ld"><b>0%</b><p>opening the file…</p></div>
+    <div class="block">
+      <p class="label">CASE FILE 77 · EPISODE 01</p>
+      <p class="title">DIAS77</p>
+      <p class="caption">Creative developer · Full cycle &amp; AI</p>
+    </div>
+    <div class="frame"></div>
   </div>
   <div id="root"></div>
   <noscript>

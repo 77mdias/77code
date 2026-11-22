@@ -28,8 +28,10 @@ test('os preloads do index.html batem com as URLs de src/lib/frames.ts', () => {
   has([`href="${frameUrl(1, false)}"`, 'media="(min-width: 768px)"']);
 });
 
-test('a casca estática do index.html usa o mesmo quadro 1 e a mesma consulta', () => {
-  const shell = readFileSync('index.html', 'utf8').match(/<div id="shell"[\s\S]*?<\/picture>/)![0];
+test('a casca estática do index.html usa o mesmo fundo, o mesmo quadro 1 e as mesmas consultas', () => {
+  const shell = readFileSync('index.html', 'utf8').match(/<div id="shell"[\s\S]*?<div id="root">/)![0];
+  assert.ok(shell.includes(`<source media="${BG_MOBILE_QUERY}" srcset="${BG_MOBILE}">`));
+  assert.ok(shell.includes(`<img class="bg" src="${BG_SRC}" srcset="${BG_SRCSET}" sizes="${BG_SIZES}"`));
   assert.ok(shell.includes(`<source media="${BG_MOBILE_QUERY}" srcset="${frameUrl(1, true)}">`));
-  assert.ok(shell.includes(`<img src="${frameUrl(1, false)}"`));
+  assert.ok(shell.includes(`<img class="jean" src="${frameUrl(1, false)}"`));
 });

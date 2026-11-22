@@ -18,7 +18,7 @@ registerGsap();
 // Deslocamento máximo de cada camada com o mouse (DESIGN.md §6); y menor, como no rascunho aprovado.
 const PARALLAX = { stage: [-14, -8], me: [10, 4], fg: [22, 12] } as const;
 
-export function Opening({ ready }: { ready: boolean }) {
+export function Opening({ ready, onFrames }: { ready: boolean; onFrames: (settled: number) => void }) {
   const reduced = useReducedMotion();
   // shortcut: decidido na montagem; girar o celular não troca a pasta dos quadros.
   const [mobile] = useState(() => matchMedia('(max-width: 767px)').matches);
@@ -35,15 +35,20 @@ export function Opening({ ready }: { ready: boolean }) {
     if (jean.current && !jean.current.src.endsWith(url)) jean.current.src = url;
   };
 
-  // Quadros 2–40 só depois do loading, um por vez, na ordem do scroll.
+  // Quadros 2–40 só depois do loading, um por vez, na ordem do scroll; onFrames conta para a etiqueta de progresso.
   useEffect(() => {
-    if (!ready || reduced) return;
+    if (!ready) return;
+    if (reduced) { onFrames(FRAME_COUNT); return; } // só o quadro 40, já pronto
+    onFrames(1);
     let stop = false;
     (async () => {
       for (let n = 2; n <= FRAME_COUNT && !stop; n++) {
-        try { await loadImage(frameUrl(n, mobile), { low: true }); } catch { continue; }
-        loaded.current.add(n);
-        show();
+        try {
+          await loadImage(frameUrl(n, mobile), { low: true });
+          loaded.current.add(n);
+          show();
+        } catch { /* quadro que falha conta igual: a etiqueta não pode ficar presa */ }
+        if (!stop) onFrames(n);
       }
     })();
     return () => { stop = true; };
@@ -67,7 +72,8 @@ export function Opening({ ready }: { ready: boolean }) {
     wanted.current = frameForProgress(st.progress);
     show();
 
-    gsap.to(jean.current, { scale: 1.006, duration: 2, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+    // Respira para dentro: o repaint do React nunca fica maior que o quadro 1 da casca (DESIGN.md §6).
+    gsap.to(jean.current, { scale: 0.994, duration: 2, ease: 'sine.inOut', yoyo: true, repeat: -1 });
 
     if (!fine) return;
     const movers = (Object.keys(PARALLAX) as (keyof typeof PARALLAX)[]).map((k) => ({

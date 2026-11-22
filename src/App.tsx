@@ -1,5 +1,4 @@
 import { useEffect, useState, type ComponentType } from 'react';
-import { Header } from './scenes/Header.tsx';
 import { Loading } from './scenes/Loading.tsx';
 import { Opening } from './scenes/Opening.tsx';
 import { Footer } from './scenes/Footer.tsx';
@@ -20,17 +19,21 @@ async function loadRest() {
 
 export function App() {
   const [loaded, setLoaded] = useState(false);
+  const [frames, setFrames] = useState(0);
   const [Rest, setRest] = useState<ComponentType | null>(null);
-  const lenis = useLenis();
+  useLenis();
+  // A abertura do React já está no DOM, no lugar da casca estática: trocar não pisca.
+  useEffect(() => { document.getElementById('shell')?.remove(); }, []);
   // O chunk das demais cenas baixa em paralelo ao loading; a marca de pronto e a volta do scroll esperam as duas coisas.
   useEffect(() => { void loadRest().then((r) => r && setRest(() => r)); }, []);
-  useEffect(() => { if (loaded) document.getElementById('shell')?.remove(); }, [loaded]);
   const ready = loaded && Rest !== null;
   useEffect(() => { if (ready) document.documentElement.dataset.loaded = 'true'; }, [ready]);
   // Link direto (/#contact): as cenas só existem depois do chunk. Antes do useScrollMemory, que vence numa recarga.
   useEffect(() => {
     if (!ready || !location.hash) return;
-    const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    let id: string;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; } // hash malformado (/#%): ignora
+    const el = document.getElementById(id);
     if (!el) return;
     ScrollTrigger.refresh();
     scrollTo(0, el.getBoundingClientRect().top + scrollY);
@@ -38,10 +41,9 @@ export function App() {
   useScrollMemory(ready);
   return (
     <>
-      <Header lenis={lenis} />
-      <Loading onDone={() => setLoaded(true)} />
+      <Loading frames={frames} onDone={() => setLoaded(true)} />
       <main>
-        <Opening ready={loaded} />
+        <Opening ready={loaded} onFrames={setFrames} />
         {Rest && <Rest />}
       </main>
       <Footer />

@@ -1,16 +1,19 @@
-.loading {
+/* Etiqueta de progresso (DESIGN.md §6, "Carregando"): pequena, no canto, não bloqueia clique nem scroll. */
+.tag {
   position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 12px;
+  left: 20px;
+  bottom: 20px;
+  z-index: 50;
+  padding: 6px 10px;
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--f-mono);
+  font: 700 var(--t-label) / 1.2 var(--f-mono);
+  letter-spacing: 0.08em;
+  pointer-events: none;
 }
-.counter { font: 700 clamp(40px, 8vw, 72px) / 1 var(--f-mono); }
-.note { font: 700 var(--t-label) / 1.2 var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; }
-/* Fora do fluxo para o contador não pular quando o carimbo entra. */
-.stamp { position: absolute; top: calc(50% + 72px); left: 50%; translate: -50% 0; }
+/* Carimbo pequeno batendo na ponta da etiqueta; fora do fluxo para a etiqueta não crescer. */
+.stamp { position: absolute; left: 100%; top: 50%; translate: -12px -50%; scale: 0.45; transform-origin: 0 50%; }
+
+@media (max-width: 767px) {
+  .tag { left: 14px; bottom: 14px; }
+}

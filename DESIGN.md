@@ -104,7 +104,7 @@ Bibliotecas: GSAP + ScrollTrigger (via `@gsap/react`) e Lenis para o scroll suav
 | Momento | O que acontece | Duração / gatilho |
 |---|---|---|
 | Carregando | A abertura aparece na hora; uma etiqueta pequena num canto ("opening the file… 67%", monospace sobre `--ink`) mostra o progresso dos 40 quadros por cima da cena e some com um carimbo pequeno ao chegar a 100% | Não bloqueia nada; ambiente e scroll ligam quando prontos |
-| Abertura | A cena fica presa e o scroll vira o Jean para a câmera (quadro 1 → 40, volta ao subir; quadro ainda não carregado usa o mais próximo). Parado, ele respira (escala 1→1.006, 4s) | Atrelado ao scroll da abertura (~1,5 tela) |
+| Abertura | A cena fica presa e o scroll vira o Jean para a câmera (quadro 1 → 40, volta ao subir; quadro ainda não carregado usa o mais próximo). Parado, ele respira (escala 1→0.994, 4s; para dentro, para o repaint não ficar maior que o quadro da casca) | Atrelado ao scroll da abertura (~1,5 tela) |
 | Abertura, ambiente | Chuva atrás da persiana, nuvem passando na lua (a sala escurece até 30% e volta, 11s), poeira no feixe de luz, abajur piscando (a cada ~6s), fumaça do café (3.6s) | Contínuo |
 | Abertura, câmera | Fundo, personagem e título se movem em camadas com o mouse (±14px, ±10px, ±22px); no celular, com o scroll | Contínuo |
 | Eyecatch | Um corte de nanquim varre a tela, "CASE 0N" entra, segura, sai | Preso no scroll (~1 tela) |

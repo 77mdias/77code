@@ -15,6 +15,12 @@ for (const vp of [{ name: 'desktop', width: 1440, height: 900 }, { name: 'celula
   });
 }
 
+test('não existe header', async ({ page }) => {
+  await page.goto('/');
+  await waitLoader(page);
+  await expect(page.locator('header')).toHaveCount(0);
+});
+
 test('não busca nada fora do site', async ({ page }) => {
   const hosts = new Set<string>();
   page.on('request', (r) => { if (/^https?:/.test(r.url())) hosts.add(new URL(r.url()).host); });

@@ -22,9 +22,67 @@ test('o loading termina em até 3s', async ({ page }) => {
   }
 });
 
+// Quadros 2–40 (o 1 é o da abertura e não atrasa).
+const LATER_FRAMES = /\/frames2\/Image([2-9]|[1-3]\d|40)\.webp$/;
+
+test('a abertura aparece antes de os quadros carregarem', async ({ page }) => {
+  await page.route(LATER_FRAMES, (r) => { setTimeout(() => r.continue().catch(() => {}), 5000); });
+  await page.goto('/', { waitUntil: 'commit' });
+  const h1 = page.locator('h1');
+  const jean = page.getByTestId('jean-frame');
+  await expect(h1).toBeVisible();
+  await expect(jean).toBeVisible();
+  await expect(page.getByTestId('loading')).toBeVisible();
+  // Visível de verdade: o ponto do meio não pode cair numa cobertura por cima da cena.
+  const uncovered = (sel: string) => page.locator(sel).first().evaluate((el) => {
+    const b = el.getBoundingClientRect();
+    const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+    return hit === el || !!hit?.closest('#opening');
+  });
+  expect(await uncovered('[data-testid="jean-frame"]')).toBe(true);
+  expect(await uncovered('h1')).toBe(true);
+});
+
+test('a casca estática desenha a abertura no mesmo lugar que o React', async ({ page }) => {
+  let release = () => {};
+  const gate = new Promise<void>((r) => { release = r; });
+  await page.route('**/assets/index-*.js', async (r) => { await gate; await r.continue(); });
+  await page.goto('/', { waitUntil: 'commit' });
+  const boxes = (sels: string[]) => page.evaluate(async (s) => {
+    await document.fonts.ready;
+    return s.map((q) => { const b = document.querySelector(q)!.getBoundingClientRect(); return [b.x, b.y, b.width, b.height]; });
+  }, sels);
+  await page.locator('#shell img').first().waitFor();
+  const shell = await boxes(['#shell .bg', '#shell .jean', '#shell .title']);
+  release();
+  await waitLoader(page);
+  await expect(page.locator('#shell')).toHaveCount(0);
+  const react = await boxes(['#opening picture img', '[data-testid="jean-frame"]', 'h1']);
+  // Até 1% da largura: o quadro do React respira (scale 0.994).
+  react.forEach((b, i) => b.forEach((v, j) => expect(Math.abs(v - shell[i][j])).toBeLessThanOrEqual(Math.max(2, b[2] * 0.01))));
+});
+
+test('a etiqueta de progresso some ao chegar a 100%', async ({ page }) => {
+  let release = () => {};
+  const gate = new Promise<void>((r) => { release = r; });
+  await page.route(LATER_FRAMES, async (r) => { await gate; await r.continue().catch(() => {}); });
+  await page.goto('/');
+  await waitLoader(page);
+  const tag = page.getByTestId('loading');
+  await expect(tag).toHaveText(/opening the file… \d+%/);
+  await expect(tag).not.toContainText('100%');
+  // Etiqueta no canto de baixo à esquerda, não a tela inteira.
+  const b = (await tag.boundingBox())!;
+  expect(b.x).toBeLessThan(80);
+  expect(b.y + b.height).toBeGreaterThan(900 - 80);
+  expect(b.width).toBeLessThan(1440 / 2);
+  release();
+  await expect(tag).not.toBeAttached({ timeout: 15_000 });
+});
+
 test('fundo chegando depois do teto não quebra o loading', async ({ page }) => {
   const w = watch(page);
-  // Dois itens atrasados: o primeiro a chegar faria o contador voltar de 100% para 67%.
+  // Dois itens essenciais chegando depois do teto de 2,5s.
   await page.route('**/opening/bg-1920.webp', (r) => { setTimeout(() => r.continue().catch(() => {}), 4000); });
   await page.route('**/frames2/Image1.webp', (r) => { setTimeout(() => r.continue().catch(() => {}), 4500); });
   const late = page.waitForResponse((r) => r.url().endsWith('/frames2/Image1.webp'));

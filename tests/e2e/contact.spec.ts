@@ -63,28 +63,6 @@ test('os campos são obrigatórios e os links de contato abrem fora com rel segu
   await expect(links.and(page.locator(`[href="mailto:${CONTACT.email}"]`))).toHaveCount(1);
 });
 
-test('link do cabeçalho leva à seção', async ({ page }) => {
-  await page.goto('/');
-  await waitLoader(page);
-  const top = (id: string) => page.locator(id).evaluate((el) => el.getBoundingClientRect().top);
-  const nav = page.locator('header');
-  await nav.getByRole('link', { name: 'Contact' }).click();
-  await expect.poll(() => top('#contact'), { timeout: 5000 }).toBeGreaterThan(-10);
-  await expect.poll(() => top('#contact'), { timeout: 5000 }).toBeLessThan(120);
-  await nav.getByRole('link', { name: 'Cases' }).click();
-  await expect.poll(() => top('#cases'), { timeout: 5000 }).toBeGreaterThan(-10);
-  await expect.poll(() => top('#cases'), { timeout: 5000 }).toBeLessThan(120);
-});
-
-test('no celular o cabeçalho tem só o logo e Contact', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  await waitLoader(page);
-  const nav = page.locator('header');
-  await expect(nav.getByRole('link', { name: 'Contact' })).toBeVisible();
-  for (const n of ['Cases', 'Profile', 'Flora']) await expect(nav.getByRole('link', { name: n })).toBeHidden();
-});
-
 test('og:image aponta para /og.jpg e o arquivo responde', async ({ page, request }) => {
   await page.goto('/');
   const og = await page.locator('meta[property="og:image"]').getAttribute('content');
@@ -107,6 +85,14 @@ test('link direto /#contact cai na cena de contato', async ({ page }) => {
   await waitLoader(page);
   await expect.poll(() => page.locator('#contact').evaluate((e) => Math.round(e.getBoundingClientRect().top))).toBeLessThan(450);
   await expect.poll(() => page.locator('#contact').evaluate((e) => e.getBoundingClientRect().top)).toBeGreaterThan(-100);
+});
+
+test('hash malformado não quebra', async ({ page }) => {
+  const w = watch(page);
+  await page.goto('/#%');
+  await waitLoader(page);
+  await expect(page.locator('h1')).toBeVisible();
+  expect(w.errors).toEqual([]);
 });
 
 test('chunk das cenas que falha uma vez não trava o site', async ({ page }) => {
