@@ -9,3 +9,5 @@ playwright-report/
 design/fundos-delegacia/
 # Pacotes de fonte baixados (só os .woff2 usados vão para public/)
 design/fonts/
+# Capturas de conferência (geradas, não versionadas)
+design/capturas/
