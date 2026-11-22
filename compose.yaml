@@ -1,0 +1,26 @@
+services:
+  web:
+    image: node:24-alpine
+    working_dir: /app
+    command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm dev --host 0.0.0.0 --port 5177"
+    ports:
+      - "5177:5177"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: sync
+          path: ./public
+          target: /app/public
+        - action: sync
+          path: ./index.html
+          target: /app/index.html
+        - action: rebuild
+          path: ./package.json
+
+volumes:
+  node_modules:
