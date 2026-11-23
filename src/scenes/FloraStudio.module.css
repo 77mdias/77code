@@ -51,7 +51,7 @@
 
 .shade {
   position: absolute;
-  inset: auto 0 0;
+  inset: auto 0 var(--kb-lift, 0px); /* sobe junto com o chat quando o teclado do celular está na tela */
   height: 68%;
   pointer-events: none;
   background: linear-gradient(to top,
@@ -62,8 +62,9 @@
 
 .chat {
   position: absolute;
-  /* Dentro da área segura: o campo não fica atrás da barra do navegador do celular. */
-  inset: auto 0 var(--scene-extra);
+  /* Dentro da área segura: o campo não fica atrás da barra do navegador do celular.
+     --kb-lift (followKeyboard, motion.ts): com o teclado na tela o chat sobe até o campo aparecer. */
+  inset: auto 0 calc(var(--scene-extra) + var(--kb-lift, 0px));
   height: calc(var(--safe-h) * 0.54);
   display: flex;
   flex-direction: column;
@@ -219,7 +220,7 @@
       transparent 100%);
   }
   .chat {
-    inset: 0 4vw 0 auto;
+    inset: 0 4vw var(--kb-lift, 0px) auto; /* teclado na tela (tablet): a coluna encolhe e o campo sobe */
     width: min(460px, 38vw);
     height: auto;
     padding: 9svh 0 6svh;

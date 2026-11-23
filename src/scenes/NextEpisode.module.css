@@ -22,8 +22,9 @@
 }
 
 /* Área segura: faixa, folha, canais e japonês se medem por ela, não pela cena inteira; embaixo sobra
-   só o fundo (a faixa que a barra do navegador cobre no celular). */
-.frame { position: absolute; inset: 0 0 auto; height: var(--safe-h); }
+   só o fundo (a faixa que a barra do navegador cobre no celular).
+   --kb-lift (followKeyboard, motion.ts): com o teclado na tela tudo sobe até o campo em foco aparecer. */
+.frame { position: absolute; inset: calc(-1 * var(--kb-lift, 0px)) 0 auto; height: var(--safe-h); }
 
 /* Celular: a faixa vai de borda a borda; os canais ficam na tira de cima e o 次回予告 na tira da direita. */
 .band { position: absolute; inset: 5% 0 12%; background: var(--red); overflow: hidden; }

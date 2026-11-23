@@ -72,6 +72,42 @@ for (const [name, scene, field] of [['Flora', FLORA, '#chat-input'], ['contato',
   });
 }
 
+// No iPhone (e no Chrome do Android) o teclado não encolhe a janela: ele cobre a página, e quem diminui é a
+// área visível (visualViewport). O Chromium do teste não tem teclado, então a área visível é trocada à mão.
+const setVisible = (page: Page, top: number, height: number) =>
+  page.evaluate(([offsetTop, h]) => {
+    const vv = visualViewport!;
+    Object.defineProperty(vv, 'offsetTop', { get: () => offsetTop, configurable: true });
+    Object.defineProperty(vv, 'height', { get: () => h, configurable: true });
+    vv.dispatchEvent(new Event('resize'));
+    vv.dispatchEvent(new Event('scroll'));
+  }, [top, height]);
+
+// Quem digita precisa ver o que escreve: o campo em foco fica logo acima do teclado.
+for (const [name, scene, field] of [['Flora', FLORA, '#chat-input'], ['contato', CONTACT, '#contact-form textarea']] as const) {
+  test(`com o teclado cobrindo a página o campo em foco fica acima dele (${name})`, async ({ page }) => {
+    await scrollThrough(page, scene, 0.9);
+    await page.tap(field);
+    await expect.poll(() => fromPinEnd(page, scene), 'o foco estaciona no fim do pin').toBeLessThanOrEqual(1);
+    const bottom = () => page.locator(field).evaluate((el) => el.getBoundingClientRect().bottom);
+    const rest = await bottom();
+    expect(rest, 'sem teclado o campo fica na metade de baixo da cena').toBeGreaterThan(400);
+
+    await setVisible(page, 0, 400); // teclado na tela: sobram os 400px de cima
+    await expect.poll(bottom, 'acima do teclado').toBeLessThanOrEqual(400);
+    expect(await bottom(), 'rente ao teclado, não no alto da tela').toBeGreaterThan(340);
+
+    // O navegador desloca a área visível 150px para mostrar o campo: a cena devolve o que tinha subido a mais.
+    await setVisible(page, 150, 400);
+    await expect.poll(bottom, 'acima do teclado, área visível deslocada').toBeLessThanOrEqual(550);
+    expect(await bottom(), 'rente ao teclado, área visível deslocada').toBeGreaterThan(490);
+
+    await setVisible(page, 0, 844); // teclado fecha: tudo volta para o lugar
+    await expect.poll(bottom, 'de volta ao lugar').toBeCloseTo(rest, 0);
+    expect(await fromPinEnd(page, scene)).toBeLessThanOrEqual(1);
+  });
+}
+
 // Girar o aparelho muda a largura: aí o recálculo tem que acontecer, e a pessoa continua na cena em que estava.
 test('girar o aparelho recalcula as cenas presas e mantém a cena', async ({ page }) => {
   const pinLength = () => page.locator(FLORA).evaluate((el) => el.parentElement!.offsetHeight - (el as HTMLElement).offsetHeight);
