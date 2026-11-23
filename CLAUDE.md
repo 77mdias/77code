@@ -41,6 +41,7 @@ E2E contra um servidor seu em outra porta (a 8778 pode estar servindo build velh
 - `prefers-reduced-motion: reduce`: sem pin, parallax, chuva ou poeira; quadro 40 parado; carimbos visíveis.
 - Site em inglês (`<html lang="en">`); japonês só pela tabela do DESIGN_V1.md §4, via `Sfx`.
 - Cena presa tem `height: var(--scene-h)` (100lvh), nunca `100svh`: no celular a barra do navegador some ao rolar e sobraria uma faixa vazia embaixo. Conteúdo que não pode ficar atrás da barra fica dentro de `--safe-h` (ver `tokens.css` e `tests/e2e/viewport.spec.ts`).
+- Toque e teclado do celular (`tests/e2e/touch.spec.ts`): o recálculo do ScrollTrigger no resize é nosso (`registerGsap` em `src/lib/motion.ts`; só de toque, apenas mudança de largura recalcula) e uma âncora devolve a mesma cena depois de qualquer recálculo. Cena presa com campo de texto usa `pinSpacer` (invólucro próprio); no celular o foco estaciona no fim do pin e, quando o teclado fecha, `settleAfterKeyboard` devolve a página para lá (o navegador rola para mostrar o campo e não volta sozinho). Área rolável dentro de cena presa não leva `data-lenis-prevent` nem `overscroll-behavior: contain` (prende o gesto na cena); o `allowNestedScroll` do Lenis cuida da roda do mouse.
 - Mudou algo visual? Conferir no navegador (desktop e celular) antes de dar por pronto.
 - Docs, comentários e commits em português do Brasil (`feat:`, `fix:`, `test:`, `docs:`, `chore:`).
 - Nada vai para a `main` sem o Jean aprovar o PR (Workers Builds publica a `main`).

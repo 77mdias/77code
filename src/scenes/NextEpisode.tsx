@@ -7,7 +7,7 @@ import { JP } from '../content/jp.ts';
 import { RedLabel } from '../ui/RedLabel.tsx';
 import { Sfx } from '../ui/Sfx.tsx';
 import { InkButton } from '../ui/InkButton.tsx';
-import { registerGsap, useMedia, useReducedMotion } from '../lib/motion.ts';
+import { registerGsap, settleAfterKeyboard, useMedia, useReducedMotion } from '../lib/motion.ts';
 import { MatrixRain } from '../ui/MatrixRain.tsx';
 import { CHANNELS } from './links.ts';
 import styles from './NextEpisode.module.css';
@@ -28,6 +28,7 @@ export function NextEpisode() {
   const idle = useRef(0);
   const built = useRef(false);
   const root = useRef<HTMLElement>(null);
+  const spacer = useRef<HTMLDivElement>(null);
 
   useEffect(() => () => clearTimeout(idle.current), []);
 
@@ -53,7 +54,7 @@ export function NextEpisode() {
     const [from, to] = FORM_IN;
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
-      scrollTrigger: { trigger: el, start: 'top top', end: '+=200%', pin: true, scrub: true, invalidateOnRefresh: true },
+      scrollTrigger: { trigger: el, start: 'top top', end: '+=200%', pin: true, pinSpacer: spacer.current, scrub: true, invalidateOnRefresh: true },
     })
       // O 77 do fundo anda devagar e ao contrário do resto: profundidade.
       .fromTo(bigNum, { y: 160 * k }, { y: -160 * k, duration: 1 }, 0)
@@ -80,8 +81,10 @@ export function NextEpisode() {
     // rAF: o scroll de foco do navegador vem depois do focusin.
     const onFocus = () => requestAnimationFrame(() => { if (pin.progress < 1) scrollTo(0, pin.end); });
     el.addEventListener('focusin', onFocus);
+    const offKeyboard = settleAfterKeyboard(pin);
     return () => {
       el.removeEventListener('focusin', onFocus);
+      offKeyboard();
       ScrollTrigger.removeEventListener('refresh', onRefresh);
     };
     // revertOnUpdate: sem ele o useGSAP não desfaz o pin e as timelines antigas quando as dependências mudam.
@@ -120,50 +123,53 @@ export function NextEpisode() {
   }
 
   return (
-    <section ref={root} id="contact" className={styles.contact} aria-labelledby="contact-title">
-      <MatrixRain className={styles.rain} />
-      <span className={styles.bigNum} aria-hidden="true">77</span>
-      <div className={styles.frame}>
-        {/* A mesma chuva, em nanquim, por cima do vermelho: cai dentro da faixa e anda com ela. */}
-        <div className={styles.band} aria-hidden="true"><MatrixRain className={styles.bandRain} /></div>
+    // O invólucro é o espaçador do pin (pinSpacer): ver FloraStudio.
+    <div ref={spacer}>
+      <section ref={root} id="contact" className={styles.contact} aria-labelledby="contact-title">
+        <MatrixRain className={styles.rain} />
+        <span className={styles.bigNum} aria-hidden="true">77</span>
+        <div className={styles.frame}>
+          {/* A mesma chuva, em nanquim, por cima do vermelho: cai dentro da faixa e anda com ela. */}
+          <div className={styles.band} aria-hidden="true"><MatrixRain className={styles.bandRain} /></div>
 
-        {/* A folha: o único papel da cena, mais alta que a faixa. */}
-        <div className={styles.card} data-reveal>
-          <div className={styles.head}>
-            <RedLabel>Next episode</RedLabel>
-            <h2 id="contact-title" className={styles.title}>Your project.</h2>
+          {/* A folha: o único papel da cena, mais alta que a faixa. */}
+          <div className={styles.card} data-reveal>
+            <div className={styles.head}>
+              <RedLabel>Next episode</RedLabel>
+              <h2 id="contact-title" className={styles.title}>Your project.</h2>
+            </div>
+            <form id="contact-form" className={styles.form} onSubmit={onSubmit}>
+              <label className={styles.field}>
+                <span>Name</span>
+                <input name="name" required autoComplete="name" />
+              </label>
+              <label className={styles.field}>
+                <span>Email</span>
+                <input name="email" type="email" required autoComplete="email" />
+              </label>
+              <label className={`${styles.field} ${styles.grow}`}>
+                <span>Message</span>
+                <textarea name="message" rows={4} required />
+              </label>
+              <InkButton type="submit" busy={state === 'sending'}>{LABEL[state]}</InkButton>
+              <p role="status" className={styles.status}>
+                {state === 'error' && `Something went wrong. Write to ${CONTACT.email} instead.`}
+                {state === 'sent' && 'Message received. I will reply soon.'}
+              </p>
+            </form>
           </div>
-          <form id="contact-form" className={styles.form} onSubmit={onSubmit}>
-            <label className={styles.field}>
-              <span>Name</span>
-              <input name="name" required autoComplete="name" />
-            </label>
-            <label className={styles.field}>
-              <span>Email</span>
-              <input name="email" type="email" required autoComplete="email" />
-            </label>
-            <label className={`${styles.field} ${styles.grow}`}>
-              <span>Message</span>
-              <textarea name="message" rows={4} required />
-            </label>
-            <InkButton type="submit" busy={state === 'sending'}>{LABEL[state]}</InkButton>
-            <p role="status" className={styles.status}>
-              {state === 'error' && `Something went wrong. Write to ${CONTACT.email} instead.`}
-              {state === 'sent' && 'Message received. I will reply soon.'}
-            </p>
-          </form>
-        </div>
 
-        <ul className={styles.channels}>
-          {CHANNELS.map((c) => (
-            <li key={c.label}>
-              <a href={c.href} {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{c.label}</a>
-            </li>
-          ))}
-        </ul>
-        <Sfx entry={JP.nextEpisode} className={styles.sfx} />
-        <span className={styles.side} aria-hidden="true">Preview</span>
-      </div>
-    </section>
+          <ul className={styles.channels}>
+            {CHANNELS.map((c) => (
+              <li key={c.label}>
+                <a href={c.href} {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{c.label}</a>
+              </li>
+            ))}
+          </ul>
+          <Sfx entry={JP.nextEpisode} className={styles.sfx} />
+          <span className={styles.side} aria-hidden="true">Preview</span>
+        </div>
+      </section>
+    </div>
   );
 }
