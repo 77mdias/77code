@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { JP } from '../content/jp.ts';
 import { Sfx } from '../ui/Sfx.tsx';
-import { registerGsap, settleAfterKeyboard, useMedia, useReducedMotion } from '../lib/motion.ts';
+import { registerGsap, followKeyboard, useMedia, useReducedMotion } from '../lib/motion.ts';
 import { EXPRESSIONS, useFloraChat } from '../chat/useFloraChat.ts';
 import styles from './FloraStudio.module.css';
 
@@ -98,7 +98,7 @@ export function FloraStudio() {
     const park = ScrollTrigger.isTouch === 1 ? 1 : DONE;
     const onFocus = () => requestAnimationFrame(() => { if (st.progress < park) scrollTo(0, st.start + (st.end - st.start) * park); });
     el.addEventListener('focusin', onFocus);
-    const offKeyboard = settleAfterKeyboard(st);
+    const offKeyboard = followKeyboard(st);
     return () => { el.removeEventListener('focusin', onFocus); offKeyboard(); };
     // revertOnUpdate: sem ele o useGSAP não desfaz o pin e a timeline antigos quando as dependências mudam.
   }, { dependencies: [reduced, phone], scope: root, revertOnUpdate: true });

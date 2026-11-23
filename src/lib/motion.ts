@@ -37,32 +37,65 @@ export function registerGsap() {
   registered = true;
 }
 
-// Cena presa com campo de texto, no celular: o teclado sobe, o navegador rola a página para mostrar o
-// campo e, quando o teclado desce, a página fica onde parou, com a cena cortada. Quando o teclado
-// fecha, a cena volta ao fim do pin, inteira na tela. "Teclado na tela" = a área visível
-// (visualViewport) está bem menor que a maior altura que já teve nesta largura; 150px separa o
-// teclado (250px ou mais) da barra do navegador (uns 100px). Devolve a função que desliga.
-export function settleAfterKeyboard(st: ScrollTrigger) {
+// Cena presa com campo de texto, no celular. "Teclado na tela" = a área visível (visualViewport) está
+// bem menor que a maior altura que já teve nesta largura; 150px separa o teclado (250px ou mais) da
+// barra do navegador (uns 100px).
+// - Com o teclado na tela, o campo em foco fica logo acima dele. No iPhone o teclado cobre a página sem
+//   encolher a janela e o navegador nem sempre rola até o campo: quem digita não vê o que escreve. A cena
+//   recebe em --kb-lift quantos px faltam para o campo aparecer e o CSS dela sobe o conteúdo esse tanto
+//   (por posição, não por transform: o GSAP reescreve o transform dos elementos que anima).
+// - Quando o teclado fecha, a página volta ao fim do pin, com a cena inteira na tela: o navegador não
+//   desfaz a rolagem que fez para mostrar o campo.
+// Devolve a função que desliga.
+export function followKeyboard(st: ScrollTrigger) {
   const vv = window.visualViewport;
   if (!vv) return () => {};
-  const size = () => [vv.width * vv.scale, vv.height * vv.scale]; // vezes a escala: zoom de pinça não conta
+  const pin = st.pin as HTMLElement;
+  const size = () => [Math.round(vv.width * vv.scale), vv.height * vv.scale]; // vezes a escala: zoom de pinça não conta
   let [width, full] = size();
   let open = false;
+  let used = false; // o teclado subiu para um campo desta cena
+  let lift = 0;
+
+  const place = () => {
+    const field = open && pin.contains(document.activeElement) ? document.activeElement : null;
+    if (field) used = true;
+    // `lift` entra na conta porque o campo já está erguido esse tanto; 12px de respiro acima do teclado.
+    const need = field ? lift + field.getBoundingClientRect().bottom + 12 - (vv.offsetTop + vv.height) : 0;
+    const next = need > 0 && need < pin.offsetHeight ? need : 0; // mais que uma cena: a pessoa rolou para longe
+    if (next !== lift) pin.style.setProperty('--kb-lift', `${(lift = next)}px`);
+  };
   const onResize = () => {
     const [w, h] = size();
-    if (w !== width) { [width, full, open] = [w, h, false]; return; } // girou o aparelho: mede de novo
+    const turned = w !== width;
+    if (turned) [width, full] = [w, h]; // girou o aparelho: mede de novo
     full = Math.max(full, h);
-    const was = open;
-    open = h < full - 150;
-    if (!was || open) return;
+    const settle = open && used && !turned;
+    open = !turned && h < full - 150;
+    place();
+    if (open) return;
+    used = false;
     // No quadro seguinte: se a orientação trocou, o recálculo do GSAP vem logo depois deste evento.
-    requestAnimationFrame(() => {
+    if (settle) requestAnimationFrame(() => {
       const past = scrollY - st.end;
-      if (past > 0 && past < (st.pin as HTMLElement).offsetHeight) scrollTo({ top: st.end, behavior: 'smooth' });
+      if (past > 0 && past < pin.offsetHeight) scrollTo({ top: st.end, behavior: 'smooth' });
     });
   };
+  // O campo muda de lugar quando a área visível anda, a página rola, o foco troca ou o GSAP recalcula.
+  const onFocus = () => requestAnimationFrame(place); // depois da rolagem de foco da cena
   vv.addEventListener('resize', onResize);
-  return () => vv.removeEventListener('resize', onResize);
+  vv.addEventListener('scroll', place);
+  addEventListener('scroll', place, { passive: true });
+  pin.addEventListener('focusin', onFocus);
+  ScrollTrigger.addEventListener('refresh', place);
+  return () => {
+    vv.removeEventListener('resize', onResize);
+    vv.removeEventListener('scroll', place);
+    removeEventListener('scroll', place);
+    pin.removeEventListener('focusin', onFocus);
+    ScrollTrigger.removeEventListener('refresh', place);
+    pin.style.removeProperty('--kb-lift');
+  };
 }
 
 // `query` tem que ser estável (constante): ela vira a assinatura do store.
