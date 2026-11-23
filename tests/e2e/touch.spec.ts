@@ -24,6 +24,13 @@ async function swipeUp(page: Page, x: number, y: number, distance: number) {
 const sceneAtCenter = (page: Page) =>
   page.evaluate(() => document.elementFromPoint(innerWidth / 2, innerHeight / 2)?.closest('section, footer')?.id ?? null);
 
+// Distância, em px, entre a rolagem e o fim do trecho preso da cena (onde ela está inteira na tela).
+const fromPinEnd = (page: Page, selector: string) =>
+  page.locator(selector).evaluate((el) => {
+    const spacer = el.parentElement!;
+    return Math.abs(scrollY - (spacer.getBoundingClientRect().top + scrollY + spacer.offsetHeight - (el as HTMLElement).offsetHeight));
+  });
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
   await waitLoader(page);
@@ -55,6 +62,8 @@ for (const [name, scene, field] of [['Flora', FLORA, '#chat-input'], ['contato',
       await page.setViewportSize({ width: 390, height });
       await page.waitForTimeout(600); // o recálculo espera 200 ms depois do resize
       expect(await page.locator(field).evaluate((el) => el === document.activeElement), `foco com ${height}px`).toBe(true);
+      // Teclado fechou: a página, que o navegador tinha rolado para mostrar o campo, volta ao fim do pin.
+      if (height === 844) await expect.poll(() => fromPinEnd(page, scene), 'volta ao fim do pin').toBeLessThanOrEqual(1);
       // O navegador rola até o campo em foco quando o teclado sobe; o Chromium do teste não tem teclado.
       await page.locator(field).evaluate((el) => el.scrollIntoView({ block: 'nearest' }));
       expect(await sceneAtCenter(page), `cena com ${height}px`).toBe(scene.split('#')[1]);

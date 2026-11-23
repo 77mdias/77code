@@ -37,6 +37,34 @@ export function registerGsap() {
   registered = true;
 }
 
+// Cena presa com campo de texto, no celular: o teclado sobe, o navegador rola a página para mostrar o
+// campo e, quando o teclado desce, a página fica onde parou, com a cena cortada. Quando o teclado
+// fecha, a cena volta ao fim do pin, inteira na tela. "Teclado na tela" = a área visível
+// (visualViewport) está bem menor que a maior altura que já teve nesta largura; 150px separa o
+// teclado (250px ou mais) da barra do navegador (uns 100px). Devolve a função que desliga.
+export function settleAfterKeyboard(st: ScrollTrigger) {
+  const vv = window.visualViewport;
+  if (!vv) return () => {};
+  const size = () => [vv.width * vv.scale, vv.height * vv.scale]; // vezes a escala: zoom de pinça não conta
+  let [width, full] = size();
+  let open = false;
+  const onResize = () => {
+    const [w, h] = size();
+    if (w !== width) { [width, full, open] = [w, h, false]; return; } // girou o aparelho: mede de novo
+    full = Math.max(full, h);
+    const was = open;
+    open = h < full - 150;
+    if (!was || open) return;
+    // No quadro seguinte: se a orientação trocou, o recálculo do GSAP vem logo depois deste evento.
+    requestAnimationFrame(() => {
+      const past = scrollY - st.end;
+      if (past > 0 && past < (st.pin as HTMLElement).offsetHeight) scrollTo({ top: st.end, behavior: 'smooth' });
+    });
+  };
+  vv.addEventListener('resize', onResize);
+  return () => vv.removeEventListener('resize', onResize);
+}
+
 // `query` tem que ser estável (constante): ela vira a assinatura do store.
 export function useMedia(query: string) {
   const subscribe = useCallback((cb: () => void) => {

@@ -7,7 +7,7 @@ import { JP } from '../content/jp.ts';
 import { RedLabel } from '../ui/RedLabel.tsx';
 import { Sfx } from '../ui/Sfx.tsx';
 import { InkButton } from '../ui/InkButton.tsx';
-import { registerGsap, useMedia, useReducedMotion } from '../lib/motion.ts';
+import { registerGsap, settleAfterKeyboard, useMedia, useReducedMotion } from '../lib/motion.ts';
 import { MatrixRain } from '../ui/MatrixRain.tsx';
 import { CHANNELS } from './links.ts';
 import styles from './NextEpisode.module.css';
@@ -81,8 +81,10 @@ export function NextEpisode() {
     // rAF: o scroll de foco do navegador vem depois do focusin.
     const onFocus = () => requestAnimationFrame(() => { if (pin.progress < 1) scrollTo(0, pin.end); });
     el.addEventListener('focusin', onFocus);
+    const offKeyboard = settleAfterKeyboard(pin);
     return () => {
       el.removeEventListener('focusin', onFocus);
+      offKeyboard();
       ScrollTrigger.removeEventListener('refresh', onRefresh);
     };
     // revertOnUpdate: sem ele o useGSAP não desfaz o pin e as timelines antigas quando as dependências mudam.
