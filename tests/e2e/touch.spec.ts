@@ -75,3 +75,14 @@ test('girar o aparelho recalcula as cenas presas e mantém a cena', async ({ pag
   await expect.poll(pinLength).toBe(before);
   expect(await sceneAtCenter(page)).toBe('flora');
 });
+
+// O dedo precisa de pelo menos 44px de altura para acertar: os links de contato tinham 15px.
+test('links de contato e o botão do chat têm altura de toque', async ({ page }) => {
+  const heights = (sel: string) => page.locator(sel).evaluateAll((els) => els.map((el) => Math.round(el.getBoundingClientRect().height)));
+  const targets = { contato: `${CONTACT} ul a`, rodape: 'footer ul a', enviar: '#chat-form button' };
+  for (const [name, sel] of Object.entries(targets)) {
+    const all = await heights(sel);
+    expect(all.length, name).toBeGreaterThan(0);
+    for (const h of all) expect(h, name).toBeGreaterThanOrEqual(44);
+  }
+});

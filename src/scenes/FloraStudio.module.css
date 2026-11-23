@@ -164,7 +164,7 @@
 
 .send {
   position: relative;
-  padding: 12px 0 12px 8px;
+  padding: 16px 0 16px 8px; /* 44px de altura de toque; cabe na linha do campo, que tem 45px */
   border: 0;
   background: transparent;
   color: var(--paper);
@@ -178,7 +178,7 @@
   position: absolute;
   left: 8px;
   right: 0;
-  bottom: 6px;
+  bottom: 10px;
   height: 1px;
   background: var(--paper);
   scale: 0 1;

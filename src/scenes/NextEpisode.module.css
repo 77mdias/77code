@@ -146,6 +146,15 @@
   .side { right: 15%; }
 }
 
+/* Dedo: cada link vira um bloco de 45px de altura de toque (13px de texto + 16px em cima e embaixo; antes
+   eram 15px). A margem negativa tira a diferença para a linha de antes (1lh), então a lista não sai do
+   lugar. O respiro fica dentro da lista, e não para fora, porque o clip-path da animação corta o toque
+   fora da caixa dela. Depois das regras de tela larga para o row-gap valer também em tablets. */
+@media (pointer: coarse) {
+  .channels { margin-block: calc((1lh - 1.2 * var(--t-label) - 32px) / 2); row-gap: 0; }
+  .channels a { display: block; padding-block: 16px; }
+}
+
 /* Sem pin (menos movimento) não há JS encolhendo a folha: a cena garante a altura que ela precisa. */
 @media (prefers-reduced-motion: reduce) {
   .contact { min-height: 760px; }

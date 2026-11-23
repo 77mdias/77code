@@ -61,6 +61,11 @@
   text-transform: uppercase;
 }
 .links a { text-decoration: underline; text-underline-offset: 6px; }
+/* Dedo: 45px de altura de toque em cada link; a margem negativa mantém a linha onde estava (ver o contato). */
+@media (pointer: coarse) {
+  .links { margin-block: calc((1lh - 1.2 * var(--t-label) - 32px) / 2); row-gap: 0; }
+  .links a { display: block; padding-block: 16px; }
+}
 /* Botão de quadro invertido: papel sobre a tela preta, sombra chapada vermelha no hover (DESIGN.md §5, Botão). */
 .rewind {
   padding: 12px 20px;
