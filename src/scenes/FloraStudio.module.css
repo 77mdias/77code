@@ -86,7 +86,10 @@
 .subtitle .jp { font-size: 1.15em; letter-spacing: 0.1em; }
 
 /* O histórico rola por dentro e some em degradê embaixo (e um pouco em cima, para não cortar meia linha
-   rente ao subtítulo); os respiros deixam a primeira e a última fala fora do degradê. */
+   rente ao subtítulo); os respiros deixam a primeira e a última fala fora do degradê.
+   Sem overscroll-behavior: contain (nem data-lenis-prevent, que traz a mesma regra pelo CSS do Lenis):
+   ele segura o gesto mesmo com o histórico vazio, e no celular, onde o histórico ocupa o meio da tela,
+   ninguém conseguia sair da cena arrastando o dedo. */
 .log {
   flex: 1;
   min-height: 0;
@@ -94,7 +97,6 @@
   flex-direction: column;
   gap: 22px;
   overflow-y: auto;
-  overscroll-behavior: contain;
   scrollbar-width: none;
   padding: 16px 8px 36px 0;
   mask-image: linear-gradient(to bottom, transparent, #000 16px, #000 calc(100% - 36px), transparent);

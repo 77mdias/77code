@@ -145,6 +145,25 @@ test('resposta longa no celular', async ({ page }) => {
   expect(input.y + input.height).toBeLessThanOrEqual(844);
 });
 
+// A roda do mouse sobre o histórico não pode prender a página: enquanto ele não tem o que rolar, rola a página.
+test('a roda do mouse sobre o histórico rola a página e, com resposta longa, o histórico', async ({ page }) => {
+  await page.route('**/api/chat', (r) => r.fulfill({ json: { reply: 'Long answer. '.repeat(270).slice(0, 3500), expression: 'explain' } }));
+  await page.goto('/');
+  await waitLoader(page);
+  await scrollThrough(page, SEL, 0.5);
+  await log(page).hover();
+  const before = await page.evaluate(() => scrollY);
+  await page.mouse.wheel(0, 300);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 100);
+
+  await send(page, 'tell me everything');
+  await expect(lastFlora(page)).toContainText('Long answer.');
+  await log(page).evaluate((el) => { el.scrollTop = 0; });
+  await log(page).hover();
+  await page.mouse.wheel(0, 300);
+  await expect.poll(() => log(page).evaluate((el) => el.scrollTop)).toBeGreaterThan(100);
+});
+
 for (const [width, height] of SIZES) {
   test(`a Flora fica presa (${width}px)`, async ({ page }) => {
     await page.setViewportSize({ width, height });

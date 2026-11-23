@@ -8,6 +8,32 @@ let registered = false;
 export function registerGsap() {
   if (registered) return;
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+  // No celular a altura da janela só muda por causa do teclado ou da barra do navegador, e em vários
+  // navegadores (os embutidos do Instagram e do WhatsApp, o Firefox) o teclado encolhe a janela. Recalcular
+  // ali desmonta as cenas presas: o campo perde o foco (o teclado fecha) e a página vai parar em outra cena.
+  // Por isso o resize é nosso: só de toque, apenas a largura (girar o aparelho) pede recálculo.
+  ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
+  let width = innerWidth;
+  addEventListener('resize', () => {
+    if (ScrollTrigger.isTouch === 1 && innerWidth === width) return;
+    width = innerWidth;
+    ScrollTrigger.refresh(true); // o recálculo de sempre, com a espera de 200 ms
+  });
+  // Um recálculo muda o comprimento dos pins e o ScrollTrigger devolve o mesmo pixel, que passa a cair em
+  // outra cena. Acontece ao girar o aparelho e quando o teclado deixa a janela mais larga que alta: aí a
+  // orientação troca e o GSAP recalcula por conta própria, sem passar pelo resize acima. A âncora guarda a
+  // cena presa em que a pessoa está (e quanto dela já passou) e a rolagem volta para lá.
+  let anchor: { pin: Element; at: number; past: number } | undefined;
+  const lastPin = (ok: (t: ScrollTrigger) => boolean) =>
+    ScrollTrigger.getAll().filter((t) => t.pin && ok(t)).sort((a, b) => b.start - a.start)[0];
+  addEventListener('scroll', () => {
+    const st = lastPin((t) => t.start <= scrollY);
+    anchor = st && { pin: st.pin!, at: Math.min(1, (scrollY - st.start) / (st.end - st.start)), past: Math.max(0, scrollY - st.end) };
+  }, { passive: true });
+  ScrollTrigger.addEventListener('refresh', () => {
+    const st = anchor && lastPin((t) => t.pin === anchor!.pin);
+    if (st) scrollTo(0, st.start + (st.end - st.start) * anchor!.at + anchor!.past);
+  });
   registered = true;
 }
 
@@ -29,7 +55,8 @@ export function useLenis(): Lenis | null {
   useEffect(() => {
     if (reduced) return;
     registerGsap();
-    const l = new Lenis();
+    // allowNestedScroll: a roda do mouse rola o histórico do chat enquanto ele tem para onde ir e a página no resto.
+    const l = new Lenis({ allowNestedScroll: true });
     l.on('scroll', ScrollTrigger.update);
     const tick = (time: number) => l.raf(time * 1000);
     gsap.ticker.add(tick);

@@ -38,6 +38,7 @@ export function FloraStudio() {
   const [greeted, setGreeted] = useState(false);
   const built = useRef(false);
   const root = useRef<HTMLElement>(null);
+  const spacer = useRef<HTMLDivElement>(null);
   const log = useRef<HTMLDivElement>(null);
   const video = useRef<HTMLVideoElement>(null);
 
@@ -73,7 +74,7 @@ export function FloraStudio() {
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: el, start: 'top top', end: `+=${(ANIM + HOLD) * 100}%`, pin: true, scrub: true, invalidateOnRefresh: true,
+        trigger: el, start: 'top top', end: `+=${(ANIM + HOLD) * 100}%`, pin: true, pinSpacer: spacer.current, scrub: true, invalidateOnRefresh: true,
         onUpdate: (st) => setGreeted(st.progress / DONE >= SMILE_AT),
       },
     })
@@ -89,10 +90,13 @@ export function FloraStudio() {
       // A espera: nada se mexe, a cena só continua presa com o chat pronto.
       .to({}, { duration: HOLD }, ANIM);
 
-    // Quem chega ao campo pelo teclado no meio da animação vai para o começo da espera, onde o chat está inteiro.
+    // Quem chega ao campo no meio da animação vai para o começo da espera, onde o chat está inteiro.
+    // No celular vai para o fim do pin, onde a cena solta: com o teclado na tela o campo não pode estar
+    // num elemento fixo, senão o navegador não consegue rolar até ele.
     // rAF: o scroll de foco do navegador vem depois do focusin.
     const st = tl.scrollTrigger!;
-    const onFocus = () => requestAnimationFrame(() => { if (st.progress < DONE) scrollTo(0, st.start + (st.end - st.start) * DONE); });
+    const park = ScrollTrigger.isTouch === 1 ? 1 : DONE;
+    const onFocus = () => requestAnimationFrame(() => { if (st.progress < park) scrollTo(0, st.start + (st.end - st.start) * park); });
     el.addEventListener('focusin', onFocus);
     return () => el.removeEventListener('focusin', onFocus);
     // revertOnUpdate: sem ele o useGSAP não desfaz o pin e a timeline antigos quando as dependências mudam.
@@ -109,56 +113,60 @@ export function FloraStudio() {
   };
 
   return (
-    <section ref={root} id="flora" className={styles.studio} aria-labelledby="flora-title">
-      <div className={styles.stage}>
-        <video ref={video} className={styles.layer} src="/static/char/back2.webm" preload="none" loop muted playsInline aria-hidden="true" />
-        <img className={styles.layer} src="/static/char/char_back3.webp" alt="" width={2752} height={1536} loading="lazy" />
-        <div className={styles.flora}>
-          {EXPRESSIONS.map((name) => {
-            const on = name === face;
-            return (
-              <img
-                key={name}
-                className={on ? styles.on : undefined}
-                src={FACES[name]}
-                alt={on ? 'Flora, the AI partner of this case file, at her desk' : ''}
-                data-testid={on ? 'flora' : undefined}
-                data-expression={name}
-                width={2752}
-                height={1536}
-                loading="lazy"
-              />
-            );
-          })}
+    // O invólucro é o espaçador do pin (pinSpacer). Sem ele o ScrollTrigger tira a seção do lugar a cada
+    // recálculo, e um campo em foco dentro dela perde o foco: no celular o teclado fecha no meio da digitação.
+    <div ref={spacer}>
+      <section ref={root} id="flora" className={styles.studio} aria-labelledby="flora-title">
+        <div className={styles.stage}>
+          <video ref={video} className={styles.layer} src="/static/char/back2.webm" preload="none" loop muted playsInline aria-hidden="true" />
+          <img className={styles.layer} src="/static/char/char_back3.webp" alt="" width={2752} height={1536} loading="lazy" />
+          <div className={styles.flora}>
+            {EXPRESSIONS.map((name) => {
+              const on = name === face;
+              return (
+                <img
+                  key={name}
+                  className={on ? styles.on : undefined}
+                  src={FACES[name]}
+                  alt={on ? 'Flora, the AI partner of this case file, at her desk' : ''}
+                  data-testid={on ? 'flora' : undefined}
+                  data-expression={name}
+                  width={2752}
+                  height={1536}
+                  loading="lazy"
+                />
+              );
+            })}
+          </div>
         </div>
-      </div>
-      {/* Sombra atrás da coluna do chat: o texto claro fica legível sobre o estúdio sem virar caixa. */}
-      <div className={styles.shade} aria-hidden="true" />
+        {/* Sombra atrás da coluna do chat: o texto claro fica legível sobre o estúdio sem virar caixa. */}
+        <div className={styles.shade} aria-hidden="true" />
 
-      <div className={styles.chat}>
-        <div className={styles.head}>
-          <h2 id="flora-title" className={styles.title}>Interactive Flora AI</h2>
-          <p className={styles.subtitle}>Partner · <Sfx entry={JP.partner} className={styles.jp} /></p>
+        <div className={styles.chat}>
+          <div className={styles.head}>
+            <h2 id="flora-title" className={styles.title}>Interactive Flora AI</h2>
+            <p className={styles.subtitle}>Partner · <Sfx entry={JP.partner} className={styles.jp} /></p>
+          </div>
+
+          <div ref={log} className={styles.log} data-testid="chat-log" role="log" aria-live="polite" aria-label="Conversation with Flora">
+            {messages.map((m, i) => <p key={i} data-from={m.from} className={styles.msg}>{m.text}</p>)}
+            {pending && (
+              <p className={styles.typing}>
+                <span aria-hidden="true">•••</span>
+                <span className={styles.srOnly}>Flora is typing</span>
+              </p>
+            )}
+          </div>
+
+          <form id="chat-form" className={styles.form} onSubmit={onSubmit}>
+            <label htmlFor="chat-input" className={styles.srOnly}>Message to Flora</label>
+            <input id="chat-input" name="message" className={styles.input} placeholder="Speak to Flora…" autoComplete="off" />
+            <button type="submit" className={styles.send}>Send</button>
+          </form>
+          <div id="flora-turnstile" />
+          <p className={`chat-privacy ${styles.privacy}`}>Messages are answered by Claude (Anthropic) and aren't stored.</p>
         </div>
-
-        <div ref={log} className={styles.log} data-testid="chat-log" role="log" aria-live="polite" aria-label="Conversation with Flora" data-lenis-prevent>
-          {messages.map((m, i) => <p key={i} data-from={m.from} className={styles.msg}>{m.text}</p>)}
-          {pending && (
-            <p className={styles.typing}>
-              <span aria-hidden="true">•••</span>
-              <span className={styles.srOnly}>Flora is typing</span>
-            </p>
-          )}
-        </div>
-
-        <form id="chat-form" className={styles.form} onSubmit={onSubmit}>
-          <label htmlFor="chat-input" className={styles.srOnly}>Message to Flora</label>
-          <input id="chat-input" name="message" className={styles.input} placeholder="Speak to Flora…" autoComplete="off" />
-          <button type="submit" className={styles.send}>Send</button>
-        </form>
-        <div id="flora-turnstile" />
-        <p className={`chat-privacy ${styles.privacy}`}>Messages are answered by Claude (Anthropic) and aren't stored.</p>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
