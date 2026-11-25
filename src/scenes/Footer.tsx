@@ -8,7 +8,7 @@ import styles from './Footer.module.css';
 
 const CREDITS = [
   ['Story & code', 'Jean Dias'],
-  ['Partner', 'Flora'],
+  ['Partner', 'Lyssxz AI'],
   ['Filed in', 'Presidente Prudente'],
 ] as const;
 
