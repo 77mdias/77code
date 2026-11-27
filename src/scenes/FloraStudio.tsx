@@ -129,7 +129,7 @@ export function FloraStudio() {
                   key={name}
                   className={on ? styles.on : undefined}
                   src={FACES[name]}
-                  alt={on ? 'Flora, the AI partner of this case file, at her desk' : ''}
+                  alt={on ? 'Lyssxz, the AI partner of this case file, at her desk' : ''}
                   data-testid={on ? 'flora' : undefined}
                   data-expression={name}
                   width={2752}
@@ -145,23 +145,23 @@ export function FloraStudio() {
 
         <div className={styles.chat}>
           <div className={styles.head}>
-            <h2 id="flora-title" className={styles.title}>Interactive Flora AI</h2>
+            <h2 id="flora-title" className={styles.title}>Interactive Lyssxz AI</h2>
             <p className={styles.subtitle}>Partner · <Sfx entry={JP.partner} className={styles.jp} /></p>
           </div>
 
-          <div ref={log} className={styles.log} data-testid="chat-log" role="log" aria-live="polite" aria-label="Conversation with Flora">
+          <div ref={log} className={styles.log} data-testid="chat-log" role="log" aria-live="polite" aria-label="Conversation with Lyssxz">
             {messages.map((m, i) => <p key={i} data-from={m.from} className={styles.msg}>{m.text}</p>)}
             {pending && (
               <p className={styles.typing}>
                 <span aria-hidden="true">•••</span>
-                <span className={styles.srOnly}>Flora is typing</span>
+                <span className={styles.srOnly}>Lyssxz is typing</span>
               </p>
             )}
           </div>
 
           <form id="chat-form" className={styles.form} onSubmit={onSubmit}>
-            <label htmlFor="chat-input" className={styles.srOnly}>Message to Flora</label>
-            <input id="chat-input" name="message" className={styles.input} placeholder="Speak to Flora…" autoComplete="off" />
+            <label htmlFor="chat-input" className={styles.srOnly}>Message to Lyssxz</label>
+            <input id="chat-input" name="message" className={styles.input} placeholder="Speak to Lyssxz…" autoComplete="off" />
             <button type="submit" className={styles.send}>Send</button>
           </form>
           <div id="flora-turnstile" />

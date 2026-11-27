@@ -125,7 +125,7 @@
   font: 800 var(--t-label) / 1.2 var(--f-section);
   letter-spacing: 0.2em;
 }
-.msg[data-from='flora']::before { content: 'FLORA'; }
+.msg[data-from='flora']::before { content: 'LYSSXZ'; }
 .msg[data-from='guest'] {
   --line: color-mix(in srgb, var(--paper) 20%, transparent);
   background-size: 1px calc(100% - var(--name));

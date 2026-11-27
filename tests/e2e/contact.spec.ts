@@ -177,7 +177,7 @@ test('o rodapé tem END OF FILE e 終 acessível', async ({ page }) => {
   await expect(footer).toContainText('END OF FILE');
   await expect(footer.getByRole('img', { name: 'the end' })).toHaveText('終');
   await expect(footer.locator('[lang="ja"]')).toHaveText('終');
-  for (const t of ['Story & code', 'Jean Dias', 'Partner', 'Flora', 'Filed in', 'Presidente Prudente']) await expect(footer.getByText(t, { exact: true })).toBeAttached();
+  for (const t of ['Story & code', 'Jean Dias', 'Partner', 'Lyssxz AI', 'Filed in', 'Presidente Prudente']) await expect(footer.getByText(t, { exact: true })).toBeAttached();
   await expect(footer.getByRole('link')).toHaveCount(4);
   await expect(footer.locator('[data-testid="rewind"]')).toHaveText('Rewind episode ↑');
   // O gato na lua (rabo e duas orelhas animados) no lugar do DIAS77 gigante.

@@ -26,10 +26,10 @@ test('a IA se chama Flora no título, no campo e na primeira fala', async ({ pag
   await page.goto('/');
   await waitLoader(page);
   const flora = page.locator('section#flora');
-  await expect(flora.locator('h2')).toContainText('Flora');
-  await expect(page.locator('#chat-input')).toHaveAttribute('placeholder', /Flora/);
-  await expect(log(page).locator('[data-from="flora"]').first()).toHaveText("Hi, I'm Flora — Jean's partner on these cases. Ask me about any of them, how he works, or how to reach him.");
-  await expect(page.getByLabel('Message to Flora', { exact: true })).toBeVisible();
+  await expect(flora.locator('h2')).toContainText('Lyssxz');
+  await expect(page.locator('#chat-input')).toHaveAttribute('placeholder', /Lyssxz/);
+  await expect(log(page).locator('[data-from="flora"]').first()).toHaveText("Hi, I'm Lyssxz — Jean's partner on these cases. Ask me about any of them, how he works, or how to reach him.");
+  await expect(page.getByLabel('Message to Lyssxz', { exact: true })).toBeVisible();
   await expect(log(page)).toHaveAttribute('aria-live', 'polite');
   await expect(page.locator('img[data-testid="flora"]')).toHaveAttribute('data-expression', 'warm');
 });
@@ -253,7 +253,7 @@ test('o chat não tem caixa de papel', async ({ page }) => {
     };
   });
   expect(chat).toEqual({ bg: 'rgba(0, 0, 0, 0)', border: 'none', btnBg: 'rgba(0, 0, 0, 0)', inputBorder: 'none', formBorder: 'solid' });
-  await expect(page.locator(`${SEL} h2`)).toHaveText('Interactive Flora AI');
+  await expect(page.locator(`${SEL} h2`)).toHaveText('Interactive Lyssxz AI');
   await expect(page.locator(SEL).getByText('Partner ·')).toBeVisible();
   await expect(page.locator('#chat-form button[type="submit"]')).toHaveText(/send/i);
   expect(await page.locator('#chat-input').evaluate((i) => getComputedStyle(i, '::placeholder').fontStyle)).toBe('italic');
