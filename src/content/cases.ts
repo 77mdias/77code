@@ -39,7 +39,7 @@ export const CASES: readonly CaseFile[] = [
       'Deposits are paid by Pix through Stripe Connect.',
     ],
     solution:
-      'A multi-tenant SaaS with an agenda, teams, a WhatsApp assistant on the official Cloud API that answers and books for the studio, and monthly or yearly plans. It runs on my own VPS, with a synthetic test of the main flow every 15 minutes.',
+      'A multi-tenant SaaS with an agenda, teams, a WhatsApp assistant on the official Cloud API that answers and books for the studio, and monthly or yearly plans. It also shows what each service costs, what is left over and what to charge for the profit the studio wants. It runs on my own VPS, with a synthetic test of the main flow every 15 minutes.',
     stack: ['Next.js', 'TypeScript', 'PostgreSQL', 'Stripe', 'WhatsApp Cloud API', 'OpenAI', 'Docker'],
     url: 'https://ateliesys.tech',
     screenshot: { desktop: '/static/projects/ateliesys.jpg', mobile: '/static/projects/ateliesys-mobile.jpg' },
